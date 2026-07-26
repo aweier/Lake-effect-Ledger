@@ -14,6 +14,17 @@ from questionary import Choice
 from rich.console import Console
 from rich.panel import Panel
 
+from lake_effect_ledger.audit.engine import InternalAuditEngine
+from lake_effect_ledger.audit.models import AuditStage
+from lake_effect_ledger.audit.presentation import (
+    render_audit_request_list,
+    render_audit_scene,
+    render_control_results,
+    render_internal_audit_report,
+    render_preliminary_findings,
+    render_walkthrough_timeline,
+)
+from lake_effect_ledger.audit.report import build_internal_audit_report
 from lake_effect_ledger.commodity.engine import CommodityEngine
 from lake_effect_ledger.commodity.models import DocumentationQuality
 from lake_effect_ledger.commodity.presentation import (
@@ -215,12 +226,127 @@ CHAPTER_PATH_CHOICES = {
         "eleventh_episode_transition": "ec_close_case_file",
     },
 }
+AUDIT_DAY_SCENES = {
+    1: ("ns_package_scope", "ns_package_context", "ns_selection_notice"),
+    2: ("ns_walkthrough_style", "ns_volume_source", "ns_responsibility"),
+    3: ("ns_control_interpretation", "ns_finding_position"),
+    4: (
+        "ns_supplement_package",
+        "ns_remediation_choice",
+        "ns_management_response",
+        "ns_exit_escalation",
+    ),
+}
+_AUDIT_ACCURATE = {
+    "ns_package_scope": "ns_send_complete_chain",
+    "ns_package_context": "ns_add_clear_chronology",
+    "ns_selection_notice": "ns_tell_evelyn_first",
+    "ns_walkthrough_style": "ns_answer_accurately",
+    "ns_volume_source": "ns_explain_recorded_volume",
+    "ns_responsibility": "ns_accept_own_actions",
+    "ns_control_interpretation": "ns_separate_design_operation",
+    "ns_finding_position": "ns_agree_preliminary",
+    "ns_supplement_package": "ns_confirm_complete_package",
+    "ns_remediation_choice": "ns_recommend_three_way_match",
+    "ns_management_response": "ns_response_agree",
+    "ns_exit_escalation": "ns_elevate_disagreement",
+}
+AUDIT_PATH_CHOICES = {
+    "full_disclosure": dict(_AUDIT_ACCURATE),
+    "control_worked_late": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_send_requested_only",
+        "ns_walkthrough_style": "ns_answer_narrowly",
+        "ns_remediation_choice": "ns_recommend_daily_review",
+    },
+    "supported_late": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_send_requested_only",
+        "ns_remediation_choice": "ns_recommend_support_gate",
+        "ns_management_response": "ns_response_partial",
+    },
+    "protect_desk": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_ask_evelyn_review",
+        "ns_package_context": "ns_submit_minimal_context",
+        "ns_selection_notice": "ns_inform_cal",
+        "ns_walkthrough_style": "ns_answer_narrowly",
+        "ns_volume_source": "ns_call_it_my_recommendation",
+        "ns_responsibility": "ns_protect_cal",
+        "ns_control_interpretation": "ns_call_isolated_error",
+        "ns_finding_position": "ns_reject_without_evidence",
+        "ns_supplement_package": "ns_keep_initial_scope",
+        "ns_remediation_choice": "ns_recommend_daily_review",
+        "ns_management_response": "ns_response_partial",
+        "ns_exit_escalation": "ns_close_internally",
+    },
+    "quiet_supplement": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_ask_evelyn_review",
+        "ns_package_context": "ns_submit_minimal_context",
+        "ns_walkthrough_style": "ns_acknowledge_uncertainty",
+        "ns_responsibility": "ns_dispute_with_evidence",
+        "ns_finding_position": "ns_dispute_supported_point",
+        "ns_supplement_package": "ns_disclose_supplement",
+        "ns_remediation_choice": "ns_recommend_daily_review",
+    },
+    "lucky_unauthorized": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_send_requested_only",
+        "ns_volume_source": "ns_explain_cal_expectation",
+        "ns_remediation_choice": "ns_recommend_support_gate",
+    },
+    "no_physical_support": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_send_requested_only",
+        "ns_walkthrough_style": "ns_acknowledge_uncertainty",
+        "ns_remediation_choice": "ns_recommend_daily_review",
+    },
+    "inaccurate": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_ask_evelyn_review",
+        "ns_package_context": "ns_submit_minimal_context",
+        "ns_selection_notice": "ns_inform_cal",
+        "ns_walkthrough_style": "ns_claim_process_followed",
+        "ns_volume_source": "ns_call_it_my_recommendation",
+        "ns_responsibility": "ns_protect_cal",
+        "ns_control_interpretation": "ns_say_policy_sufficient",
+        "ns_finding_position": "ns_reject_without_evidence",
+        "ns_supplement_package": "ns_keep_initial_scope",
+        "ns_remediation_choice": "ns_recommend_training",
+        "ns_management_response": "ns_response_disagree",
+        "ns_exit_escalation": "ns_close_internally",
+    },
+    "automated": {
+        **_AUDIT_ACCURATE,
+        "ns_volume_source": "ns_explain_cal_expectation",
+    },
+    "policy_only": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_send_requested_only",
+        "ns_package_context": "ns_submit_minimal_context",
+        "ns_walkthrough_style": "ns_answer_narrowly",
+        "ns_control_interpretation": "ns_say_policy_sufficient",
+        "ns_finding_position": "ns_reject_without_evidence",
+        "ns_remediation_choice": "ns_recommend_training",
+        "ns_exit_escalation": "ns_close_internally",
+    },
+    "risk_acceptance": {
+        **_AUDIT_ACCURATE,
+        "ns_package_scope": "ns_send_requested_only",
+        "ns_walkthrough_style": "ns_acknowledge_uncertainty",
+        "ns_responsibility": "ns_dispute_with_evidence",
+        "ns_finding_position": "ns_dispute_supported_point",
+        "ns_remediation_choice": "ns_recommend_risk_acceptance",
+        "ns_management_response": "ns_response_partial",
+    },
+}
 
 app = typer.Typer(
     add_completion=False,
     invoke_without_command=True,
     no_args_is_help=False,
-    help="Play Lake Effect Ledger through The Eleventh Contract.",
+    help="Play Lake Effect Ledger through No Surprises.",
 )
 console = Console()
 
@@ -1059,6 +1185,305 @@ def _play_eleventh_contract(
     return True
 
 
+def _run_audit_checks(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    day: int,
+    strategy: str,
+    interactive: bool,
+) -> None:
+    if strategy not in {"auto", "correct", "helped", "retry"}:
+        raise typer.BadParameter(
+            "audit check strategy must be auto, correct, helped, or retry",
+            param_hint="--audit-check-strategy",
+        )
+    should_run = state.game_mode == GameMode.GUIDED or strategy != "auto"
+    if interactive and state.game_mode == GameMode.STANDARD and strategy == "auto":
+        should_run = bool(
+            _ask(
+                questionary.confirm(
+                    "Open this day's optional control and evidence checks?",
+                    default=False,
+                )
+            )
+        )
+    if not should_run:
+        return
+    effective_strategy = "correct" if strategy == "auto" else strategy
+    learning = LearningEngine(content)
+    audit = state.no_surprises
+    for check_id in content.audit_learning.day_check_ids[f"day_{day}"]:
+        progress = state.learning.checks.get(check_id)
+        if progress is not None and progress.completed:
+            if check_id not in audit.learning_check_ids:
+                audit.learning_check_ids.append(check_id)
+            continue
+        if interactive:
+            _interactive_check(
+                state,
+                content=content,
+                engine=learning,
+                check_id=check_id,
+            )
+        elif effective_strategy == "helped":
+            learning.walkthrough(state, check_id)
+        else:
+            if effective_strategy == "retry":
+                learning.submit(state, check_id, "__wrong__")
+            learning.submit(state, check_id, learning.expected_answer(check_id))
+        if check_id not in audit.learning_check_ids:
+            audit.learning_check_ids.append(check_id)
+
+
+def _choose_audit_choice_interactively(
+    content: ContentBundle,
+    scene_id: str,
+) -> str:
+    scene = content.audit_scene(scene_id)
+    return str(
+        _ask(
+            questionary.select(
+                "What do you do?",
+                choices=[Choice(title=item.text, value=item.id) for item in scene.choices],
+            )
+        )
+    )
+
+
+def _run_audit_scene(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    scene_id: str,
+    audit_path: str,
+    interactive: bool,
+) -> None:
+    engine = InternalAuditEngine(content)
+    scene = content.audit_scene(scene_id)
+    render_audit_scene(console, state, scene)
+    selected = (
+        _choose_audit_choice_interactively(content, scene_id)
+        if interactive
+        else AUDIT_PATH_CHOICES[audit_path][scene_id]
+    )
+    valid_ids = {item.id for item in scene.choices}
+    if selected not in valid_ids:
+        raise typer.BadParameter(
+            f"audit path {audit_path!r} cannot select {selected!r} in {scene_id}",
+            param_hint="--audit-path",
+        )
+    engine.apply_choice(state, scene_id, selected)
+
+
+def _audit_pause(
+    state: GameState,
+    *,
+    repository: SaveRepository,
+    save_enabled: bool,
+    message: str,
+) -> None:
+    if save_enabled:
+        repository.save(state)
+    console.print(
+        Panel(
+            f"{message} Load the autosave to resume from the preserved audit state.",
+            title="No Surprises paused",
+            border_style="yellow",
+        )
+    )
+
+
+def _play_no_surprises(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    repository: SaveRepository,
+    audit_path: str | None,
+    check_strategy: str,
+    maximum_stages: int | None,
+    pause_before_exit: bool,
+    interactive: bool,
+    debug: bool,
+    save_enabled: bool,
+) -> bool:
+    if audit_path is not None and audit_path not in AUDIT_PATH_CHOICES:
+        raise typer.BadParameter(
+            "audit path must be one of: " + ", ".join(sorted(AUDIT_PATH_CHOICES)),
+            param_hint="--audit-path",
+        )
+    engine = InternalAuditEngine(content)
+    audit = engine.initialize(state)
+    requested_path = audit_path
+    if audit.selected_story_path_id is None:
+        audit.selected_story_path_id = (
+            "interactive" if interactive else requested_path or "full_disclosure"
+        )
+    elif (
+        requested_path is not None
+        and audit.selected_story_path_id != requested_path
+        and audit.selected_story_path_id != "interactive"
+    ):
+        raise typer.BadParameter(
+            f"the saved audit is already using story path {audit.selected_story_path_id!r}",
+            param_hint="--audit-path",
+        )
+    audit_path = requested_path or (
+        audit.selected_story_path_id
+        if audit.selected_story_path_id != "interactive"
+        else "full_disclosure"
+    )
+    if audit.completed:
+        render_internal_audit_report(
+            console,
+            build_internal_audit_report(state, content),
+        )
+        return True
+    console.print(
+        Panel(
+            "Four working days · about "
+            f"{content.audit_scenario.estimated_minutes} minutes\n"
+            "You retrieve and explain records. Noah tests controls; management owns the response.",
+            title=content.audit_scenario.title,
+            border_style="cyan",
+        )
+    )
+    completed_this_run = 0
+    while not audit.completed:
+        if maximum_stages is not None and completed_this_run >= maximum_stages:
+            _audit_pause(
+                state,
+                repository=repository,
+                save_enabled=save_enabled,
+                message=f"Completed {completed_this_run} audit stage(s) in this run.",
+            )
+            return False
+        stage = audit.current_stage
+        if stage == AuditStage.REQUEST_LIST:
+            _run_audit_checks(
+                state,
+                content=content,
+                day=1,
+                strategy=check_strategy,
+                interactive=interactive,
+            )
+            for scene_id in AUDIT_DAY_SCENES[1]:
+                _run_audit_scene(
+                    state,
+                    content=content,
+                    scene_id=scene_id,
+                    audit_path=audit_path,
+                    interactive=interactive,
+                )
+                if save_enabled:
+                    repository.save(state)
+            engine.prepare_initial_package(state)
+            render_audit_request_list(console, state)
+        elif stage == AuditStage.WALKTHROUGH:
+            _run_audit_checks(
+                state,
+                content=content,
+                day=2,
+                strategy=check_strategy,
+                interactive=interactive,
+            )
+            render_walkthrough_timeline(console, state, debug=debug)
+            for scene_id in AUDIT_DAY_SCENES[2]:
+                _run_audit_scene(
+                    state,
+                    content=content,
+                    scene_id=scene_id,
+                    audit_path=audit_path,
+                    interactive=interactive,
+                )
+                if save_enabled:
+                    repository.save(state)
+            engine.conduct_walkthrough(state)
+        elif stage == AuditStage.CONTROL_TESTING:
+            _run_audit_checks(
+                state,
+                content=content,
+                day=3,
+                strategy=check_strategy,
+                interactive=interactive,
+            )
+            _run_audit_scene(
+                state,
+                content=content,
+                scene_id="ns_control_interpretation",
+                audit_path=audit_path,
+                interactive=interactive,
+            )
+            engine.evaluate_controls(state)
+            render_control_results(console, state)
+        elif stage == AuditStage.PRELIMINARY_FINDINGS:
+            engine.prepare_findings(state)
+            render_preliminary_findings(console, state)
+            _run_audit_scene(
+                state,
+                content=content,
+                scene_id="ns_finding_position",
+                audit_path=audit_path,
+                interactive=interactive,
+            )
+        elif stage == AuditStage.MANAGEMENT_RESPONSE:
+            _run_audit_checks(
+                state,
+                content=content,
+                day=4,
+                strategy=check_strategy,
+                interactive=interactive,
+            )
+            _run_audit_scene(
+                state,
+                content=content,
+                scene_id="ns_supplement_package",
+                audit_path=audit_path,
+                interactive=interactive,
+            )
+            engine.prepare_supplement(state)
+            render_audit_request_list(console, state)
+            for scene_id in ("ns_remediation_choice", "ns_management_response"):
+                _run_audit_scene(
+                    state,
+                    content=content,
+                    scene_id=scene_id,
+                    audit_path=audit_path,
+                    interactive=interactive,
+                )
+            engine.prepare_management_response(state)
+        elif stage == AuditStage.BEFORE_EXIT:
+            if pause_before_exit and not audit.audit_flags.get("paused_before_exit"):
+                audit.audit_flags["paused_before_exit"] = True
+                _audit_pause(
+                    state,
+                    repository=repository,
+                    save_enabled=save_enabled,
+                    message="The management response is saved before the exit meeting.",
+                )
+                return False
+            _run_audit_scene(
+                state,
+                content=content,
+                scene_id="ns_exit_escalation",
+                audit_path=audit_path,
+                interactive=interactive,
+            )
+            engine.complete(state)
+            render_internal_audit_report(
+                console,
+                build_internal_audit_report(state, content),
+            )
+        else:
+            raise ValueError(f"unsupported audit stage: {stage}")
+        completed_this_run += 1
+        if save_enabled:
+            repository.save(state)
+    if debug:
+        render_debug(console, state)
+    return True
+
+
 def _load_interactive(repository: SaveRepository) -> GameState | None:
     saves = repository.list_saves()
     if not saves:
@@ -1279,8 +1704,42 @@ def main(
             help="Autosave after the Day 3 exception decision, before position action.",
         ),
     ] = False,
+    audit_path: Annotated[
+        str | None,
+        typer.Option(
+            "--audit-path",
+            help=(
+                "Run No Surprises with full_disclosure, supported_late, protect_desk, "
+                "quiet_supplement, lucky_unauthorized, no_physical_support, inaccurate, "
+                "automated, control_worked_late, policy_only, or risk_acceptance."
+            ),
+        ),
+    ] = None,
+    audit_check_strategy: Annotated[
+        str,
+        typer.Option(
+            "--audit-check-strategy",
+            help="Run audit checks as auto, correct, helped, or retry.",
+        ),
+    ] = "auto",
+    audit_stages: Annotated[
+        int | None,
+        typer.Option(
+            "--audit-stages",
+            min=0,
+            max=6,
+            help="Complete at most this many No Surprises stages, then autosave.",
+        ),
+    ] = None,
+    pause_before_exit: Annotated[
+        bool,
+        typer.Option(
+            "--pause-before-exit",
+            help="Autosave the management response before the audit exit meeting.",
+        ),
+    ] = False,
 ) -> None:
-    """Play Lake Effect Ledger through The Eleventh Contract."""
+    """Play Lake Effect Ledger through No Surprises."""
     render_title(console)
     try:
         content = ContentBundle.load(DEFAULT_CONTENT_ROOT)
@@ -1354,7 +1813,10 @@ def main(
                 debug=debug and hedge_choice is None,
                 save_enabled=not no_save,
             )
-        chapter_requested = eleventh_path is not None or state.eleventh_contract is not None
+        audit_requested = audit_path is not None or state.no_surprises is not None
+        chapter_requested = (
+            eleventh_path is not None or state.eleventh_contract is not None or audit_requested
+        )
         if hedge_choice is not None or state.hedge_book is not None or chapter_requested:
             _play_hedge_book(
                 state,
@@ -1394,6 +1856,21 @@ def main(
                 check_strategy=chapter_check_strategy,
                 maximum_days=chapter_days,
                 pause_with_exception=pause_with_exception,
+                interactive=False,
+                debug=debug,
+                save_enabled=not no_save,
+            )
+        if audit_requested:
+            if state.eleventh_contract is None or not state.eleventh_contract.completed:
+                return
+            _play_no_surprises(
+                state,
+                content=content,
+                repository=repository,
+                audit_path=audit_path,
+                check_strategy=audit_check_strategy,
+                maximum_stages=audit_stages,
+                pause_before_exit=pause_before_exit,
                 interactive=False,
                 debug=debug,
                 save_enabled=not no_save,
@@ -1501,7 +1978,7 @@ def main(
         )
     )
     if continue_to_chapter:
-        _play_eleventh_contract(
+        chapter_finished = _play_eleventh_contract(
             state,
             content=content,
             repository=repository,
@@ -1513,6 +1990,29 @@ def main(
             debug=debug,
             save_enabled=not no_save,
         )
+        if not chapter_finished:
+            return
+        continue_to_audit = state.no_surprises is not None or bool(
+            _ask(
+                questionary.confirm(
+                    "Continue to No Surprises?",
+                    default=True,
+                )
+            )
+        )
+        if continue_to_audit:
+            _play_no_surprises(
+                state,
+                content=content,
+                repository=repository,
+                audit_path=audit_path,
+                check_strategy=audit_check_strategy,
+                maximum_stages=audit_stages,
+                pause_before_exit=pause_before_exit,
+                interactive=True,
+                debug=debug,
+                save_enabled=not no_save,
+            )
 
 
 if __name__ == "__main__":  # pragma: no cover

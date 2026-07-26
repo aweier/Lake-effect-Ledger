@@ -3,8 +3,8 @@
 `Lake Effect Ledger` is a fictional Python CLI narrative-management game about
 natural-gas accounting, hedging, liquidity, evidence, and loyalty.
 
-The repository now contains a Guided Career prologue and four playable portions
-of Episode 1:
+The repository now contains a Guided Career prologue and five connected playable
+chapters:
 
 1. **First Rotation** — a three-day, 25-minute introduction to physical and
    futures exposure, basis, hedge quantities, daily settlement, margin,
@@ -19,6 +19,9 @@ of Episode 1:
 5. **The Eleventh Contract** — prepare a live-book recommendation, observe a
    supervised order, then reconcile ten authorized contracts against an
    eleven-contract execution and FCM confirmation.
+6. **No Surprises** — answer Noah Shah's internal-audit request, reconstruct the
+   transaction from preserved records, test eight controls, and draft a
+   management response and remediation plan.
 
 The product source of truth supplied for this project is
 [`../Lake_Effect_Ledger_Game_Concept.txt`](../Lake_Effect_Ledger_Game_Concept.txt).
@@ -119,11 +122,41 @@ Educational material is not legal, tax, accounting, trading, or investment advic
 - Six state-derived case-file outcomes, durable relationship shifts, new
   detail-oriented and risk-seeking career tendencies, and v5 save/resume.
 
+### Milestone 6: No Surprises
+
+- Four working days and twelve durable decisions: Request List, Walkthrough,
+  Control Testing, and Exit Meeting.
+- A sixteen-row Audit Request List resolves stable Milestone 5 record IDs and
+  shows availability, initial inclusion, creation/provision timing, transaction,
+  and contemporaneous-versus-later status.
+- Full, requested-only, controller-review, and limited-then-supplemented package
+  paths. Initial and supplemental responses remain separate; no choice deletes
+  or changes an existing record.
+- A fourteen-step Walkthrough Timeline derived from actual authorization,
+  recommendation, order, execution, confirmation, reconciliation, notification,
+  approval, offset, support, certification, communication, and response state.
+- Eight typed control objectives with preventive/detective and
+  manual/automated classifications, test procedures, evidence, populations,
+  design/operation conclusions, exceptions, and results.
+- Northstar's fictional Advisory, Moderate, High, and Critical finding
+  methodology. Authorization, timing, evidence, correction, preservation, and
+  management involvement drive severity; profit and loss do not.
+- Five remediation choices with real tradeoffs: automated three-way match,
+  daily supervisory review, physical-support gate, training/policy, and formal
+  risk acceptance.
+- Structured management responses with agreement, evidence, root cause, action,
+  owner, target date, interim control, residual risk, and status.
+- Six learning-only Guided checks and Standard Story concepts derived from
+  actual decisions.
+- Seven state-derived outcomes, conditional Noah/Evelyn/Cal/Marisol trust, and
+  v6 pause/resume through the pre-exit-meeting boundary.
+
 ## Architecture and data flow
 
 ```text
 content/
   accounting/                    Accounts, static templates, dynamic patterns
+  audit/                         No Surprises request, controls, scenes, outcomes
   chapters/                      All authored decision scenes
   commodity/                     Contract, price path, scenario, hedge levels
   events/                        Milestone 1 delayed consequences
@@ -146,10 +179,15 @@ src/lake_effect_ledger/
     engine.py                    Deterministic fills, settlement, offset, reconciliation
     presentation.py              Live book, order chain, blotter, and case-file views
     report.py                    State-derived Analyst Case File
+  audit/
+    models.py                    Engagement, evidence, control, finding, response state
+    engine.py                    Record resolution, chronology, tests, severity, outcomes
+    presentation.py              Request List, Timeline, findings, and report views
+    report.py                    State-derived Internal Audit Walkthrough Report
   education/                     Entry-derived and Hedge Book reports
   learning/                      Check rules, shared calculations, notebook, rendering
   narrative/                     YAML schemas, references, typed-effect engine
-  persistence/                   Versioned SQLite saves and v1-through-v5 migration
+  persistence/                   Versioned SQLite saves and v1-through-v6 migration
   cli.py                         Typer/Questionary interaction boundary
   game.py                        Initial-state construction
   presentation.py               Milestone 1 Rich rendering
@@ -214,6 +252,23 @@ structured physical/market brief
 There is no general matching engine or event framework. The authored tape and one
 small fill function are sufficient for this chapter and keep future market
 microstructure work from leaking into accounting, learning, or narrative code.
+
+No Surprises adds one similarly scoped audit flow:
+
+```text
+completed Eleventh Contract record chain
+  → stable-ID Audit Request List and immutable initial response
+  → actual-record Walkthrough Timeline and fourteen explanations
+  → eight objective-specific control tests and evidence-linked exceptions
+  → fact-derived Northstar finding severity
+  → structured management response and approved remediation
+  → state-derived Internal Audit Walkthrough Report
+```
+
+The audit state records audit judgments, package timing, player explanations,
+findings, and remediation. It does not copy cash, P&L, positions, authorization,
+or accounting into a second source of truth. The subsystem evaluates one
+selected transaction and is deliberately not a generalized GRC platform.
 
 ## Setup
 
@@ -290,6 +345,60 @@ lake-ledger --load-autosave --show-notebook
 ```
 
 ## Scripted play and acceptance paths
+
+### Milestone 6 acceptance paths
+
+Run a clean correction followed by complete audit disclosure and strong
+remediation:
+
+```powershell
+lake-ledger --quick-start --game-mode guided --seed 1728 `
+  --eleventh-path formal_correction --audit-path full_disclosure `
+  --audit-check-strategy correct
+```
+
+Representative prior-record and audit-response combinations:
+
+```powershell
+lake-ledger --quick-start --seed 1728 --eleventh-path marisol_supported `
+  --audit-path supported_late
+lake-ledger --quick-start --seed 1729 --eleventh-path accept_cal `
+  --audit-path protect_desk
+lake-ledger --quick-start --seed 1728 --eleventh-path quiet_file `
+  --audit-path quiet_supplement
+lake-ledger --quick-start --seed 1729 --eleventh-path lucky_unapproved `
+  --audit-path lucky_unauthorized
+lake-ledger --quick-start --seed 1729 --eleventh-path leave_open_fail `
+  --audit-path no_physical_support
+lake-ledger --quick-start --seed 1728 --eleventh-path formal_correction `
+  --audit-path inaccurate
+lake-ledger --quick-start --seed 1728 --eleventh-path formal_correction `
+  --audit-path automated
+lake-ledger --quick-start --seed 1728 --eleventh-path formal_correction `
+  --audit-path control_worked_late
+lake-ledger --quick-start --seed 1728 --eleventh-path formal_correction `
+  --audit-path policy_only
+lake-ledger --quick-start --seed 1728 --eleventh-path formal_correction `
+  --audit-path risk_acceptance
+```
+
+Guided checks support `correct`, `helped`, and `retry`; Standard Story skips
+them with the default `auto` strategy while retaining decision-derived concepts.
+
+Pause after any of the six durable audit stages or immediately before the exit
+meeting:
+
+```powershell
+lake-ledger --quick-start --seed 1728 --eleventh-path formal_correction `
+  --audit-path full_disclosure --audit-stages 3 `
+  --save-db .\saves\audit_resume.db
+lake-ledger --load-autosave --save-db .\saves\audit_resume.db
+
+lake-ledger --quick-start --seed 1728 --eleventh-path formal_correction `
+  --audit-path full_disclosure --pause-before-exit `
+  --save-db .\saves\audit_exit.db
+lake-ledger --load-autosave --save-db .\saves\audit_exit.db
+```
 
 ### Milestone 5 acceptance paths
 
@@ -691,12 +800,14 @@ network access.
 
 ## Save compatibility
 
-The save schema is version 5.
+The save schema is version 6.
 
-- Version 1 Milestone 1 saves migrate through the full chain to version 5.
-- Version 2 Hedge Book saves migrate through the full chain to version 5.
-- Version 3 Treasury saves migrate through versions 4 and 5.
-- Version 4 First Rotation saves migrate explicitly to version 5.
+- Version 1 Milestone 1 saves migrate through the full chain to version 6.
+- Version 2 Hedge Book saves migrate through the full chain to version 6.
+- Version 3 Treasury saves migrate through versions 4, 5, and 6.
+- Version 4 First Rotation saves migrate through versions 5 and 6.
+- Version 5 Eleventh Contract saves migrate explicitly to version 6 with an
+  empty audit state; the completed chapter is not replayed.
 - Migration preserves the player, resources, decisions, event log, and ledger.
 - All old saves enter Standard Story with First Rotation already bypassed.
 - The new evidence-exposure resource receives a documented default of 10.
@@ -713,6 +824,9 @@ The save schema is version 5.
   current day and scene, all trade-lifecycle records, blotter history, position,
   margin, settlements, reconciliation, notifications, approvals, offset,
   relationships, evidence links, and chapter checks.
+- Version 6 persists the audit stage, selected path, request and package
+  responses, chronology, walkthrough explanations, tests, exceptions, findings,
+  management responses, remediation, relationship shifts, checks, and outcome.
 - Early native-v5 chapter saves without the explicit reconciliation envelope
   rebuild that typed link from the preserved lifecycle records when play resumes.
 
@@ -734,7 +848,7 @@ Run formatting, linting, and the complete suite:
 
 The suite covers:
 
-- Guided and Standard mode defaults, background introductions, all 22 check
+- Guided and Standard mode defaults, background introductions, all 28 check
   answers, five check types, glossary/source/topic references, and broken content;
 - correct, helped, unsure, and retry learning paths with protected-state
   invariants;
@@ -746,7 +860,8 @@ The suite covers:
 - initial margin, maintenance breaches, calls, insufficient cash, and release;
 - balanced entries and cash/FCM reconciliation after every settlement;
 - deterministic replay and mid-scenario save/resume;
-- explicit v1-through-v5, v2-through-v5, v3-through-v5, and v4-to-v5 migration;
+- explicit v1-through-v6, v2-through-v6, v3-through-v6, v4-through-v6, and
+  v5-to-v6 migration;
 - invalid contract, path, date, price, side, margin, hedge, effect, and lesson data;
 - documentation independence from market P&L;
 - actual-path learning-report reconciliation;
@@ -768,13 +883,22 @@ The suite covers:
 - Standard-mode Case File concepts derived from story decisions;
 - conditional prior-conduct and physical-outcome dialogue; and
 - before-order, post-confirmation, open-exception, and post-offset resume plus v4 migration.
+- audit request/package construction, supplements, and record immutability;
+- actual-timestamp chronology and all fourteen walkthrough facts;
+- eight control classifications, procedures, results, evidence links, design
+  and operating conclusions, segregation, exceptions, and finding severity;
+- P&L-neutral severity, evidence-supported and unsupported disputes, five
+  remediation types, risk acceptance, and materially different reports;
+- six Guided audit checks with protected-state retry and Standard
+  decision-derived concepts;
+- all scripted audit paths plus every saved stage and pre-exit pause/resume.
 
 ## Known limitations
 
 This remains a vertical-slice prototype:
 
 - One commodity, one active physical exposure per chapter, two Hedge Book paths,
-  and one Eleventh Contract intraday tape.
+  one Eleventh Contract intraday tape, and one selected audit transaction.
 - Fixed fictional margin requirements; no SPAN, portfolio offsets, or intraday calls.
 - Futures gains remain in the FCM account until final release.
 - No commissions, bid/ask spread, taxes, borrowing-base model, or interest on
@@ -786,6 +910,8 @@ This remains a vertical-slice prototype:
 - SQLite still stores each save as a versioned JSON state blob.
 - Career tendencies are transparent deterministic heuristics, not a psychological
   model; they need more authored decisions before supporting a broader campaign.
+- The audit subsystem is transaction-scoped. It is not a SOX program, legal
+  conclusion, statistical sampling engine, or enterprise GRC repository.
 - Source-tree editable installation is supported; wheel resource packaging is not
   yet configured.
 

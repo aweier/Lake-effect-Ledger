@@ -5,7 +5,7 @@ from lake_effect_ledger.commodity.engine import CommodityEngine
 from lake_effect_ledger.persistence.saves import SaveRepository
 
 
-def test_milestone_2_save_migrates_through_schema_3_to_schema_5(
+def test_milestone_2_save_migrates_through_schema_3_to_schema_6(
     content,
     completed_state_factory,
     tmp_path,
@@ -42,7 +42,8 @@ def test_milestone_2_save_migrates_through_schema_3_to_schema_5(
 
     restored = repository.load()
 
-    assert restored.save_schema_version == 5
+    assert restored.save_schema_version == 6
+    assert restored.no_surprises is None
     assert restored.eleventh_contract is None
     assert restored.game_mode.value == "standard"
     assert restored.prologue.transitioned_to_episode_1

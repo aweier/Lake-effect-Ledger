@@ -87,6 +87,7 @@ class SaveRepository:
                         and (state.hedge_book is None or state.hedge_book.completed)
                         and (state.treasury is None or state.treasury.completed)
                         and (state.eleventh_contract is None or state.eleventh_contract.completed)
+                        and (state.no_surprises is None or state.no_surprises.completed)
                     ),
                     state.model_dump_json(),
                 ),
@@ -192,6 +193,11 @@ def migrate_state_payload(payload: dict[str, object]) -> dict[str, object]:
         migrated.setdefault("eleventh_contract", None)
         migrated["save_schema_version"] = 5
         version = 5
+
+    if version == 5:
+        migrated.setdefault("no_surprises", None)
+        migrated["save_schema_version"] = 6
+        version = 6
 
     if version != SAVE_SCHEMA_VERSION:
         raise ValueError(f"no migration path to save schema {SAVE_SCHEMA_VERSION}")

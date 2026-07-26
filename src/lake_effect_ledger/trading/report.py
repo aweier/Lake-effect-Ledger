@@ -22,6 +22,7 @@ OUTCOME_TITLES = {
 
 
 class AnalystCaseFile(BaseModel):
+    case_file_id: str
     outcome: EleventhOutcome
     outcome_title: str
     outcome_summary: str
@@ -170,6 +171,7 @@ def build_analyst_case_file(state: GameState, content: ContentBundle) -> Analyst
         else chapter.blotter.certification_record_id
     )
     return AnalystCaseFile(
+        case_file_id="analyst_case_file_eleventh_contract",
         outcome=chapter.outcome,
         outcome_title=OUTCOME_TITLES[chapter.outcome],
         outcome_summary=summaries[chapter.outcome],

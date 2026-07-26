@@ -247,6 +247,11 @@ class LearningEngine:
                 if state.eleventh_contract is not None
                 else None
             ),
+            "no_surprises": (
+                state.no_surprises.model_dump(mode="json")
+                if state.no_surprises is not None
+                else None
+            ),
         }
 
     @staticmethod

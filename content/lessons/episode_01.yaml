@@ -175,3 +175,52 @@ lessons:
       A profitable trade or later physical support does not retroactively
       enlarge a contemporaneous approval. Economic result and supervisory
       authorization answer different questions.
+
+  - id: preventive_detective_controls
+    category: controls
+    title: Preventive and detective controls
+    explanation: >-
+      A preventive control is designed to stop or constrain an error before
+      it occurs. A detective control identifies an event after or as it
+      occurs so that it can be escalated and corrected.
+
+  - id: authorization_reconciliation_roles
+    category: controls
+    title: Authorization and reconciliation serve different purposes
+    explanation: >-
+      Authorization defines what may happen before execution. Reconciliation
+      compares what actually happened with approvals and external evidence;
+      a later match cannot create missing prior authority.
+
+  - id: design_operating_effectiveness
+    category: controls
+    title: Control design and operation
+    explanation: >-
+      Design effectiveness asks whether a control, if performed as intended,
+      can address its objective. Operating effectiveness asks whether the
+      designed control was performed consistently, by the right person, and
+      with reliable evidence.
+
+  - id: contemporaneous_evidence
+    category: controls
+    title: Contemporaneous and later-created evidence
+    explanation: >-
+      Contemporaneous evidence records what was known and done at the time.
+      Later evidence can resolve uncertainty or document remediation, but it
+      should not be presented as if it existed earlier.
+
+  - id: segregation_of_duties
+    category: controls
+    title: Segregation of duties
+    explanation: >-
+      Separating incompatible responsibilities reduces the chance that one
+      person can initiate, approve, record, and conceal an error. Small teams
+      may use documented independent review as a compensating control.
+
+  - id: remediation_preserves_history
+    category: controls
+    title: Remediation does not rewrite history
+    explanation: >-
+      Corrective action changes present exposure or future process. It does
+      not erase an original authorization breach, late escalation, or the
+      records used to reconstruct the event.

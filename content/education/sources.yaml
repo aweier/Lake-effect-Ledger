@@ -53,5 +53,29 @@ sources:
   - id: cftc_fcm_records
     organization: Commodity Futures Trading Commission
     title: Futures Commission Merchants (FCMs)
-    url: https://www.cftc.gov/IndustryOversight/Intermediaries/FCMs/fcmibdisclosures
+    url: https://www.cftc.gov/IndustryOversight/Intermediaries/FCMs/fcmibdisclosures.html
     note: CFTC summary of trading authorization, confirmations, order timestamps, transaction records, and supervision.
+  - id: iia_global_standards
+    organization: The Institute of Internal Auditors
+    title: 2024 Global Internal Audit Standards
+    url: https://www.theiia.org/en/standards/2024-standards/global-internal-audit-standards/
+    note: >-
+      Primary professional source for evidence-based internal-audit
+      engagement work, professional skepticism, communication, and monitoring
+      action plans; effective for quality assessments January 9, 2025.
+  - id: gao_green_book_2025
+    organization: U.S. Government Accountability Office
+    title: Standards for Internal Control in the Federal Government — 2025 Revision
+    url: https://www.gao.gov/greenbook
+    note: >-
+      Primary federal internal-control framework used here only for accurate
+      control-design, operation, preventive, and detective concepts; it does
+      not govern fictional Northstar.
+  - id: nfa_supervision_rule
+    organization: National Futures Association
+    title: NFA Rulebook — Compliance Rule 2-9 supervision materials
+    url: https://www.nfa.futures.org/rulebook/rules.aspx
+    note: >-
+      Primary NFA rulebook entry point for member supervision requirements.
+      The game does not imply that every rule directly governs every
+      Northstar employee.

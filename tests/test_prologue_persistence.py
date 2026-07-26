@@ -66,7 +66,8 @@ def test_v3_save_migrates_to_standard_with_prologue_skipped(content, tmp_path) -
             ),
         )
     restored = repository.load()
-    assert restored.save_schema_version == 5
+    assert restored.save_schema_version == 6
+    assert restored.no_surprises is None
     assert restored.eleventh_contract is None
     assert restored.game_mode == GameMode.STANDARD
     assert restored.prologue.completed

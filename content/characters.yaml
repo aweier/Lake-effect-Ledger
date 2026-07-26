@@ -61,3 +61,6 @@ people:
   - id: dom_bellini
     name: Dom Bellini
     role: Commercial counterparty
+  - id: noah_shah
+    name: Noah Shah
+    role: Internal audit manager

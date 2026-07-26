@@ -1,7 +1,7 @@
 # Educational sources
 
 Checked July 26, 2026. These primary sources support the stable educational
-concepts used in Milestones 2 through 5. Runtime gameplay and tests use local
+concepts used in Milestones 2 through 6. Runtime gameplay and tests use local
 fictional configuration and do not require network access.
 
 ## CME Group
@@ -42,7 +42,7 @@ fictional configuration and do not require network access.
 - [Futures Market Basics](https://www.cftc.gov/LearnAndProtect/EducationCenter/FuturesMarketBasics/index2.htm)
   - Distinguishes commercial hedgers from speculators and describes market
     oversight, supervision, and internal-control responsibilities.
-- [Futures Commission Merchants (FCMs)](https://www.cftc.gov/IndustryOversight/Intermediaries/FCMs/fcmibdisclosures)
+- [Futures Commission Merchants (FCMs)](https://www.cftc.gov/IndustryOversight/Intermediaries/FCMs/fcmibdisclosures.html)
   - Summarizes exact-quantity trading authorization, next-business-day
     confirmations, order receipt/transmission timestamps, transaction records,
     daily journals, and supervisory responsibility.
@@ -74,10 +74,23 @@ GAAP conclusion for any real facility.
   - Provides a primary-source framework for control activities, reliable
     information, communication, and documentation. The game uses these concepts
     for contemporaneous approvals and durable decision evidence.
+  - Its 2025 revision includes examples of preventive and detective activities
+    and distinguishes the design, implementation, and operation of controls.
 
 The Green Book applies directly to U.S. federal internal control. Here it is a
 general educational control-design reference, not a claim that Northstar is a
 federal entity.
+
+## The Institute of Internal Auditors
+
+- [2024 Global Internal Audit Standards](https://www.theiia.org/en/standards/2024-standards/global-internal-audit-standards/)
+  - The current Standards are effective for quality assessments beginning
+    January 9, 2025.
+  - They support the chapter's evidence-based engagement work, professional
+    skepticism, communication of results, and monitoring of action plans.
+  - Noah's fictional walkthrough borrows these professional concepts. It does
+    not claim that a four-day single-transaction game chapter is a complete
+    standards-conforming internal-audit engagement.
 
 ## NFA
 
@@ -85,6 +98,13 @@ federal entity.
   - Identifies short and long hedging, basis, hedge calculations, initial and
     maintenance margin, variation, settlement, and substantial price movements
     as exam-study concepts.
+- [NFA Rulebook](https://www.nfa.futures.org/rulebook/rules.aspx)
+  - Includes NFA Compliance Rule 2-9 supervision requirements and related
+    interpretive materials for NFA members.
+  - The game distinguishes those member and associated-person obligations from
+    Northstar's fictional internal policies and from general professional best
+    practices. It does not imply every NFA rule directly governs the junior
+    analyst or every Northstar employee.
 
 ## Fictional assumptions
 
@@ -107,6 +127,9 @@ requirements:
 - The Eleventh Contract dates, intraday observations, fills, trigger behavior,
   physical-volume outcome, order and authorization IDs, FCM confirmation,
   control workflow, Chicago basis, and fish-fry events.
+- The No Surprises engagement, request list, control objectives and activities,
+  Northstar severity labels, test results, findings, target dates, management
+  responses, outcomes, and board/lender/buyer interest.
 - Full fills at the next configured eligible observation, with no order-book
   depth, queue priority, fees, slippage, exchange price protection, or partial
   fills in the authored path. The typed order model can still represent partial,

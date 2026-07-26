@@ -174,3 +174,39 @@ terms:
     learning_objective_ids: [offset_preserves_history]
     source_ids: [cme_closing_position]
     series_3_topics: [Offsetting positions]
+  - id: preventive_control
+    term: Preventive control
+    definition: A control designed to stop or constrain an error before it occurs.
+    learning_objective_ids: [preventive_detective_controls]
+    source_ids: [gao_green_book_2025]
+    series_3_topics: [Supervision and controls]
+  - id: detective_control
+    term: Detective control
+    definition: A control designed to identify an event or exception so it can be investigated and corrected.
+    learning_objective_ids: [preventive_detective_controls]
+    source_ids: [gao_green_book_2025]
+    series_3_topics: [Supervision and controls]
+  - id: operating_effectiveness
+    term: Operating effectiveness
+    definition: Whether a control operated as designed, at the required time, by the right owner, with reliable evidence.
+    learning_objective_ids: [design_operating_effectiveness]
+    source_ids: [iia_global_standards, gao_green_book_2025]
+    series_3_topics: [Supervision and controls]
+  - id: contemporaneous_evidence
+    term: Contemporaneous evidence
+    definition: Evidence created when the underlying event occurred or decision was made, rather than reconstructed later.
+    learning_objective_ids: [contemporaneous_evidence]
+    source_ids: [iia_global_standards]
+    series_3_topics: [Books and records]
+  - id: segregation_of_duties
+    term: Segregation of duties
+    definition: Assignment of incompatible initiation, approval, custody, recording, and review responsibilities to different people.
+    learning_objective_ids: [segregation_of_duties]
+    source_ids: [gao_green_book_2025]
+    series_3_topics: [Supervision and controls]
+  - id: remediation
+    term: Remediation
+    definition: An approved action that reduces a control gap or residual risk without changing the historical record of what occurred.
+    learning_objective_ids: [remediation_preserves_history]
+    source_ids: [iia_global_standards]
+    series_3_topics: [Supervision and controls]

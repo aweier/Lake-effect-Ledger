@@ -56,6 +56,8 @@ def rebundle(content, **changes):
         "eleventh_scenario": content.eleventh_scenario,
         "eleventh_learning": content.eleventh_learning,
         "eleventh_narrative": content.eleventh_narrative,
+        "audit_scenario": content.audit_scenario,
+        "audit_learning": content.audit_learning,
     }
     values.update(changes)
     return ContentBundle(**values)

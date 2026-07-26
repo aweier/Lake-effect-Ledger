@@ -392,7 +392,7 @@ def test_early_native_v5_after_confirmation_rebuilds_typed_reconciliation(
 
     restored = repository.load()
 
-    assert restored.save_schema_version == 5
+    assert restored.save_schema_version == 6
     assert restored.eleventh_contract.reconciliation is None
     _choose_path_scenes(
         restored,

@@ -1,0 +1,616 @@
+schema_version: 1
+id: no_surprises
+title: No Surprises
+estimated_minutes: 44
+day_dates:
+  day_1: 2028-02-01
+  day_2: 2028-02-02
+  day_3: 2028-02-03
+  day_4: 2028-02-04
+engagement_objective: >-
+  Determine whether the Eleventh Contract authorization, execution,
+  confirmation, physical support, exception handling, and reconciliation can
+  be reconstructed from preserved records, and whether the related controls
+  were designed and operated to produce a timely, accurate result.
+scope_inclusions:
+  - The Eleventh Contract transaction and its physical-volume support
+  - Authorization, order, execution, confirmation, position, margin, and reconciliation
+  - Exception escalation, corrective approval, offset, communications, and preserved records
+scope_exclusions:
+  - Legal conclusions or regulatory enforcement
+  - A company-wide control opinion
+  - Transactions outside the selected Eleventh Contract
+simplifying_assumptions:
+  - Northstar's Advisory, Moderate, High, and Critical labels are fictional internal ratings.
+  - The walkthrough tests one selected transaction and does not establish company-wide failure rates.
+  - Noah evaluates records available to internal audit; he does not know hidden game state.
+  - NFA and CFTC references are educational and are not asserted to govern every Northstar employee.
+request_specs:
+  - request_item_id: req_physical_forecast
+    requested_record: Physical-volume forecast
+    stable_record_id: forecast_live_week_2028
+    record_type: PhysicalForecastRecord
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_market_note
+    requested_record: Monday market note
+    stable_record_id: brief_live_week_2028
+    record_type: MarketBrief
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_recommendation
+    requested_record: Hedge recommendation
+    stable_record_id: recommendation_live_week
+    record_type: OrderRecommendation
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_authorization
+    requested_record: Authorization
+    stable_record_id: auth_live_week_ten_short
+    record_type: TradeAuthorization
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_order
+    requested_record: Order instruction
+    stable_record_id: order_live_week_ten_short
+    record_type: TradeOrder
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_execution
+    requested_record: Execution
+    stable_record_id: execution_live_week_eleven
+    record_type: ExecutionRecord
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_confirmation
+    requested_record: FCM confirmation
+    stable_record_id: fcm_confirmation_live_week_eleven
+    record_type: FCMConfirmation
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_position
+    requested_record: Position record
+    stable_record_id: blotter_eleventh_contract
+    record_type: TradeBlotterEntry
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_margin
+    requested_record: Margin records
+    stable_record_id: txn_eleventh_initial_margin
+    record_type: JournalEntry
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_reconciliation
+    requested_record: Blotter reconciliation
+    stable_record_id: reconciliation_eleventh_contract
+    record_type: TradeReconciliationRecord
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_notification
+    requested_record: Exception notification
+    stable_record_id: comm_ec_formal_exception
+    record_type: CommunicationRecord
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_corrective_approval
+    requested_record: Corrective approval
+    stable_record_id: approval_offset_eleventh_contract
+    record_type: CorrectiveTradeApprovalRecord
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_offset
+    requested_record: Offset, if applicable
+    stable_record_id: offset_eleventh_contract
+    record_type: OffsetTrade
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_physical_support
+    requested_record: Later physical-support documentation
+    stable_record_id: final_nomination_additional_10000
+    record_type: PhysicalSupportDocument
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_communications
+    requested_record: Relevant contemporaneous communications
+    stable_record_id: comm_eleventh_market_brief
+    record_type: CommunicationRecord
+    available: false
+    related_transaction: eleventh_contract_live_week
+  - request_item_id: req_case_file
+    requested_record: Analyst Case File
+    stable_record_id: analyst_case_file_eleventh_contract
+    record_type: AnalystCaseFile
+    available: false
+    related_transaction: eleventh_contract_live_week
+control_owners:
+  - {owner_id: owner_controller, person_id: evelyn_marsh, role: Controller}
+  - {owner_id: owner_commercial, person_id: cal_rourke, role: Commercial director}
+  - {owner_id: owner_scheduling, person_id: marisol_vega, role: Gas scheduling manager}
+  - {owner_id: owner_analyst, person_id: player, role: Junior commodity risk analyst}
+control_objectives:
+  - objective_id: ctl_physical_support
+    title: Physical volume is supported before hedge quantity approval
+    rationale: Unsupported hedge quantity can create exposure unrelated to documented physical volume.
+    activity_ids: [act_physical_support_review]
+  - objective_id: ctl_authorization_limit
+    title: Futures orders remain within documented authorization
+    rationale: A specific quantity approval constrains order release and execution.
+    activity_ids: [act_authorization_release]
+  - objective_id: ctl_prompt_match
+    title: Executions and FCM confirmations are matched promptly
+    rationale: Prompt comparison identifies quantity, price, contract, and side differences.
+    activity_ids: [act_confirmation_match]
+  - objective_id: ctl_exception_escalation
+    title: Quantity exceptions are escalated
+    rationale: A visible exception needs an accountable owner and timely disposition.
+    activity_ids: [act_exception_route]
+  - objective_id: ctl_corrective_approval
+    title: Corrective trades receive approval
+    rationale: A correction is a new transaction and requires prospective authority.
+    activity_ids: [act_correction_approval]
+  - objective_id: ctl_record_preservation
+    title: Original records remain preserved after correction
+    rationale: Correction must not erase the evidence needed to reconstruct the original event.
+    activity_ids: [act_record_retention]
+  - objective_id: ctl_certification_accuracy
+    title: Reconciliation certifications accurately describe unresolved exceptions
+    rationale: Certification should agree with open status and supporting evidence.
+    activity_ids: [act_reconciliation_certification]
+  - objective_id: ctl_segregation
+    title: Trading, approval, reconciliation, and correction duties are appropriately separated
+    rationale: Independent responsibilities reduce the risk of unreviewed error or concealment.
+    activity_ids: [act_role_separation]
+control_activities:
+  - activity_id: act_physical_support_review
+    objective_id: ctl_physical_support
+    description: Scheduling support and hedge quantity are compared before controller approval.
+    owner_id: owner_controller
+    nature: preventive
+    execution: manual
+  - activity_id: act_authorization_release
+    objective_id: ctl_authorization_limit
+    description: The transmitting user releases only the contract, side, and quantity in the approval.
+    owner_id: owner_commercial
+    nature: preventive
+    execution: manual
+  - activity_id: act_confirmation_match
+    objective_id: ctl_prompt_match
+    description: The analyst compares internal order and execution records with the FCM confirmation.
+    owner_id: owner_analyst
+    nature: detective
+    execution: manual
+  - activity_id: act_exception_route
+    objective_id: ctl_exception_escalation
+    description: A quantity exception is routed to the controller with status retained until resolution.
+    owner_id: owner_analyst
+    nature: detective
+    execution: manual
+  - activity_id: act_correction_approval
+    objective_id: ctl_corrective_approval
+    description: The controller approves an opposite-side corrective order before release.
+    owner_id: owner_controller
+    nature: preventive
+    execution: manual
+  - activity_id: act_record_retention
+    objective_id: ctl_record_preservation
+    description: Original authorization, execution, confirmation, and status history remain linked after correction.
+    owner_id: owner_controller
+    nature: detective
+    execution: automated
+  - activity_id: act_reconciliation_certification
+    objective_id: ctl_certification_accuracy
+    description: The certifier describes any unresolved exception and links the evidence used.
+    owner_id: owner_analyst
+    nature: detective
+    execution: manual
+  - activity_id: act_role_separation
+    objective_id: ctl_segregation
+    description: Transmission, approval, reconciliation, and corrective approval are assigned to distinct roles.
+    owner_id: owner_controller
+    nature: preventive
+    execution: manual
+test_procedures:
+  - procedure_id: proc_physical_support
+    control_objective_id: ctl_physical_support
+    description: Compare forecast support at approval time with the authorized and executed quantity.
+  - procedure_id: proc_authorization_limit
+    control_objective_id: ctl_authorization_limit
+    description: Compare authorization, order, execution, and confirmation quantities and timestamps.
+  - procedure_id: proc_prompt_match
+    control_objective_id: ctl_prompt_match
+    description: Inspect reconciliation creation and the first recorded exception disposition.
+  - procedure_id: proc_exception_escalation
+    control_objective_id: ctl_exception_escalation
+    description: Inspect notification evidence, recipients, status, and timing.
+  - procedure_id: proc_corrective_approval
+    control_objective_id: ctl_corrective_approval
+    description: If an offset occurred, inspect its linked approval and execution sequence.
+  - procedure_id: proc_record_preservation
+    control_objective_id: ctl_record_preservation
+    description: Confirm original records and status history remain present after any correction.
+  - procedure_id: proc_certification_accuracy
+    control_objective_id: ctl_certification_accuracy
+    description: Compare certification language and timing with the unresolved exception status.
+  - procedure_id: proc_segregation
+    control_objective_id: ctl_segregation
+    description: Compare the people who transmitted, approved, reconciled, and approved correction.
+scenes:
+  - id: ns_package_scope
+    day: 1
+    speaker: Noah Shah
+    title: Sixteen Rows
+    text: >-
+      Noah's request is a table, not an accusation. "If a record does not
+      exist, say that. Missing is a test result. Hidden is a second issue."
+      The junior analyst must decide how to assemble the first response.
+    choices:
+      - id: ns_send_complete_chain
+        text: Provide the complete linked record chain, including available exception records.
+        effect:
+          package_strategy: complete_linked_chain
+          relationship_deltas: {noah_shah: 2, evelyn_marsh: 1}
+          trajectory_deltas: {detail_oriented: 1, principled: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_send_requested_only
+        text: Provide only the records specifically requested, without extra related evidence.
+        effect:
+          package_strategy: requested_records_only
+          relationship_deltas: {noah_shah: -1}
+          trajectory_deltas: {self_protective: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_ask_evelyn_review
+        text: Ask Evelyn to review the package before it goes to internal audit.
+        effect:
+          package_strategy: evelyn_review_first
+          relationship_deltas: {evelyn_marsh: 1, noah_shah: -1}
+          trajectory_deltas: {company_loyal: 1}
+        learning_objective_ids: [segregation_of_duties]
+  - id: ns_package_context
+    day: 1
+    speaker: Evelyn Marsh
+    title: The Cover Note
+    text: >-
+      Evelyn reads the filenames twice. "You can explain the ten-versus-eleven
+      difference. You cannot explain it away." The cover note determines
+      whether Noah receives a map or a stack.
+    choices:
+      - id: ns_add_clear_chronology
+        text: Add a chronology that separates contemporaneous facts from later support and correction.
+        effect:
+          chronology_style: clear_chronology
+          relationship_deltas: {noah_shah: 2, evelyn_marsh: 1}
+          trajectory_deltas: {detail_oriented: 1}
+        learning_objective_ids: [contemporaneous_evidence, remediation_preserves_history]
+      - id: ns_submit_minimal_context
+        text: Submit the package without drawing attention to unresolved inconsistencies.
+        effect:
+          chronology_style: minimal_context
+          relationship_deltas: {noah_shah: -1}
+          trajectory_deltas: {self_protective: 1}
+          flags: {initial_package_minimized: true}
+        learning_objective_ids: [contemporaneous_evidence]
+  - id: ns_selection_notice
+    day: 1
+    speaker: Cal Rourke
+    title: A Courtesy
+    text: >-
+      Cal hears the words "internal audit" from the hallway. He says notifying
+      him first is a courtesy. Evelyn says the request belongs to the company,
+      not to anyone's social calendar.
+    choices:
+      - id: ns_tell_evelyn_first
+        text: Tell Evelyn the package is ready and let the process notify the desk.
+        effect:
+          selection_notice: tell_evelyn
+          relationship_deltas: {evelyn_marsh: 1, cal_rourke: -1}
+          trajectory_deltas: {principled: 1}
+        learning_objective_ids: [segregation_of_duties]
+      - id: ns_inform_cal
+        text: Inform Cal that the transaction was selected, without sharing Noah's work plan.
+        effect:
+          selection_notice: tell_cal
+          relationship_deltas: {cal_rourke: 1, noah_shah: -1}
+          trajectory_deltas: {company_loyal: 1}
+        learning_objective_ids: [segregation_of_duties]
+      - id: ns_notify_neither
+        text: Send the response and let Noah manage all notifications.
+        effect:
+          selection_notice: tell_neither
+          relationship_deltas: {noah_shah: 1, evelyn_marsh: -1}
+          trajectory_deltas: {self_protective: 1}
+        learning_objective_ids: [segregation_of_duties]
+  - id: ns_walkthrough_style
+    day: 2
+    speaker: Noah Shah
+    title: Monday, Then Tuesday
+    text: >-
+      Noah places the forecast beside the market note. "Start with what you
+      knew Monday. If Friday changed the answer, we will get to Friday when the
+      calendar does." His pencil waits.
+    choices:
+      - id: ns_answer_accurately
+        text: Reconstruct the whole sequence and identify what was uncertain at each point.
+        effect:
+          walkthrough_posture: accurate_and_complete
+          relationship_deltas: {noah_shah: 2, marisol_vega: 1}
+          trajectory_deltas: {principled: 1, detail_oriented: 1}
+        learning_objective_ids: [authorization_reconciliation_roles, contemporaneous_evidence]
+      - id: ns_answer_narrowly
+        text: Answer each question narrowly and do not volunteer surrounding context.
+        effect:
+          walkthrough_posture: narrow
+          relationship_deltas: {noah_shah: -1}
+          trajectory_deltas: {self_protective: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_acknowledge_uncertainty
+        text: State where your memory is uncertain and ask to rely on the records.
+        effect:
+          walkthrough_posture: acknowledge_uncertainty
+          relationship_deltas: {noah_shah: 1}
+          trajectory_deltas: {cooperative: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_claim_process_followed
+        text: Say the normal process was followed and the final records prove it.
+        effect:
+          walkthrough_posture: claim_process_followed
+          relationship_deltas: {noah_shah: -3, evelyn_marsh: -2}
+          trajectory_deltas: {self_protective: 2, conflicted: 1}
+          flags: {inaccurate_walkthrough_claim: true}
+        learning_objective_ids: [authorization_reconciliation_roles]
+  - id: ns_volume_source
+    day: 2
+    speaker: Noah Shah
+    title: Whose Number
+    text: >-
+      "The extra ten thousand MMBtu was possible," Noah says. "Who converted
+      possible into a trading expectation?" Cal's chair does not move.
+    choices:
+      - id: ns_explain_recorded_volume
+        text: Explain the supported and possible volumes exactly as the Monday record describes them.
+        effect:
+          volume_explanation: record_based
+          relationship_deltas: {noah_shah: 2, marisol_vega: 1}
+          trajectory_deltas: {detail_oriented: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_explain_cal_expectation
+        text: Explain that Cal supplied the unsupported commercial expectation, while owning your wording.
+        effect:
+          volume_explanation: cal_expectation
+          relationship_deltas: {noah_shah: 1, cal_rourke: -2, evelyn_marsh: 1}
+          trajectory_deltas: {principled: 1}
+        learning_objective_ids: [authorization_reconciliation_roles]
+      - id: ns_call_it_my_recommendation
+        text: Treat the extra quantity as your recommendation and leave Cal out of the explanation.
+        effect:
+          volume_explanation: player_recommendation
+          relationship_deltas: {cal_rourke: 2, noah_shah: -1, marisol_vega: -1}
+          trajectory_deltas: {company_loyal: 1, conflicted: 1}
+        learning_objective_ids: [authorization_reconciliation_roles]
+  - id: ns_responsibility
+    day: 2
+    speaker: Noah Shah
+    title: The Verb
+    text: >-
+      Noah circles "certified," "notified," or "left open"—whichever the file
+      supports. "Organizations like passive voice. Timestamps rarely do."
+    choices:
+      - id: ns_accept_own_actions
+        text: Accept responsibility for your certification, delay, or escalation decision.
+        effect:
+          responsibility_posture: accept_own_actions
+          relationship_deltas: {noah_shah: 2, evelyn_marsh: 1}
+          trajectory_deltas: {principled: 1}
+        learning_objective_ids: [remediation_preserves_history]
+      - id: ns_dispute_with_evidence
+        text: Dispute only the part of Noah's preliminary reading that the linked evidence does not support.
+        effect:
+          responsibility_posture: dispute_with_evidence
+          relationship_deltas: {noah_shah: 1}
+          trajectory_deltas: {detail_oriented: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_protect_cal
+        text: Protect Cal by describing the quantity difference as an anonymous process failure.
+        effect:
+          responsibility_posture: protect_cal
+          relationship_deltas: {cal_rourke: 2, noah_shah: -2, marisol_vega: -1}
+          trajectory_deltas: {company_loyal: 1, self_protective: 1}
+        learning_objective_ids: [segregation_of_duties]
+  - id: ns_control_interpretation
+    day: 3
+    speaker: Noah Shah
+    title: Designed, Operated, or Decorated
+    text: >-
+      Noah sketches the controls as a sequence. "A policy can describe a
+      control. It cannot perform one. Framed policies are excellent at staying
+      on walls."
+    choices:
+      - id: ns_separate_design_operation
+        text: Separate control-design gaps from controls that existed but operated late or not at all.
+        effect:
+          control_view: design_and_operation
+          relationship_deltas: {noah_shah: 2, evelyn_marsh: 1}
+          trajectory_deltas: {detail_oriented: 1}
+        learning_objective_ids: [design_operating_effectiveness]
+      - id: ns_call_isolated_error
+        text: Treat the selected transaction as an isolated manual error.
+        effect:
+          control_view: isolated_error
+          relationship_deltas: {cal_rourke: 1, noah_shah: -1}
+          trajectory_deltas: {company_loyal: 1}
+        learning_objective_ids: [design_operating_effectiveness]
+      - id: ns_say_policy_sufficient
+        text: Argue that the existing authorization policy is already a sufficient control.
+        effect:
+          control_view: policy_sufficient
+          relationship_deltas: {noah_shah: -2}
+          trajectory_deltas: {self_protective: 1}
+          flags: {policy_equated_with_control: true}
+        learning_objective_ids: [design_operating_effectiveness]
+  - id: ns_finding_position
+    day: 3
+    speaker: Evelyn Marsh
+    title: Preliminary Means Preliminary
+    text: >-
+      Evelyn says a finding can be wrong without being inconvenient, and
+      inconvenient without being wrong. Noah slides the evidence column toward
+      the player.
+    choices:
+      - id: ns_agree_preliminary
+        text: Agree with the evidence-supported chronology and focus on a proportionate response.
+        effect:
+          finding_posture: agree
+          relationship_deltas: {noah_shah: 1, evelyn_marsh: 1}
+          trajectory_deltas: {cooperative: 1}
+        learning_objective_ids: [design_operating_effectiveness]
+      - id: ns_dispute_supported_point
+        text: Dispute a narrow inference using the actual notification, approval, or support record.
+        effect:
+          finding_posture: evidence_dispute
+          relationship_deltas: {noah_shah: 1}
+          trajectory_deltas: {detail_oriented: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_reject_without_evidence
+        text: Reject the finding because the final economics were acceptable.
+        effect:
+          finding_posture: unsupported_dispute
+          relationship_deltas: {noah_shah: -2, evelyn_marsh: -1}
+          trajectory_deltas: {self_protective: 1}
+          flags: {unsupported_finding_dispute: true}
+        learning_objective_ids: [authorization_vs_outcome]
+  - id: ns_supplement_package
+    day: 4
+    speaker: Marisol Vega
+    title: The Other Attachment
+    text: >-
+      Marisol recognizes a message or support document that did not appear in
+      the first package. If it was omitted, the original response remains in
+      the log; a supplement can add context but cannot change Tuesday.
+    choices:
+      - id: ns_disclose_supplement
+        text: Supply any available omitted record as a dated supplemental response.
+        effect:
+          supplement_choice: disclose_omitted
+          relationship_deltas: {noah_shah: 2, marisol_vega: 1, evelyn_marsh: 1}
+          trajectory_deltas: {principled: 1, cooperative: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_keep_initial_scope
+        text: Keep the response limited to what was included initially.
+        effect:
+          supplement_choice: keep_initial_scope
+          relationship_deltas: {noah_shah: -2, marisol_vega: -1}
+          trajectory_deltas: {self_protective: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_confirm_complete_package
+        text: Confirm that every available requested record was already provided.
+        effect:
+          supplement_choice: no_supplement_needed
+          relationship_deltas: {noah_shah: 1}
+          trajectory_deltas: {detail_oriented: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+  - id: ns_remediation_choice
+    day: 4
+    speaker: Noah Shah
+    title: What Changes Monday
+    text: >-
+      The player may recommend; Evelyn and management will approve or reject.
+      Noah asks one question: "What will be different before the next order,
+      besides everyone's memory of this meeting?"
+    choices:
+      - id: ns_recommend_three_way_match
+        text: Recommend an automated authorization–execution–confirmation match that blocks certification and routes exceptions.
+        effect:
+          remediation_kind: automated_three_way_match
+          relationship_deltas: {noah_shah: 2, evelyn_marsh: 1, cal_rourke: -1}
+          trajectory_deltas: {detail_oriented: 1, principled: 1}
+        learning_objective_ids: [preventive_detective_controls, remediation_preserves_history]
+      - id: ns_recommend_daily_review
+        text: Recommend a daily qualified supervisory review of positions, approvals, confirmations, and exceptions.
+        effect:
+          remediation_kind: daily_supervisory_review
+          relationship_deltas: {noah_shah: 1, evelyn_marsh: 1}
+          trajectory_deltas: {cooperative: 1}
+        learning_objective_ids: [preventive_detective_controls]
+      - id: ns_recommend_support_gate
+        text: Recommend a physical-support gate with documented secondary approval for excess quantity.
+        effect:
+          remediation_kind: physical_support_gate
+          relationship_deltas: {noah_shah: 2, marisol_vega: 1, cal_rourke: -1}
+          trajectory_deltas: {principled: 1}
+        learning_objective_ids: [preventive_detective_controls]
+      - id: ns_recommend_training
+        text: Recommend revised policy language and desk training without a new preventive or detective mechanism.
+        effect:
+          remediation_kind: training_and_policy
+          relationship_deltas: {cal_rourke: 1, noah_shah: -2}
+          trajectory_deltas: {company_loyal: 1}
+        learning_objective_ids: [design_operating_effectiveness]
+      - id: ns_recommend_risk_acceptance
+        text: Recommend temporary formal risk acceptance with an owner, interim review, expiration, and residual-risk statement.
+        effect:
+          remediation_kind: formal_risk_acceptance
+          relationship_deltas: {evelyn_marsh: 1}
+          trajectory_deltas: {cooperative: 1}
+        learning_objective_ids: [remediation_preserves_history]
+  - id: ns_management_response
+    day: 4
+    speaker: Evelyn Marsh
+    title: The Management Voice
+    text: >-
+      Evelyn owns the response, but asks the analyst to draft it. Agreement,
+      root cause, action, owner, date, interim control, and residual risk must
+      fit in the same paragraph without contradicting the file.
+    choices:
+      - id: ns_response_agree
+        text: Agree with the finding and state the root cause and residual risk directly.
+        effect:
+          response_agreement: agree
+          relationship_deltas: {noah_shah: 1, evelyn_marsh: 1}
+          trajectory_deltas: {principled: 1}
+        learning_objective_ids: [remediation_preserves_history]
+      - id: ns_response_partial
+        text: Partially agree, preserving a narrow evidence-supported disagreement.
+        effect:
+          response_agreement: partially_agree
+          relationship_deltas: {noah_shah: 1, evelyn_marsh: 1}
+          trajectory_deltas: {detail_oriented: 1}
+        learning_objective_ids: [contemporaneous_evidence]
+      - id: ns_response_disagree
+        text: Disagree with the control conclusion and cite the later support or correction.
+        effect:
+          response_agreement: disagree
+          relationship_deltas: {noah_shah: -2, evelyn_marsh: -1}
+          trajectory_deltas: {self_protective: 1}
+          flags: {management_response_tension: true}
+        learning_objective_ids: [authorization_vs_outcome]
+  - id: ns_exit_escalation
+    day: 4
+    speaker: Noah Shah
+    title: No Surprises
+    text: >-
+      The room is professional and tired. A note arrives: a board committee,
+      lender diligence team, or potential buyer may request the final report.
+      Noah does not dramatize it. "That is why the first version should be the
+      version we can defend."
+    choices:
+      - id: ns_elevate_disagreement
+        text: Recommend that any unresolved evidence disagreement be elevated through internal governance.
+        effect:
+          elevate_unresolved: true
+          relationship_deltas: {noah_shah: 1, evelyn_marsh: 1}
+          trajectory_deltas: {principled: 1}
+        learning_objective_ids: [remediation_preserves_history]
+      - id: ns_close_internally
+        text: Recommend closing the walkthrough with management's response and assigned monitoring.
+        effect:
+          elevate_unresolved: false
+          relationship_deltas: {cal_rourke: 1}
+          trajectory_deltas: {company_loyal: 1}
+        learning_objective_ids: [remediation_preserves_history]
+possible_outcomes:
+  - control_worked_late
+  - clean_walkthrough
+  - management_override
+  - quiet_file_opens
+  - policy_is_not_a_control
+  - no_surprises
+  - two_versions_of_monday

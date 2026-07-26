@@ -1,0 +1,91 @@
+schema_version: 1
+day_check_ids:
+  day_1: [audit_preventive_detective, audit_contemporaneous_evidence]
+  day_2: [audit_authorization_reconciliation]
+  day_3: [audit_design_operation, audit_segregation]
+  day_4: [audit_remediation_history]
+checks:
+  - id: audit_preventive_detective
+    check_type: multiple_choice
+    prompt: Which control would prevent an over-authorization before the order is released?
+    learning_objective_ids: [preventive_detective_controls]
+    source_id: gao_green_book_2025
+    options:
+      - {id: support_gate, text: A system gate requiring physical support or secondary approval}
+      - {id: next_day_match, text: A next-day comparison of confirmation to authorization}
+      - {id: monthly_training, text: A monthly policy reminder}
+    correct_option_id: support_gate
+    explanation: The gate constrains the action before release; the next-day match is detective.
+    hints: [Ask whether the activity operates before or after the order.]
+    worked_solution: A physical-support gate is preventive because it stops the unsupported quantity before release.
+    retry_policy: until_correct
+  - id: audit_contemporaneous_evidence
+    check_type: interpretation
+    prompt: Friday support for possible Monday volume proves which fact?
+    learning_objective_ids: [contemporaneous_evidence]
+    source_id: iia_global_standards
+    options:
+      - {id: later_support_only, text: The volume became supported Friday, not that it was supported Monday}
+      - {id: retroactive_authority, text: Monday authorization automatically increased}
+      - {id: no_exception, text: The original exception never existed}
+    correct_option_id: later_support_only
+    explanation: Later evidence can resolve exposure but cannot be backdated.
+    hints: [Separate what the document proves from when it was created.]
+    worked_solution: Treat the Friday document as later support and retain Monday's state of knowledge.
+    retry_policy: until_correct
+  - id: audit_authorization_reconciliation
+    check_type: interpretation
+    prompt: A confirmation matches an eleven-contract execution. What does that establish?
+    learning_objective_ids: [authorization_reconciliation_roles]
+    source_id: cftc_trade_records
+    options:
+      - {id: execution_match, text: The external confirmation agrees with execution, not that eleven were authorized}
+      - {id: authorization, text: The external confirmation authorizes all eleven}
+      - {id: physical_support, text: The confirmation proves physical volume}
+    correct_option_id: execution_match
+    explanation: Confirmation and authorization answer different questions.
+    hints: [Identify the records being compared.]
+    worked_solution: The confirmation supports execution accuracy; compare authorization separately.
+    retry_policy: until_correct
+  - id: audit_design_operation
+    check_type: multiple_choice
+    prompt: A sound daily review exists but was skipped on Tuesday. What failed?
+    learning_objective_ids: [design_operating_effectiveness]
+    source_id: gao_green_book_2025
+    options:
+      - {id: operation, text: Operating effectiveness}
+      - {id: design, text: Design effectiveness only}
+      - {id: neither, text: Neither design nor operation}
+    correct_option_id: operation
+    explanation: The control may be capable of working, but it did not operate that day.
+    hints: [Ask whether the procedure was incapable or simply not performed.]
+    worked_solution: Classify the exception as an operating failure unless evidence also shows a design gap.
+    retry_policy: until_correct
+  - id: audit_segregation
+    check_type: multiple_choice
+    prompt: Which assignment best separates the trade lifecycle?
+    learning_objective_ids: [segregation_of_duties]
+    source_id: gao_green_book_2025
+    options:
+      - {id: separate_review, text: Trader transmits, controller approves, analyst reconciles, supervisor approves correction}
+      - {id: one_owner, text: One person transmits, approves, reconciles, and corrects}
+      - {id: self_review, text: Trader transmits and later certifies the exception alone}
+    correct_option_id: separate_review
+    explanation: Independent approval and review reduce incompatible-duty risk.
+    hints: [Look for initiation, approval, recording, and review in different hands.]
+    worked_solution: Separate transmission, approval, reconciliation, and correction authority.
+    retry_policy: until_correct
+  - id: audit_remediation_history
+    check_type: interpretation
+    prompt: What does an approved offset do to the original over-authorization?
+    learning_objective_ids: [remediation_preserves_history]
+    source_id: cme_closing_position
+    options:
+      - {id: prospective, text: Reduces exposure prospectively while preserving the original exception}
+      - {id: erases, text: Deletes the original execution and exception}
+      - {id: authorizes, text: Retroactively authorizes the original quantity}
+    correct_option_id: prospective
+    explanation: Correction changes the current position, not the past record.
+    hints: [Distinguish current exposure from historical authorization.]
+    worked_solution: Link the offset to the original record and retain both transactions and settled P&L.
+    retry_policy: until_correct

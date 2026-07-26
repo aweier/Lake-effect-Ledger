@@ -10,6 +10,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from lake_effect_ledger.accounting.models import Ledger
+from lake_effect_ledger.audit.models import NoSurprisesState
 from lake_effect_ledger.commodity.models import HedgeBookState
 from lake_effect_ledger.learning.models import (
     CareerTrajectory,
@@ -21,7 +22,7 @@ from lake_effect_ledger.learning.models import (
 from lake_effect_ledger.trading.models import EleventhContractState
 from lake_effect_ledger.treasury.models import CommunicationRecord, TreasuryState
 
-SAVE_SCHEMA_VERSION = 5
+SAVE_SCHEMA_VERSION = 6
 CONTENT_SCHEMA_VERSION = 1
 
 
@@ -99,7 +100,7 @@ class ScheduledEvent(BaseModel):
 class GameState(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
 
-    save_schema_version: Literal[5] = SAVE_SCHEMA_VERSION
+    save_schema_version: Literal[6] = SAVE_SCHEMA_VERSION
     content_schema_version: Literal[1] = CONTENT_SCHEMA_VERSION
     game_id: str
     seed: int = Field(ge=0)
@@ -128,6 +129,7 @@ class GameState(BaseModel):
     treasury: TreasuryState | None = None
     evidence_log: list[CommunicationRecord] = Field(default_factory=list)
     eleventh_contract: EleventhContractState | None = None
+    no_surprises: NoSurprisesState | None = None
     completed: bool = False
 
     def record(

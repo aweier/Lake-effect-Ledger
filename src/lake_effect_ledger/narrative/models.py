@@ -11,6 +11,7 @@ import yaml
 from pydantic import BaseModel, Field, TypeAdapter, model_validator
 
 from lake_effect_ledger.accounting.models import AccountDefinition, JournalLine
+from lake_effect_ledger.audit.models import AuditLearningFile, AuditScenario
 from lake_effect_ledger.commodity.models import (
     DocumentationQuality,
     FuturesContractSpec,
@@ -432,6 +433,8 @@ class ContentBundle:
         eleventh_scenario: EleventhContractScenario,
         eleventh_learning: ChapterLearningFile,
         eleventh_narrative: SceneFile,
+        audit_scenario: AuditScenario,
+        audit_learning: AuditLearningFile,
     ) -> None:
         self.characters = characters
         self.scenes = scenes
@@ -453,6 +456,8 @@ class ContentBundle:
         self.eleventh_scenario = eleventh_scenario
         self.eleventh_learning = eleventh_learning
         self.eleventh_narrative = eleventh_narrative
+        self.audit_scenario = audit_scenario
+        self.audit_learning = audit_learning
         self._validate_references()
 
     @classmethod
@@ -506,6 +511,12 @@ class ContentBundle:
             eleventh_narrative=SceneFile.model_validate(
                 _read_yaml(root / "chapters" / "eleventh_contract.yaml")
             ),
+            audit_scenario=AuditScenario.model_validate(
+                _read_yaml(root / "audit" / "no_surprises.yaml")
+            ),
+            audit_learning=AuditLearningFile.model_validate(
+                _read_yaml(root / "education" / "no_surprises.yaml")
+            ),
         )
 
     @staticmethod
@@ -539,6 +550,7 @@ class ContentBundle:
         check_ids = [
             *prologue_check_ids,
             *[item.id for item in self.eleventh_learning.checks],
+            *[item.id for item in self.audit_learning.checks],
         ]
 
         for values, label in (
@@ -600,6 +612,19 @@ class ContentBundle:
                     f"choice {choice.id} references unknown lessons: {missing_lessons}"
                 )
             self._validate_effects(choice.effects, choice.id, valid_templates, valid_events)
+        audit_choices = [choice for scene in self.audit_scenario.scenes for choice in scene.choices]
+        self._unique([choice.id for choice in audit_choices], "audit choice")
+        for choice in audit_choices:
+            missing_lessons = set(choice.learning_objective_ids) - valid_lessons
+            if missing_lessons:
+                raise ValueError(
+                    f"audit choice {choice.id} references unknown lessons: {missing_lessons}"
+                )
+            unknown_people = set(choice.effect.relationship_deltas) - set(person_ids)
+            if unknown_people:
+                raise ValueError(
+                    f"audit choice {choice.id} references unknown people: {unknown_people}"
+                )
         communication_effects = [
             effect
             for choice in choices
@@ -656,7 +681,11 @@ class ContentBundle:
                     f"glossary term {term.id} has invalid references: "
                     f"lessons={missing_lessons}, sources={missing_sources}"
                 )
-        for check in [*self.prologue.checks, *self.eleventh_learning.checks]:
+        for check in [
+            *self.prologue.checks,
+            *self.eleventh_learning.checks,
+            *self.audit_learning.checks,
+        ]:
             missing_lessons = set(check.learning_objective_ids) - valid_lessons
             if missing_lessons or check.source_id not in valid_sources:
                 raise ValueError(
@@ -689,6 +718,8 @@ class ContentBundle:
             raise ValueError("prologue transition references an unknown scene")
         if "eleventh_episode_transition" not in scene_ids:
             raise ValueError("missing Episode 1 to Episode 2 transition")
+        if len(self.audit_scenario.scenes) < 10:
+            raise ValueError("No Surprises requires at least ten durable decisions")
         durable_chapter_scenes = [
             scene
             for scene in self.eleventh_narrative.scenes
@@ -707,6 +738,13 @@ class ContentBundle:
             self.eleventh_scenario.transmitting_user_id,
         } - valid_people:
             raise ValueError("Eleventh Contract references unknown authorized people")
+        if self.audit_scenario.id != "no_surprises":
+            raise ValueError("missing transition from The Eleventh Contract to No Surprises")
+        if any(
+            item.stable_record_id not in self.audit_expected_record_ids
+            for item in self.audit_scenario.request_specs
+        ):
+            raise ValueError("audit request references a nonexistent Eleventh Contract record")
 
         for event in self.events.events:
             self._validate_effects(event.effects, event.id, valid_templates, valid_events)
@@ -847,9 +885,16 @@ class ContentBundle:
     def knowledge_check(self, check_id: str) -> KnowledgeCheckDefinition:
         return next(
             item
-            for item in [*self.prologue.checks, *self.eleventh_learning.checks]
+            for item in [
+                *self.prologue.checks,
+                *self.eleventh_learning.checks,
+                *self.audit_learning.checks,
+            ]
             if item.id == check_id
         )
+
+    def audit_scene(self, scene_id: str):
+        return next(item for item in self.audit_scenario.scenes if item.id == scene_id)
 
     def glossary_term(self, term_id: str) -> GlossaryTerm:
         return next(item for item in self.glossary.terms if item.id == term_id)
@@ -860,3 +905,25 @@ class ContentBundle:
     @property
     def valid_accounts(self) -> set[str]:
         return {item.number for item in self.chart.accounts}
+
+    @property
+    def audit_expected_record_ids(self) -> set[str]:
+        """Stable IDs the audit request may resolve from a completed v5 chapter."""
+        return {
+            "forecast_live_week_2028",
+            "brief_live_week_2028",
+            "recommendation_live_week",
+            "auth_live_week_ten_short",
+            "order_live_week_ten_short",
+            "execution_live_week_eleven",
+            "fcm_confirmation_live_week_eleven",
+            "blotter_eleventh_contract",
+            "reconciliation_eleventh_contract",
+            "txn_eleventh_initial_margin",
+            "comm_ec_formal_exception",
+            "approval_offset_eleventh_contract",
+            "offset_eleventh_contract",
+            "final_nomination_additional_10000",
+            "comm_eleventh_market_brief",
+            "analyst_case_file_eleventh_contract",
+        }

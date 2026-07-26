@@ -38,7 +38,7 @@ def test_save_load_mid_scenario_resumes_exact_path(
     assert restored.hedge_book.completed
 
 
-def test_milestone_1_save_migrates_through_full_chain_to_schema_5(
+def test_milestone_1_save_migrates_through_full_chain_to_schema_6(
     content,
     completed_state_factory,
     tmp_path,
@@ -72,7 +72,8 @@ def test_milestone_1_save_migrates_through_full_chain_to_schema_5(
 
     migrated = repository.load()
 
-    assert migrated.save_schema_version == 5
+    assert migrated.save_schema_version == 6
+    assert migrated.no_surprises is None
     assert migrated.eleventh_contract is None
     assert migrated.game_mode.value == "standard"
     assert migrated.prologue.completed
