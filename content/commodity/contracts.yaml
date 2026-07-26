@@ -1,0 +1,12 @@
+schema_version: 1
+contracts:
+  - id: cme_henry_hub_ng
+    product_code: NG
+    name: Henry Hub Natural Gas Futures
+    exchange: NYMEX
+    contract_size_mmbtu: 10000
+    minimum_tick: 0.001
+    settlement_type: physical
+    specification_source_name: CME Group NYMEX Rulebook, Chapter 220
+    specification_source_url: https://www.cmegroup.com/rulebook/NYMEX/2/220.pdf
+

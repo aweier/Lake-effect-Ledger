@@ -1,0 +1,18 @@
+schema_version: 1
+modes:
+  - id: guided
+    label: Guided Career
+    recommended: true
+    description: >-
+      Begin as a junior commodity risk analyst with a three-day, 20–30 minute
+      First Rotation that teaches the market and treasury systems before Episode 1.
+    default_show_math: on_request
+    starts_with_prologue: true
+  - id: standard
+    label: Standard Story
+    recommended: false
+    description: >-
+      Start at Episode 1 with the existing narrative, hedge, and treasury systems.
+      The Learning Notebook remains available but the First Rotation is skipped.
+    default_show_math: "off"
+    starts_with_prologue: false

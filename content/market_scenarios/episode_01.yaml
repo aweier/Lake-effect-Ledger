@@ -1,0 +1,12 @@
+schema_version: 1
+scenarios:
+  - id: fictional_winter_close
+    label: FICTIONAL training market — winter close
+    fictional: true
+    game_date: 2028-01-16
+    henry_hub_base: 5.84
+    henry_hub_jitter_cents: 8
+    chicago_basis_base: -0.31
+    chicago_basis_jitter_cents: 5
+    margin_due: 1100000
+

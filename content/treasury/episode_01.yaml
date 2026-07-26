@@ -1,0 +1,169 @@
+schema_version: 1
+scenarios:
+  - id: episode_01_two_oclock_call
+    trigger_settlement_day: 2
+    crisis_title: The Two O'Clock Call
+    crisis_text: >-
+      Darren Cho at Lakefront FCM wants collected funds by 2:00 p.m. Evelyn
+      wants a decision record. June Halvorsen wants the protected-payment
+      forecast before she touches the revolver. Marisol notes that the Chicago
+      physical gain is still a forecast, not collected cash. Cal says the
+      hedge is making money, which is true in the way that a frozen hydrant is
+      full of water. Dom wants his supply payment; Vince wants no lender call
+      that mentions his name. The clock remains professionally indifferent.
+    no_position_crisis_text: >-
+      Darren Cho has no margin call because Northstar holds no futures. June
+      Halvorsen still has $750,000 of protected payments queued against the
+      same operating account. Marisol notes that an unhedged forecast is not
+      collected cash either. Dom wants his supply payment, Vince wants the
+      bank left asleep, and Evelyn wants the obligations forecast documented.
+      The absence of an FCM problem has not created extra money.
+    margin_deadline: 2028-01-19T14:00:00-06:00
+    minimum_operating_reserve: 3500000
+    facility:
+      id: great_lakes_revolver
+      lender_name: Great Lakes Commercial Bank
+      commitment: 500000
+      beginning_outstanding: 0
+      annual_interest_rate: 0.085
+      minimum_draw_increment: 50000
+      covenant_minimum_available_liquidity: 3600000
+      maturity_date: 2029-06-30
+      default_draw_amount: 400000
+      interest_accrual_days: 3
+      required_approver_ids:
+        - evelyn_marsh
+        - june_halvorsen
+    obligations:
+      - id: payroll_jan_19
+        payee: Northstar employees
+        description: Protected payroll
+        amount: 180000
+        due_date: 2028-01-19
+        priority: critical
+        protected: true
+        journal_pattern_id: treasury_payroll_payment
+      - id: pipeline_reservation_jan_20
+        payee: Lake Line Pipeline
+        description: Firm transportation reservation
+        amount: 160000
+        due_date: 2028-01-20
+        priority: critical
+        protected: true
+        journal_pattern_id: treasury_pipeline_payment
+      - id: gas_supply_jan_21
+        payee: Prairie Bend Gas
+        description: Scheduled gas-supply payable
+        amount: 310000
+        due_date: 2028-01-21
+        priority: protected
+        protected: true
+        journal_pattern_id: treasury_gas_supply_payment
+      - id: bank_interest_jan_21
+        payee: Great Lakes Commercial Bank
+        description: Scheduled term-debt interest
+        amount: 20000
+        due_date: 2028-01-21
+        priority: protected
+        protected: true
+        journal_pattern_id: treasury_bank_interest_payment
+      - id: field_vendors_jan_22
+        payee: Northstar field vendors
+        description: Winter field-operations invoices
+        amount: 80000
+        due_date: 2028-01-22
+        priority: protected
+        protected: true
+        journal_pattern_id: treasury_field_vendor_payment
+    notification_options:
+      - id: notify_immediately
+        label: Notify Evelyn and June accurately now
+        narrative: >-
+          Send the call amount, deadline, current cash, protected obligations,
+          and a requested draw approval to Evelyn and June.
+        timestamp: 2028-01-19T09:18:00-06:00
+        channel: email
+        sender_id: player
+        recipient_ids: [evelyn_marsh, june_halvorsen]
+        subject: FCM call due 2:00 p.m.—funding approval requested
+        body_summary: >-
+          Accurate margin call, deadline, liquidity forecast, protected
+          obligations, and $400,000 revolver draw request.
+        accuracy: accurate
+        grants_facility_approval: true
+        resource_deltas:
+          integrity: 2
+          reputation: 1
+          audit_risk: -1
+      - id: notify_cal_only
+        label: Tell Cal only
+        narrative: >-
+          Call Cal and leave treasury outside the decision loop.
+        timestamp: 2028-01-19T09:22:00-06:00
+        channel: phone
+        sender_id: player
+        recipient_ids: [cal_rourke]
+        subject: Margin call
+        body_summary: Cal was told a margin call exists; no approval request was sent.
+        accuracy: limited
+        grants_facility_approval: false
+        resource_deltas:
+          family_loyalty: 2
+          audit_risk: 2
+      - id: send_vague_update
+        label: Send a vague liquidity update
+        narrative: >-
+          Mention “temporary collateral noise” without the amount, deadline,
+          obligations, or requested approval.
+        timestamp: 2028-01-19T09:25:00-06:00
+        channel: email
+        sender_id: player
+        recipient_ids: [evelyn_marsh, june_halvorsen]
+        subject: Temporary collateral noise
+        body_summary: Vague update omitting amount, deadline, obligations, and action.
+        accuracy: vague
+        grants_facility_approval: false
+        resource_deltas:
+          integrity: -2
+          audit_risk: 3
+          evidence_exposure: 2
+      - id: delay_notification
+        label: Wait until after the deadline
+        narrative: >-
+          Record no outbound notice before 2:00 p.m. and hope the screen
+          develops manners.
+        timestamp: 2028-01-19T14:05:00-06:00
+        channel: none
+        sender_id: player
+        recipient_ids: []
+        subject: No pre-deadline notice
+        body_summary: No communication was sent before the margin deadline.
+        accuracy: delayed
+        grants_facility_approval: false
+        resource_deltas:
+          integrity: -3
+          audit_risk: 4
+          evidence_exposure: 3
+    default_reduction_contracts: 5
+    journal_patterns:
+      revolver_draw: treasury_revolver_draw
+      interest_accrual: treasury_interest_accrual
+      revolver_repayment: treasury_revolver_repayment
+    learning_objectives:
+      - liquidity_not_profit
+      - revolver_mechanics
+      - obligation_priority
+      - treasury_communication
+    simplified_assumptions:
+      - >-
+        The revolver commitment, rate, covenant, approvals, and draw increments
+        are fictional training terms, not a representation of any real loan.
+      - >-
+        Available liquidity equals operating cash plus undrawn revolver
+        availability minus unpaid protected obligations. The measure is used
+        consistently for the fictional covenant test.
+      - >-
+        Interest uses simple Actual/365 accrual for three scenario days.
+      - >-
+        All scheduled obligations are paid in priority order when sufficient
+        cash exists; no real insolvency, legal, or lender remedies are modeled.

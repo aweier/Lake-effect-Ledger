@@ -1,0 +1,83 @@
+schema_version: 1
+templates:
+  - id: december_variance_line_loss
+    description: Classify the unsupported December variance as operational line loss.
+    lines:
+      - account: "5200"
+        debit: 12000
+      - account: "2100"
+        credit: 12000
+
+  - id: december_provisional_imbalance
+    description: Record the unresolved December gas as inventory with an offsetting imbalance payable.
+    lines:
+      - account: "1200"
+        debit: 12000
+      - account: "2100"
+        credit: 12000
+
+patterns:
+  - id: futures_initial_margin
+    description: Transfer operating cash to the FCM margin account.
+    debit_account: "1050"
+    credit_account: "1000"
+
+  - id: futures_daily_gain
+    description: Record cash settlement variation received in the FCM account.
+    debit_account: "1050"
+    credit_account: "4200"
+
+  - id: futures_daily_loss
+    description: Record cash settlement variation paid from the FCM account.
+    debit_account: "5300"
+    credit_account: "1050"
+
+  - id: futures_margin_call_funding
+    description: Transfer additional operating cash to meet an FCM margin call.
+    debit_account: "1050"
+    credit_account: "1000"
+
+  - id: futures_margin_release
+    description: Release the remaining FCM margin balance to operating cash.
+    debit_account: "1000"
+    credit_account: "1050"
+
+  - id: treasury_revolver_draw
+    description: Record collected cash borrowed under the revolving facility.
+    debit_account: "1000"
+    credit_account: "2300"
+
+  - id: treasury_interest_accrual
+    description: Accrue interest on the revolving facility.
+    debit_account: "5600"
+    credit_account: "2150"
+
+  - id: treasury_revolver_repayment
+    description: Repay revolving-facility principal.
+    debit_account: "2300"
+    credit_account: "1000"
+
+  - id: treasury_payroll_payment
+    description: Pay protected payroll.
+    debit_account: "5400"
+    credit_account: "1000"
+
+  - id: treasury_pipeline_payment
+    description: Pay protected pipeline transportation.
+    debit_account: "5500"
+    credit_account: "1000"
+
+  - id: treasury_gas_supply_payment
+    description: Pay the protected gas-supply payable.
+    debit_account: "2000"
+    credit_account: "1000"
+
+  - id: treasury_bank_interest_payment
+    description: Pay scheduled bank interest.
+    debit_account: "5600"
+    credit_account: "1000"
+
+  - id: treasury_field_vendor_payment
+    description: Pay protected field-operations vendors.
+    debit_account: "5100"
+    credit_account: "1000"

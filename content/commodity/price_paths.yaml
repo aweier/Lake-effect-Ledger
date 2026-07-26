@@ -1,0 +1,112 @@
+schema_version: 1
+price_paths:
+  - id: fictional_lake_storm_2028
+    label: FICTIONAL Lake Storm settlement path
+    fictional: true
+    initial_market:
+      settlement_date: 2028-01-17
+      henry_hub_price: 5.80
+      chicago_basis: -0.30
+      event_title: Storm watch
+      event_text: >-
+        Forecasts put the coldest air over the Midwest, but the pipelines are
+        still operating normally.
+    settlements:
+      - settlement_date: 2028-01-18
+        henry_hub_price: 6.10
+        chicago_basis: -0.38
+        event_title: Forecasts tighten
+        event_text: >-
+          Henry Hub rallies as the forecast turns colder. Chicago rises too,
+          but its basis weakens as regional transportation worries appear.
+
+      - settlement_date: 2028-01-19
+        henry_hub_price: 6.55
+        chicago_basis: -0.62
+        event_title: The first cash test
+        event_text: >-
+          National prices jump again while Chicago basis deteriorates.
+          Short-futures losses arrive in cash before the physical sale occurs.
+        communication_from: Lakefront FCM Margin Desk
+        communication_subject: Margin deficiency—collected funds due by 2:00 p.m.
+
+      - settlement_date: 2028-01-20
+        henry_hub_price: 5.90
+        chicago_basis: -0.25
+        event_title: National relief, regional recovery
+        event_text: >-
+          Henry Hub falls while Chicago basis strengthens. The two components
+          move in opposite directions, exposing the location mismatch.
+
+      - settlement_date: 2028-01-21
+        henry_hub_price: 5.20
+        chicago_basis: 0.20
+        event_title: A basis reversal
+        event_text: >-
+          Henry Hub falls again, but Chicago trades above Henry Hub as
+          constrained regional demand briefly dominates the national move.
+
+      - settlement_date: 2028-01-22
+        henry_hub_price: 4.80
+        chicago_basis: -0.70
+        event_title: Chicago breaks away
+        event_text: >-
+          Warmer national forecasts push Henry Hub lower. A fictional regional
+          scheduling disruption crushes the Chicago differential just as the
+          physical exposure is valued.
+
+  - id: fictional_margin_squeeze_2028
+    label: FICTIONAL Winter Rally margin-squeeze path
+    fictional: true
+    initial_market:
+      settlement_date: 2028-01-17
+      henry_hub_price: 5.80
+      chicago_basis: -0.30
+      event_title: A quiet screen
+      event_text: >-
+        The hedge opens into a calm afternoon. Lake Michigan looks like sheet
+        metal and everyone pretends that counts as a forecast.
+    settlements:
+      - settlement_date: 2028-01-18
+        henry_hub_price: 6.10
+        chicago_basis: -0.15
+        event_title: The rally starts
+        event_text: >-
+          Henry Hub climbs while Chicago basis strengthens. The physical mark
+          rises, but the short futures position pays cash into the daily mark.
+
+      - settlement_date: 2028-01-19
+        henry_hub_price: 6.50
+        chicago_basis: -0.45
+        event_title: The two o'clock call
+        event_text: >-
+          Henry Hub rallies again while Chicago basis weakens independently.
+          The hedge remains economically defensible, but its cash timing is
+          not interested in anyone's defense.
+        communication_from: Darren Cho, Lakefront FCM
+        communication_subject: Margin deficiency—collected funds due by 2:00 p.m.
+
+      - settlement_date: 2028-01-20
+        henry_hub_price: 6.75
+        chicago_basis: -0.20
+        event_title: Cold holds
+        event_text: >-
+          The national rally continues and Chicago basis recovers. Futures
+          cash losses arrive now; the forecast physical cash still does not.
+
+      - settlement_date: 2028-01-21
+        henry_hub_price: 6.60
+        chicago_basis: 0.10
+        event_title: Opposite directions
+        event_text: >-
+          Henry Hub eases while Chicago basis jumps positive. The futures mark
+          helps, but location risk keeps writing its own weather report.
+
+      - settlement_date: 2028-01-22
+        henry_hub_price: 6.80
+        chicago_basis: -0.05
+        event_title: Profitable and thirsty
+        event_text: >-
+          Chicago's physical value finishes well above the opening mark. The
+          short hedge has consumed cash along the way before any physical sale
+          proceeds are recognized.

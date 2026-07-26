@@ -1,0 +1,68 @@
+schema_version: 1
+id: eleventh_contract_live_week
+title: The Eleventh Contract
+estimated_minutes: 38
+account_id: northstar_house_futures
+book_id: commercial_hedge_book
+contract_id: cme_henry_hub_ng
+contract_month: 2028-03
+physical_exposure_id: chicago_live_sale_2028_02
+hedge_memo_id: live_week_hedge_memo
+day_1_date: 2028-01-24
+day_2_date: 2028-01-25
+day_3_date: 2028-01-28
+supported_volume_mmbtu: 100000
+possible_additional_volume_mmbtu: 10000
+approved_contracts: 10
+confirmed_contracts: 11
+initial_henry_hub_price: 5.190
+chicago_basis: -0.300
+day_2_settlement_price: 5.180
+day_3_arrives_settlement_price: 5.160
+day_3_fails_settlement_price: 5.190
+day_3_arrives_basis: -0.280
+day_3_fails_basis: -0.350
+offset_price: 5.170
+initial_margin_per_contract: 15000
+maintenance_margin_per_contract: 11000
+approver_id: evelyn_marsh
+transmitting_user_id: cal_rourke
+authorization_purpose: >-
+  Sell no more than ten March Henry Hub futures contracts against Northstar's
+  supported 100,000 MMBtu Chicago forecast sale. Chicago basis remains open.
+weather_information: >-
+  A two-day cold ridge is forecast for the upper Midwest, but confidence falls
+  sharply after Thursday.
+pipeline_information: >-
+  ANR reports a maintenance restriction. Marisol has a possible 10,000 MMBtu
+  supply increment, but no finalized nomination or signed amendment.
+data_sources:
+  - Lakefront FCM 08:55 fictional quote
+  - Northstar approved physical forecast revision 7
+  - Marisol's preliminary ANR scheduling worksheet
+  - NOAA-style fictional weather desk summary
+intraday_path:
+  id: fictional_live_week_intraday
+  label: Fictional Tuesday Henry Hub tape
+  fictional: true
+  points:
+    - {timestamp: "2028-01-25T09:05:00-06:00", price: 5.195}
+    - {timestamp: "2028-01-25T09:10:00-06:00", price: 5.205}
+    - {timestamp: "2028-01-25T09:15:00-06:00", price: 5.200}
+    - {timestamp: "2028-01-25T09:20:00-06:00", price: 5.215}
+    - {timestamp: "2028-01-25T09:25:00-06:00", price: 5.180}
+    - {timestamp: "2028-01-25T09:30:00-06:00", price: 5.175}
+fill_assumptions:
+  - A market order fills at the next configured executable observation.
+  - A sell limit is eligible at or above its limit; a buy limit at or below.
+  - A stop triggers at the first qualifying observation and fills at the next observation.
+  - Trigger price and fill price are stored separately.
+  - Every eligible order fills completely; market depth, queue priority, commissions, and slippage are omitted.
+  - Future observations are hidden in normal play and visible only in debug mode.
+possible_outcomes:
+  - clean_correction
+  - supported_but_late
+  - cals_analyst
+  - quiet_file
+  - lucky_is_not_authorized
+  - eleven_against_ten

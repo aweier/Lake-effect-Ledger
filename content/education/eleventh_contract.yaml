@@ -1,0 +1,109 @@
+schema_version: 1
+day_check_ids:
+  day_1: [ec_sell_for_forecast_sale]
+  day_2: [ec_market_versus_limit, ec_sell_limit_eligibility]
+  day_3:
+    - ec_eleven_contract_ratio
+    - ec_current_overhedge
+    - ec_offset_preserves_history
+    - ec_profit_not_authorization
+checks:
+  - id: ec_sell_for_forecast_sale
+    check_type: position_direction
+    prompt: Northstar is long a supported forecast sale. Which futures side reduces falling-price risk?
+    learning_objective_ids: [short_futures_hedge]
+    source_id: nfa_series3_outline
+    options:
+      - {id: sell_futures, text: Sell futures against the forecast sale.}
+      - {id: buy_futures, text: Buy futures and increase long price exposure.}
+      - {id: either_side, text: Either side is equivalent if the quantity is ten.}
+    correct_option_id: sell_futures
+    explanation: A short futures position gains when the benchmark falls.
+    hints: [Choose the futures side that benefits from falling prices.]
+    worked_solution: The physical forecast sale is long; a short futures position offsets benchmark decline.
+    retry_policy: until_correct
+  - id: ec_market_versus_limit
+    check_type: interpretation
+    prompt: Which statement distinguishes a market order from a limit order in this simplified model?
+    learning_objective_ids: [order_types]
+    source_id: cme_order_types
+    options:
+      - {id: market_next_limit_condition, text: Market seeks the next executable price; limit requires its price condition.}
+      - {id: both_guarantee_price, text: Both guarantee the requested price.}
+      - {id: limit_always_immediate, text: A limit order always fills immediately.}
+    correct_option_id: market_next_limit_condition
+    explanation: A market order prioritizes execution; a limit constrains eligibility by price.
+    hints: [Ask which order specifies an acceptable price boundary.]
+    worked_solution: Market uses the next configured price; limit waits for an eligible price and may remain unfilled.
+    retry_policy: until_correct
+  - id: ec_sell_limit_eligibility
+    check_type: prediction
+    prompt: A sell limit is $5.205. Which observation first makes it eligible?
+    learning_objective_ids: [order_types]
+    source_id: cme_order_types
+    options:
+      - {id: at_or_above, text: The first observation at or above $5.205.}
+      - {id: at_or_below, text: The first observation at or below $5.205.}
+      - {id: next_any_price, text: The next observation regardless of price.}
+    correct_option_id: at_or_above
+    explanation: A sell limit becomes eligible at its limit or a higher price.
+    hints: [The seller will not accept less than the limit in this model.]
+    worked_solution: $5.205 or higher satisfies a $5.205 sell-limit condition.
+    retry_policy: until_correct
+  - id: ec_eleven_contract_ratio
+    check_type: numeric
+    prompt: Eleven 10,000 MMBtu contracts against 100,000 supported MMBtu equal what hedge ratio as a decimal?
+    learning_objective_ids: [hedge_ratio]
+    source_id: nfa_series3_outline
+    calculation:
+      kind: hedge_ratio
+      contract_id: cme_henry_hub_ng
+      contracts: 11
+      physical_quantity_mmbtu: 100000
+    numeric_rule: {rounding_quantum: 0.0001, tolerance: 0.0001, rounding: half_up}
+    explanation: 110,000 futures MMBtu divided by 100,000 supported MMBtu is 1.1000.
+    hints: [Multiply eleven by contract size, then divide by supported physical volume.]
+    worked_solution: (11 × 10,000) ÷ 100,000 = 1.1000, or 110%.
+    retry_policy: until_correct
+  - id: ec_current_overhedge
+    check_type: interpretation
+    prompt: Before additional physical support arrives, what does the eleventh short contract represent?
+    learning_objective_ids: [hedge_ratio, authorization_vs_outcome]
+    source_id: nfa_series3_outline
+    options:
+      - {id: current_excess, text: Current speculative excess beyond the supported exposure.}
+      - {id: automatically_supported, text: An authorized hedge because Cal expects more gas.}
+      - {id: no_position_effect, text: No exposure until final physical settlement.}
+    correct_option_id: current_excess
+    explanation: The documented exposure supports ten standard contracts, not eleven.
+    hints: [Use evidence available now, not a later possible outcome.]
+    worked_solution: Eleven contracts cover 110,000 MMBtu while only 100,000 is supported.
+    retry_policy: until_correct
+  - id: ec_offset_preserves_history
+    check_type: interpretation
+    prompt: What does an approved one-contract offset do to the original eleven-contract execution?
+    learning_objective_ids: [offset_preserves_history, trade_reconciliation]
+    source_id: cftc_trade_records
+    options:
+      - {id: new_linked_trade, text: Creates a new linked trade and leaves the original execution intact.}
+      - {id: rewrite_original, text: Rewrites the original confirmation from eleven to ten.}
+      - {id: erase_pnl, text: Deletes previously settled P&L on the extra contract.}
+    correct_option_id: new_linked_trade
+    explanation: Corrections are prospective records; they do not erase the earlier execution or settlement.
+    hints: [A durable audit trail keeps both the original and the correction.]
+    worked_solution: Record a buy of one contract, link it to the original sell, preserve prior P&L, and update only the open position.
+    retry_policy: until_correct
+  - id: ec_profit_not_authorization
+    check_type: interpretation
+    prompt: If the extra contract later makes money or becomes physically matched, what happens to the original authorization exception?
+    learning_objective_ids: [authorization_vs_outcome]
+    source_id: cftc_trade_records
+    options:
+      - {id: exception_remains, text: It remains; later economics do not rewrite prior authorization.}
+      - {id: profit_authorizes, text: Profit retroactively authorizes the trade.}
+      - {id: volume_erases, text: Later physical support deletes the original quantity exception.}
+    correct_option_id: exception_remains
+    explanation: Authorization is assessed from the approved record and facts available when the trade occurred.
+    hints: [Separate economic outcome from contemporaneous supervision.]
+    worked_solution: Later support may change the final hedge ratio, but not the ten-contract approval limit at execution time.
+    retry_policy: until_correct

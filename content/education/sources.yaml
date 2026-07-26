@@ -1,0 +1,57 @@
+schema_version: 1
+sources:
+  - id: cme_ng_contract
+    organization: CME Group
+    title: NYMEX Rulebook Chapter 220 — Henry Hub Natural Gas Futures
+    url: https://www.cmegroup.com/rulebook/NYMEX/2/220.pdf
+    note: Primary contract specification for Henry Hub Natural Gas futures.
+  - id: cme_ng_overview
+    organization: CME Group
+    title: Natural Gas Product Overview
+    url: https://www.cmegroup.com/education/courses/introduction-to-natural-gas/nat-gas-product-overview.html
+    note: Product overview supporting the standard contract size and minimum tick.
+  - id: cftc_glossary
+    organization: Commodity Futures Trading Commission
+    title: CFTC Glossary
+    url: https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/CFTCGlossary/index.htm
+    note: Definitions for futures, hedging, basis, margin, positions, and speculation.
+  - id: cftc_economic_purpose
+    organization: Commodity Futures Trading Commission
+    title: The Economic Purpose of Futures Markets
+    url: https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/economicpurpose.html
+    note: Overview of price-risk transfer, daily settlement, margin, and market roles.
+  - id: cftc_market_basics
+    organization: Commodity Futures Trading Commission
+    title: Futures Market Basics
+    url: https://www.cftc.gov/LearnAndProtect/EducationCenter/FuturesMarketBasics/index2.htm
+    note: Public educational overview of hedgers, speculators, and market oversight.
+  - id: nfa_series3_outline
+    organization: National Futures Association
+    title: Series 3 — National Commodities Futures Examination Study Outline
+    url: https://www.nfa.futures.org/registration-membership/study-outlines/index.html
+    note: Topic map for futures terminology, hedging, calculations, margin, and controls.
+  - id: cme_order_types
+    organization: CME Group
+    title: Futures Order Types
+    url: https://www.cmegroup.com/education/courses/futures-trading-mechanics-and-regulation/futures-order-types
+    note: Primary exchange education on market, limit, stop, and related order mechanics.
+  - id: cme_order_lifecycle
+    organization: CME Group
+    title: What happens when you submit an order?
+    url: https://www.cmegroup.com/education/courses/futures-trading-mechanics-and-regulation/what-happens-when-you-submit-an-order
+    note: Exchange education on broker verification, exchange acceptance, matching, fills, and clearing.
+  - id: cme_closing_position
+    organization: CME Group
+    title: Closing Your Position
+    url: https://www.cmegroup.com/education/courses/things-to-know-before-trading-cme-futures/closing-your-position
+    note: Exchange education on using an opposite trade to close an open futures position.
+  - id: cftc_trade_records
+    organization: Electronic Code of Federal Regulations
+    title: 17 CFR 1.35 — Records of commodity interest transactions
+    url: https://www.ecfr.gov/current/title-17/chapter-I/part-1/section-1.35
+    note: Current federal recordkeeping requirements supporting distinct, durable trade records.
+  - id: cftc_fcm_records
+    organization: Commodity Futures Trading Commission
+    title: Futures Commission Merchants (FCMs)
+    url: https://www.cftc.gov/IndustryOversight/Intermediaries/FCMs/fcmibdisclosures
+    note: CFTC summary of trading authorization, confirmations, order timestamps, transaction records, and supervision.

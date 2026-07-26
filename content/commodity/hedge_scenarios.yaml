@@ -1,0 +1,67 @@
+schema_version: 1
+scenarios:
+  - id: episode_01_hedge_book
+    contract_id: cme_henry_hub_ng
+    price_path_id: fictional_lake_storm_2028
+    price_path_ids:
+      - fictional_margin_squeeze_2028
+      - fictional_lake_storm_2028
+    physical_exposure_id: chicago_forecast_sale_2028_01
+    physical_quantity_mmbtu: 100000
+    physical_direction: long
+    regional_hub: Chicago Citygate
+    trade_date: 2028-01-17
+    physical_settlement_date: 2028-01-22
+    contract_month: 2028-02
+    futures_side: short
+    initial_margin_per_contract: 15000
+    maintenance_margin_per_contract: 11000
+    minimum_operating_reserve: 3900000
+    hedge_levels:
+      - id: no_hedge
+        label: No hedge
+        hedge_ratio: 0
+        description: Leave all 100,000 MMBtu exposed to the Chicago index.
+      - id: hedge_50
+        label: 50% hedge
+        hedge_ratio: 0.5
+        description: Sell five contracts covering 50,000 MMBtu.
+      - id: hedge_100
+        label: 100% hedge
+        hedge_ratio: 1
+        description: Sell ten contracts covering 100,000 MMBtu.
+      - id: hedge_150
+        label: 150% hedge
+        hedge_ratio: 1.5
+        description: Sell fifteen contracts, 50,000 MMBtu beyond the exposure.
+    journal_patterns:
+      initial_margin: futures_initial_margin
+      futures_gain: futures_daily_gain
+      futures_loss: futures_daily_loss
+      margin_call: futures_margin_call_funding
+      margin_release: futures_margin_release
+    learning_objectives:
+      - physical_financial_exposure
+      - short_futures_hedge
+      - hedge_ratio
+      - daily_settlement_margin
+      - basis_risk
+      - economic_cash_accounting
+      - hedge_documentation
+    simplified_assumptions:
+      - >-
+        The $15,000 initial and $11,000 maintenance margin amounts per
+        contract are fictional fixed training assumptions, not current CME or
+        FCM requirements.
+      - >-
+        All prices and events are fictional. The standard 10,000 MMBtu
+        contract size and $0.001 tick are sourced from CME specifications.
+      - >-
+        The futures position is offset after the final scenario settlement;
+        no physical delivery through the futures contract is modeled.
+      - >-
+        Daily futures cash settlement is recognized in a simplified ledger.
+        The forecast physical sale is economically marked but not booked.
+      - >-
+        Gains remain in the FCM margin account until final release. Losses
+        reduce that account; margin calls transfer additional operating cash.

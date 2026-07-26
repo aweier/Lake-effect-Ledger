@@ -1,0 +1,108 @@
+schema_version: 1
+briefings:
+  - id: cal_hedge_pitch
+    speaker: cal_rourke
+    title: Cal's Weather Map
+    text: >-
+      Cal Rourke taps the cold front on his monitor. “We're long a hundred
+      thousand Chicago. Sell Henry Hub against it before the weather boys
+      discover another shade of blue.” He calls ten contracts a seat belt and
+      fifteen “room to be right.”
+
+  - id: marisol_basis_warning
+    speaker: marisol_vega
+    title: Chicago Is Not Louisiana
+    text: >-
+      Marisol slides the transportation schedule under Cal's forecast.
+      “Henry Hub can behave perfectly and Chicago can still ruin your day.
+      Different pipes, different constraints, different price. Put that in
+      whatever memo survives this meeting.”
+
+  - id: evelyn_approval_request
+    speaker: evelyn_marsh
+    title: The Approval Trail
+    text: >-
+      Evelyn asks for the physical quantity, contract count, hedge ratio, and
+      the risk that remains. “If this is a hedge, the paperwork should be able
+      to say what it hedges before we know whether it made money.”
+
+documentation_scene:
+  id: hedge_documentation
+  chapter: episode_01
+  speaker: evelyn_marsh
+  title: Sign the Hedge Memo
+  text: >-
+    The trade ticket is ready. Evelyn leaves the rationale field open and
+    waits. Cal has already typed “winter supply protection,” which does not
+    identify the Chicago sale, the contract count, or the basis mismatch.
+  choices:
+    - id: write_accurate_hedge_memo
+      text: >-
+        Document the physical exposure, contract count, hedge ratio, approval,
+        and remaining Chicago basis risk.
+      effects:
+        - type: set_commodity_field
+          target: documentation_quality
+          value: accurate
+        - type: resource_delta
+          target: integrity
+          amount: 2
+        - type: resource_delta
+          target: reputation
+          amount: 1
+        - type: resource_delta
+          target: audit_risk
+          amount: -2
+        - {type: trajectory_delta, target: principled, amount: 1}
+        - {type: trajectory_delta, target: cooperative, amount: 1}
+      learning_objectives:
+        - hedge_documentation
+        - basis_risk
+
+    - id: copy_cal_vague_description
+      text: Copy Cal's “winter supply protection” description and submit it.
+      effects:
+        - type: set_commodity_field
+          target: documentation_quality
+          value: vague
+        - type: resource_delta
+          target: family_loyalty
+          amount: 2
+        - type: resource_delta
+          target: integrity
+          amount: -2
+        - type: resource_delta
+          target: audit_risk
+          amount: 3
+        - type: resource_delta
+          target: evidence_exposure
+          amount: 2
+        - {type: trajectory_delta, target: company_loyal, amount: 1}
+        - {type: trajectory_delta, target: self_protective, amount: 1}
+        - {type: trajectory_delta, target: ambitious, amount: 1}
+      learning_objectives:
+        - hedge_documentation
+
+    - id: escalate_basis_mismatch
+      text: Ask Evelyn to approve the Henry Hub/Chicago mismatch explicitly.
+      effects:
+        - type: set_commodity_field
+          target: documentation_quality
+          value: escalated
+        - type: resource_delta
+          target: integrity
+          amount: 2
+        - type: resource_delta
+          target: reputation
+          amount: 1
+        - type: resource_delta
+          target: family_loyalty
+          amount: -1
+        - type: resource_delta
+          target: audit_risk
+          amount: -1
+        - {type: trajectory_delta, target: principled, amount: 1}
+        - {type: trajectory_delta, target: cooperative, amount: 1}
+      learning_objectives:
+        - hedge_documentation
+        - basis_risk

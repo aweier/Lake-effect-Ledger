@@ -1,0 +1,103 @@
+schema_version: 1
+scenes:
+  - id: december_difference
+    chapter: episode_01
+    speaker: vince_bellandi
+    title: The December Difference
+    text: >-
+      Vince Bellandi closes the conference-room door with his heel and sets a
+      marked-up meter report beside your keyboard. “Two thousand five hundred
+      dekatherms isn't a crisis. It's weather with paperwork. Book it to line
+      loss and Evelyn gets a clean close.” Outside, lake-effect snow erases the
+      parking lot one row at a time. The settlement statement and the meter
+      report still disagree.
+    discrepancy:
+      metered_mmbtu: 112400
+      settlement_mmbtu: 109900
+      difference_mmbtu: 2500
+      index_price: 4.80
+      exposure: 12000
+    choices:
+      - id: book_line_loss
+        text: Book the full $12,000 discrepancy to operational line loss.
+        effects:
+          - type: post_journal
+            template_id: december_variance_line_loss
+          - type: resource_delta
+            target: family_loyalty
+            amount: 2
+          - type: resource_delta
+            target: audit_risk
+            amount: 2
+          - {type: trajectory_delta, target: company_loyal, amount: 1}
+          - {type: trajectory_delta, target: self_protective, amount: 1}
+          - type: schedule_event
+            event_id: line_loss_review
+            due_in_days: 0
+        learning_objectives:
+          - double_entry
+          - classification_support
+          - gas_imbalance
+
+      - id: record_temporary_imbalance
+        text: Record a temporary imbalance at $12,000 and open an investigation.
+        effects:
+          - type: post_journal
+            template_id: december_provisional_imbalance
+          - type: set_flag
+            target: measurement_review_open
+            value: true
+          - type: resource_delta
+            target: integrity
+            amount: 1
+          - {type: trajectory_delta, target: conflicted, amount: 1}
+          - type: schedule_event
+            event_id: provisional_followup
+            due_in_days: 0
+        learning_objectives:
+          - double_entry
+          - provisional_recognition
+          - gas_imbalance
+
+      - id: request_meter_support
+        text: Request the source meter data and allocation support before posting.
+        effects:
+          - type: set_flag
+            target: meter_support_requested
+            value: true
+          - type: resource_delta
+            target: reputation
+            amount: 1
+          - type: resource_delta
+            target: integrity
+            amount: 2
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - type: schedule_event
+            event_id: meter_support_arrives
+            due_in_days: 0
+        learning_objectives:
+          - reconciliation_evidence
+          - gas_imbalance
+
+      - id: escalate_to_controller
+        text: Escalate the unsupported classification to Evelyn, the controller.
+        effects:
+          - type: set_flag
+            target: controller_notified
+            value: true
+          - type: resource_delta
+            target: family_loyalty
+            amount: -2
+          - type: resource_delta
+            target: integrity
+            amount: 2
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - type: schedule_event
+            event_id: controller_review
+            due_in_days: 0
+        learning_objectives:
+          - escalation_and_review
+          - provisional_recognition
+          - gas_imbalance

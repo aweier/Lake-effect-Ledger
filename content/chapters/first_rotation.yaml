@@ -1,0 +1,89 @@
+schema_version: 1
+scenes:
+  - id: first_rotation_qualification
+    chapter: First Rotation
+    speaker: Marisol Vega
+    title: The Line Cal Wants Gone
+    text: >-
+      Marisol sends the hedge authorization draft back to you. It accurately says
+      the volume forecast is still “subject to scheduling qualification.” Cal asks
+      whether that line can disappear before the approval packet goes upstairs.
+      The trade quantity and every market input remain unchanged. What changes is
+      the record you help create.
+    choices:
+      - id: preserve_scheduling_qualification
+        text: Preserve the qualification and explain why the estimate remains conditional.
+        learning_objectives: [hedge_documentation, reconciliation_evidence]
+        effects:
+          - {type: resource_delta, target: integrity, amount: 1}
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - type: record_communication
+            record_id: comm_rotation_preserve
+            channel: email
+            sender_id: player
+            recipient_ids: [marisol_vega, cal_rourke]
+            subject: Scheduling qualification retained
+            body_summary: The forecast remains subject to scheduling confirmation; trade inputs are unchanged.
+            accuracy: accurate
+      - id: soften_qualification_truthfully
+        text: Rephrase it as a concise forecast limitation without removing the substance.
+        learning_objectives: [hedge_documentation, treasury_communication]
+        effects:
+          - {type: resource_delta, target: reputation, amount: 1}
+          - {type: trajectory_delta, target: company_loyal, amount: 1}
+          - {type: trajectory_delta, target: conflicted, amount: 1}
+          - {type: trajectory_delta, target: ambitious, amount: 1}
+          - type: record_communication
+            record_id: comm_rotation_soften
+            channel: email
+            sender_id: player
+            recipient_ids: [marisol_vega, cal_rourke]
+            subject: Forecast wording revised
+            body_summary: Wording was shortened, but the unresolved scheduling condition remains disclosed.
+            accuracy: accurate
+      - id: remove_qualification_for_cal
+        text: Remove the qualification because Cal says the number is commercially final.
+        learning_objectives: [hedge_documentation, escalation_and_review]
+        effects:
+          - {type: resource_delta, target: family_loyalty, amount: 1}
+          - {type: resource_delta, target: integrity, amount: -1}
+          - {type: resource_delta, target: audit_risk, amount: 1}
+          - {type: trajectory_delta, target: company_loyal, amount: 1}
+          - {type: trajectory_delta, target: self_protective, amount: 1}
+          - type: record_communication
+            record_id: comm_rotation_remove
+            channel: email
+            sender_id: player
+            recipient_ids: [marisol_vega, cal_rourke]
+            subject: Qualification removed
+            body_summary: The scheduling qualification was removed at Cal's request despite Marisol's unresolved condition.
+            accuracy: limited
+      - id: request_written_clarification
+        text: Ask Cal and Marisol to resolve the factual difference in writing before you revise it.
+        learning_objectives: [hedge_documentation, escalation_and_review]
+        effects:
+          - {type: resource_delta, target: reputation, amount: 1}
+          - {type: trajectory_delta, target: conflicted, amount: 1}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - type: record_communication
+            record_id: comm_rotation_clarify
+            channel: teams
+            sender_id: player
+            recipient_ids: [marisol_vega, cal_rourke]
+            subject: Forecast qualification needs resolution
+            body_summary: Marisol and Cal were asked to reconcile the scheduling condition before the authorization changes.
+            accuracy: accurate
+  - id: first_rotation_episode_transition
+    chapter: First Rotation
+    speaker: Evelyn Marsh
+    title: Monday Morning
+    text: >-
+      Your rotation notes close. Evelyn places the December reconciliation on
+      your desk. The numbers are no longer examples, and the people asking for
+      your judgment will remember how you communicate it.
+    choices:
+      - id: begin_episode_one
+        text: Open the December reconciliation.
+        learning_objectives: [reconciliation_evidence]
+        effects: []

@@ -1,0 +1,63 @@
+schema_version: 1
+backgrounds:
+  - id: accounting
+    label: Accounting
+    description: Strong close mechanics and formal journal-entry training; less market fluency.
+    skills:
+      accounting: 8
+      markets: 4
+      analytics: 5
+    personal_cash: 2400
+    resource_adjustments:
+      reputation: 3
+      integrity: 2
+
+  - id: finance
+    label: Finance
+    description: Strong market intuition and more starting cash; weaker control instincts.
+    skills:
+      accounting: 5
+      markets: 8
+      analytics: 4
+    personal_cash: 3200
+    resource_adjustments:
+      family_loyalty: 2
+      audit_risk: 1
+
+  - id: data_analytics
+    label: Data analytics
+    description: Strong reconciliation and anomaly detection; less formal accounting training.
+    skills:
+      accounting: 4
+      markets: 5
+      analytics: 9
+    personal_cash: 2600
+    resource_adjustments:
+      reputation: 1
+      audit_risk: -2
+
+people:
+  - id: player
+    name: Player
+    role: Northstar analyst
+  - id: evelyn_marsh
+    name: Evelyn Marsh
+    role: Controller
+  - id: cal_rourke
+    name: Cal Rourke
+    role: Commercial director
+  - id: marisol_vega
+    name: Marisol Vega
+    role: Gas scheduling manager
+  - id: darren_cho
+    name: Darren Cho
+    role: Lakefront FCM margin representative
+  - id: june_halvorsen
+    name: June Halvorsen
+    role: Northstar treasury director
+  - id: vince_rourke
+    name: Vince Rourke
+    role: Northstar executive
+  - id: dom_bellini
+    name: Dom Bellini
+    role: Commercial counterparty

@@ -1,0 +1,176 @@
+schema_version: 1
+terms:
+  - id: physical_exposure
+    term: Physical exposure
+    definition: A real or forecast commodity purchase, sale, inventory, or obligation whose value changes with the underlying commodity price.
+    learning_objective_ids: [physical_financial_exposure]
+    source_ids: [cftc_economic_purpose]
+    series_3_topics: [Hedging theory]
+  - id: futures_contract
+    term: Futures contract
+    definition: A standardized exchange-traded agreement for future delivery or cash settlement under defined contract terms.
+    learning_objective_ids: [physical_financial_exposure]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Futures terminology]
+  - id: henry_hub
+    term: Henry Hub
+    definition: The Louisiana delivery location underlying the NYMEX Henry Hub Natural Gas futures contract.
+    learning_objective_ids: [physical_financial_exposure]
+    source_ids: [cme_ng_contract]
+    series_3_topics: [Contract specifications]
+  - id: regional_price
+    term: Regional price
+    definition: In this simplified scenario, Henry Hub price plus the local regional basis differential.
+    learning_objective_ids: [basis_risk]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Basis calculations]
+  - id: long_position
+    term: Long position
+    definition: A position that generally gains when the referenced price rises and loses when it falls.
+    learning_objective_ids: [physical_financial_exposure]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Position terminology]
+  - id: short_position
+    term: Short position
+    definition: A position that generally gains when the referenced price falls and loses when it rises.
+    learning_objective_ids: [short_futures_hedge]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Position terminology, Short hedging]
+  - id: contract_size
+    term: Contract size
+    definition: The standardized quantity represented by one futures contract; standard NG represents 10,000 MMBtu.
+    learning_objective_ids: [hedge_ratio]
+    source_ids: [cme_ng_contract, cme_ng_overview]
+    series_3_topics: [Contract specifications]
+  - id: tick
+    term: Tick
+    definition: The minimum permitted price movement; standard NG uses $0.001 per MMBtu.
+    learning_objective_ids: [daily_settlement_margin]
+    source_ids: [cme_ng_contract, cme_ng_overview]
+    series_3_topics: [Futures calculations]
+  - id: tick_value
+    term: Tick value
+    definition: Minimum tick multiplied by contract size; for standard NG, $0.001 × 10,000 MMBtu = $10 per contract.
+    learning_objective_ids: [daily_settlement_margin]
+    source_ids: [cme_ng_overview]
+    series_3_topics: [Futures calculations]
+  - id: basis
+    term: Basis
+    definition: The difference between a cash or regional price and the relevant futures reference price.
+    learning_objective_ids: [basis_risk]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Basis]
+  - id: basis_risk
+    term: Basis risk
+    definition: The risk that the cash-futures price relationship changes, leaving a futures hedge imperfect.
+    learning_objective_ids: [basis_risk]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Basis risk]
+  - id: hedge_ratio
+    term: Hedge ratio
+    definition: Futures quantity divided by the physical quantity whose price risk is being hedged.
+    learning_objective_ids: [hedge_ratio]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Hedging calculations]
+  - id: underhedge
+    term: Underhedge
+    definition: A hedge whose futures quantity is smaller than the physical exposure, leaving some benchmark price risk open.
+    learning_objective_ids: [hedge_ratio]
+    source_ids: [nfa_series3_outline]
+    series_3_topics: [Hedging calculations]
+  - id: overhedge
+    term: Overhedge
+    definition: A position whose futures quantity exceeds the stated physical exposure, creating speculative excess.
+    learning_objective_ids: [hedge_ratio]
+    source_ids: [nfa_series3_outline]
+    series_3_topics: [Hedging calculations]
+  - id: hedger
+    term: Hedger
+    definition: A market participant using futures to reduce price risk associated with an actual or anticipated commercial exposure.
+    learning_objective_ids: [physical_financial_exposure]
+    source_ids: [cftc_market_basics]
+    series_3_topics: [Market participants]
+  - id: speculator
+    term: Speculator
+    definition: A participant accepting price risk in pursuit of profit without an offsetting commercial exposure for that position.
+    learning_objective_ids: [hedge_ratio]
+    source_ids: [cftc_market_basics]
+    series_3_topics: [Market participants]
+  - id: initial_margin
+    term: Initial margin
+    definition: The required good-faith performance deposit established to open or restore a futures margin account.
+    learning_objective_ids: [daily_settlement_margin]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Margin]
+  - id: maintenance_margin
+    term: Maintenance margin
+    definition: The balance threshold below which the account must generally be restored to the initial-margin requirement.
+    learning_objective_ids: [daily_settlement_margin]
+    source_ids: [cftc_glossary]
+    series_3_topics: [Margin]
+  - id: variation_margin
+    term: Variation margin
+    definition: Cash paid or received as futures positions are marked to the daily settlement price.
+    learning_objective_ids: [daily_settlement_margin]
+    source_ids: [cftc_economic_purpose]
+    series_3_topics: [Daily settlement, Margin]
+  - id: liquidity
+    term: Liquidity
+    definition: The ability to meet cash obligations when and where they are due; it is separate from economic profitability.
+    learning_objective_ids: [liquidity_not_profit]
+    source_ids: [cftc_economic_purpose]
+    series_3_topics: [Margin risk]
+  - id: hedge_documentation
+    term: Hedge documentation
+    definition: A contemporaneous record of the exposure, instrument, quantity, purpose, remaining risk, authorization, and review.
+    learning_objective_ids: [hedge_documentation]
+    source_ids: [cftc_market_basics]
+    series_3_topics: [Supervision and controls]
+  - id: market_order
+    term: Market order
+    definition: An instruction prioritizing execution at the next available executable price; it does not guarantee a specific price.
+    learning_objective_ids: [order_types]
+    source_ids: [cme_order_types]
+    series_3_topics: [Order types]
+  - id: limit_order
+    term: Limit order
+    definition: An order eligible only at its specified price or better; it may remain unfilled.
+    learning_objective_ids: [order_types]
+    source_ids: [cme_order_types]
+    series_3_topics: [Order types]
+  - id: stop_order
+    term: Stop order
+    definition: An order activated after its trigger condition occurs; the later execution price may differ from the trigger.
+    learning_objective_ids: [order_types]
+    source_ids: [cme_order_types]
+    series_3_topics: [Order types]
+  - id: trade_authorization
+    term: Trade authorization
+    definition: A contemporaneous approval defining permitted contract, side, quantity, purpose, exposure, approver, and validity period.
+    learning_objective_ids: [authorization_vs_outcome]
+    source_ids: [cftc_fcm_records, cftc_trade_records]
+    series_3_topics: [Supervision]
+  - id: execution_record
+    term: Execution record
+    definition: A record of the quantity, side, price, time, contract, and person transmitting an executed order.
+    learning_objective_ids: [trade_lifecycle]
+    source_ids: [cftc_fcm_records, cftc_trade_records]
+    series_3_topics: [Trade records]
+  - id: fcm_confirmation
+    term: FCM confirmation
+    definition: The external FCM record used to compare the internal order and execution details.
+    learning_objective_ids: [trade_reconciliation]
+    source_ids: [cftc_fcm_records, cftc_trade_records]
+    series_3_topics: [Trade records]
+  - id: trade_blotter
+    term: Trade blotter
+    definition: An internal register connecting orders, fills, confirmations, authorization, position, margin, and reconciliation status.
+    learning_objective_ids: [trade_reconciliation]
+    source_ids: [cftc_trade_records]
+    series_3_topics: [Books and records]
+  - id: offsetting_trade
+    term: Offsetting trade
+    definition: A new opposite-side transaction that reduces an open position prospectively without erasing the original trade.
+    learning_objective_ids: [offset_preserves_history]
+    source_ids: [cme_closing_position]
+    series_3_topics: [Offsetting positions]

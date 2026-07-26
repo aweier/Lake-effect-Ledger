@@ -1,0 +1,59 @@
+schema_version: 1
+accounts:
+  - number: "1000"
+    name: Cash
+    account_type: asset
+  - number: "1050"
+    name: FCM Margin Cash
+    account_type: asset
+  - number: "1120"
+    name: Gas Imbalance Receivable
+    account_type: asset
+  - number: "1200"
+    name: Gas Inventory and Line Fill
+    account_type: asset
+  - number: "1500"
+    name: Property, Plant, and Equipment
+    account_type: asset
+  - number: "2000"
+    name: Accounts Payable
+    account_type: liability
+  - number: "2100"
+    name: Gas Imbalance Payable
+    account_type: liability
+  - number: "2150"
+    name: Accrued Interest Payable
+    account_type: liability
+  - number: "2300"
+    name: Revolving Credit Payable
+    account_type: liability
+  - number: "2500"
+    name: Long-Term Debt
+    account_type: liability
+  - number: "3000"
+    name: Members' Equity
+    account_type: equity
+  - number: "4100"
+    name: Gas Marketing Revenue
+    account_type: revenue
+  - number: "4200"
+    name: Futures Settlement Gain
+    account_type: revenue
+  - number: "5100"
+    name: Gas Purchase Expense
+    account_type: expense
+  - number: "5200"
+    name: Operational Line Loss Expense
+    account_type: expense
+  - number: "5300"
+    name: Futures Settlement Loss
+    account_type: expense
+  - number: "5400"
+    name: Payroll Expense
+    account_type: expense
+  - number: "5500"
+    name: Pipeline Transportation Expense
+    account_type: expense
+  - number: "5600"
+    name: Interest Expense
+    account_type: expense

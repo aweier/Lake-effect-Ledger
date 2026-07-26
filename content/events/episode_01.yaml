@@ -1,0 +1,79 @@
+schema_version: 1
+events:
+  - id: line_loss_review
+    title: A clean close gets a question
+    text: >-
+      Evelyn initials the entry, then circles “line loss” twice. She asks for
+      the measurement support by nine tomorrow. Vince does not look at you
+      when he leaves.
+    effects:
+      - type: resource_delta
+        target: audit_risk
+        amount: 3
+      - type: set_flag
+        target: unsupported_classification_posted
+        value: true
+      - type: add_inbox
+        item_id: inbox_line_loss_support
+        sender: Evelyn Marsh, Controller
+        subject: Support required for line-loss classification
+        urgent: true
+
+  - id: provisional_followup
+    title: The clearing item survives the afternoon
+    text: >-
+      Marisol agrees the volume should stay visible while ownership is
+      resolved. The payable and inventory remain provisional; neither proves
+      whose meter is right.
+    effects:
+      - type: resource_delta
+        target: reputation
+        amount: 1
+      - type: set_flag
+        target: provisional_imbalance_open
+        value: true
+      - type: add_inbox
+        item_id: inbox_provisional_owner
+        sender: Marisol Vega, Gas Scheduling
+        subject: Imbalance owner still unresolved
+
+  - id: meter_support_arrives
+    title: The source data has fingerprints
+    text: >-
+      Marisol sends the raw hourly reads. One meter estimate was manually
+      carried forward during a communications outage. The evidence narrows the
+      problem but does not yet justify an entry.
+    effects:
+      - type: resource_delta
+        target: audit_risk
+        amount: -2
+      - type: set_flag
+        target: raw_meter_support_received
+        value: true
+      - type: add_inbox
+        item_id: inbox_raw_meter_data
+        sender: Marisol Vega, Gas Scheduling
+        subject: Raw meter reads and outage note attached
+
+  - id: controller_review
+    title: Evelyn chooses a reversible number
+    text: >-
+      Evelyn records the gas and an offsetting imbalance payable, labels both
+      provisional, and assigns the reconciliation to you. “A balanced entry
+      can still tell the wrong story,” she says. “This one admits what we do
+      not know.”
+    effects:
+      - type: post_journal
+        template_id: december_provisional_imbalance
+      - type: resource_delta
+        target: reputation
+        amount: 2
+      - type: set_flag
+        target: controller_review_complete
+        value: true
+      - type: add_inbox
+        item_id: inbox_reconciliation_assignment
+        sender: Evelyn Marsh, Controller
+        subject: Own the meter-to-settlement reconciliation
+        urgent: true
+

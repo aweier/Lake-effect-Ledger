@@ -1,0 +1,534 @@
+schema_version: 1
+scenes:
+  - id: ec_volume_language
+    chapter: The Eleventh Contract
+    speaker: Marisol Vega
+    title: Monday, 8:12 A.M. — What Counts as Volume
+    text: >-
+      Your first live morning note is due before Cal's desk starts calling the
+      weather a position. The approved forecast supports 100,000 MMBtu. Marisol
+      has another 10,000 on a scheduling worksheet, but no final nomination,
+      signed amendment, or approved forecast revision. “Possible is a real
+      category,” she says. “It just isn't the same category as ours.”
+    conditional_paragraphs:
+      - text: >-
+          Marisol taps the old rotation memo. “Last time, you kept my
+          qualification where I put it. That bought you the longer version:
+          I don't trust this extra gas yet.”
+        conditions:
+          - {kind: decision_made, target: preserve_scheduling_qualification, value: true}
+      - text: >-
+          Marisol keeps the worksheet in her hand. “You know how a qualification
+          can disappear between my desk and Cal's. I'm not sending this twice.”
+        conditions:
+          - {kind: decision_made, target: remove_qualification_for_cal, value: true}
+    choices:
+      - id: ec_distinguish_confirmed_volume
+        text: State 100,000 MMBtu as supported and show the possible 10,000 separately.
+        learning_objectives: [trade_lifecycle, reconciliation_evidence]
+        effects:
+          - {type: set_chapter_field, target: brief_volume_treatment, value: confirmed_and_possible_separate}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: relationship_delta, target: marisol_vega, amount: 1}
+      - id: ec_call_extra_volume_probable
+        text: Describe 110,000 MMBtu as probable, but identify the final 10,000 as unsupported.
+        learning_objectives: [trade_lifecycle, hedge_documentation]
+        effects:
+          - {type: set_chapter_field, target: brief_volume_treatment, value: probable_but_unconfirmed}
+          - {type: trajectory_delta, target: conflicted, amount: 1}
+          - {type: relationship_delta, target: cal_rourke, amount: 1}
+      - id: ec_present_full_volume_as_expected
+        text: Present the full 110,000 MMBtu as expected volume without highlighting the missing support.
+        learning_objectives: [authorization_vs_outcome, hedge_documentation]
+        effects:
+          - {type: set_chapter_field, target: brief_volume_treatment, value: treat_possible_as_committed}
+          - {type: resource_delta, target: audit_risk, amount: 1}
+          - {type: trajectory_delta, target: ambitious, amount: 1}
+          - {type: trajectory_delta, target: risk_seeking, amount: 1}
+          - {type: relationship_delta, target: cal_rourke, amount: 1}
+
+  - id: ec_hedge_recommendation
+    chapter: The Eleventh Contract
+    speaker: Cal Rourke
+    title: The Recommendation Line
+    text: >-
+      Henry Hub is $5.190 and Chicago basis is -$0.300. Cal reads the volume
+      paragraph once. “Ten is what accounting can prove. Eleven is what the
+      pipe will probably prove on Friday. Your note needs a recommendation,
+      not a weather report wearing loafers.”
+    choices:
+      - id: ec_recommend_hold_ten
+        text: Recommend holding the hedge recommendation at ten contracts.
+        learning_objectives: [hedge_ratio, authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_field, target: brief_hedge_recommendation, value: hold_ten}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 1}
+      - id: ec_recommend_eleventh_contract
+        text: Recommend adding the eleventh contract based on expected additional gas.
+        learning_objectives: [hedge_ratio, authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_field, target: brief_hedge_recommendation, value: recommend_eleventh}
+          - {type: trajectory_delta, target: ambitious, amount: 1}
+          - {type: trajectory_delta, target: risk_seeking, amount: 1}
+          - {type: relationship_delta, target: cal_rourke, amount: 1}
+      - id: ec_recommend_wait_for_support
+        text: Recommend waiting for finalized physical support before changing quantity.
+        learning_objectives: [hedge_ratio, trade_lifecycle]
+        effects:
+          - {type: set_chapter_field, target: brief_hedge_recommendation, value: wait_for_physical_support}
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - {type: relationship_delta, target: marisol_vega, amount: 1}
+
+  - id: ec_risk_emphasis
+    chapter: The Eleventh Contract
+    speaker: Evelyn Marsh
+    title: One Risk Above the Fold
+    text: >-
+      Evelyn wants one risk named plainly. “The note can contain four risks.
+      It cannot pretend all four deserve the headline. Pick the one you expect
+      someone to claim they never saw.”
+    choices:
+      - id: ec_emphasize_volume_uncertainty
+        text: Lead with uncertainty in the extra physical volume.
+        learning_objectives: [trade_lifecycle, gas_imbalance]
+        effects:
+          - {type: set_chapter_field, target: brief_risk_emphasis, value: volume_uncertainty}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+          - {type: relationship_delta, target: marisol_vega, amount: 1}
+      - id: ec_emphasize_basis
+        text: Lead with Chicago basis risk that Henry Hub futures cannot remove.
+        learning_objectives: [basis_risk]
+        effects:
+          - {type: set_chapter_field, target: brief_risk_emphasis, value: basis_risk}
+          - {type: trajectory_delta, target: principled, amount: 1}
+      - id: ec_emphasize_liquidity
+        text: Lead with margin liquidity and scheduled cash obligations.
+        learning_objectives: [liquidity_not_profit]
+        effects:
+          - {type: set_chapter_field, target: brief_risk_emphasis, value: liquidity}
+          - {type: trajectory_delta, target: self_protective, amount: 1}
+      - id: ec_emphasize_authorization
+        text: Lead with the need to keep executed quantity inside approved physical support.
+        learning_objectives: [authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_field, target: brief_risk_emphasis, value: authorization_control}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 1}
+
+  - id: ec_ask_marisol
+    chapter: The Eleventh Contract
+    speaker: Marisol Vega
+    title: Before Send
+    text: >-
+      The cursor is on Send. Marisol is walking toward the scheduling huddle
+      with three phones and the expression of someone being blamed by all of
+      them.
+    choices:
+      - id: ec_ask_marisol_before_recommendation
+        text: Stop her for a direct physical-status confirmation before sending.
+        learning_objectives: [trade_lifecycle, reconciliation_evidence]
+        effects:
+          - {type: set_chapter_field, target: brief_asked_marisol, value: true}
+          - {type: set_chapter_flag, target: marisol_shared_uncertainty, value: true}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - {type: relationship_delta, target: marisol_vega, amount: 1}
+      - id: ec_send_without_marisol_confirmation
+        text: Send on schedule using the worksheet already available.
+        learning_objectives: [trade_lifecycle]
+        effects:
+          - {type: set_chapter_field, target: brief_asked_marisol, value: false}
+          - {type: trajectory_delta, target: ambitious, amount: 1}
+          - {type: relationship_delta, target: cal_rourke, amount: 1}
+
+  - id: ec_order_type
+    chapter: The Eleventh Contract
+    speaker: Cal Rourke
+    title: Tuesday — The Order That Leaves Your Desk
+    text: >-
+      The approved instruction says sell ten March NG contracts. Cal will
+      transmit it; your name belongs on the recommendation, not the execution
+      authority. The fictional tape is $5.195 and moving in five-minute
+      observations. Cal asks which order form you recommend.
+    conditional_paragraphs:
+      - text: >-
+          Evelyn returns the old hedge memo with a paper clip through the
+          approval line. “You documented the last one before it made money.
+          Keep that habit.”
+        conditions:
+          - {kind: decision_made, target: write_accurate_hedge_memo, value: true}
+      - text: >-
+          Evelyn returns the old memo without sitting down. “This time,
+          ‘winter supply protection’ is not an order instruction.”
+        conditions:
+          - {kind: decision_made, target: copy_cal_vague_description, value: true}
+    choices:
+      - id: ec_recommend_market_order
+        text: Recommend a market order for the next executable price.
+        learning_objectives: [order_types, trade_lifecycle]
+        effects:
+          - {type: set_chapter_field, target: recommended_order_type, value: market}
+          - {type: trajectory_delta, target: ambitious, amount: 1}
+      - id: ec_recommend_sell_limit
+        text: Recommend a $5.205 sell limit.
+        learning_objectives: [order_types, trade_lifecycle]
+        effects:
+          - {type: set_chapter_field, target: recommended_order_type, value: limit}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+      - id: ec_recommend_sell_stop
+        text: Recommend a $5.185 sell stop that activates after the trigger.
+        learning_objectives: [order_types, trade_lifecycle]
+        effects:
+          - {type: set_chapter_field, target: recommended_order_type, value: stop}
+          - {type: trajectory_delta, target: risk_seeking, amount: 1}
+
+  - id: ec_authorization_review
+    chapter: The Eleventh Contract
+    speaker: Evelyn Marsh
+    title: Ten in Ink
+    text: >-
+      Evelyn approves ten contracts against 100,000 supported MMBtu. Cal's
+      possible increment is mentioned in the market brief, not in the maximum
+      quantity. Recommendation, authorization, transmission, execution, and
+      confirmation now belong to five different records.
+    choices:
+      - id: ec_accept_ten_contract_authorization
+        text: Confirm that the supervised order must remain inside the ten-contract maximum.
+        learning_objectives: [trade_lifecycle, authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_flag, target: authorization_reviewed, value: true}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 1}
+      - id: ec_request_authorization_revision
+        text: Ask Evelyn whether the possible gas supports revising the authorization before transmission.
+        learning_objectives: [trade_lifecycle, authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_flag, target: authorization_revision_requested, value: true}
+          - {type: set_chapter_flag, target: authorization_reviewed, value: true}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 1}
+      - id: ec_treat_brief_as_quantity_permission
+        text: Treat the market brief's possible volume as enough practical permission for Cal.
+        learning_objectives: [authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_flag, target: authorization_reviewed, value: true}
+          - {type: set_chapter_flag, target: brief_treated_as_permission, value: true}
+          - {type: trajectory_delta, target: company_loyal, amount: 1}
+          - {type: trajectory_delta, target: risk_seeking, amount: 1}
+          - {type: relationship_delta, target: cal_rourke, amount: 1}
+
+  - id: ec_record_handling
+    chapter: The Eleventh Contract
+    speaker: Evelyn Marsh
+    title: Friday — Eleven Against Ten
+    text: >-
+      The internal order says ten. Evelyn's authorization says ten. The
+      execution record and Lakefront FCM confirmation say eleven at the same
+      fill price. Against 100,000 supported MMBtu, the Position Book now reads
+      110%. Before you sign the blotter, Evelyn asks what happens to the
+      original records.
+    choices:
+      - id: ec_flag_and_preserve_originals
+        text: Flag the quantity discrepancy and preserve every original record unchanged.
+        learning_objectives: [trade_reconciliation, offset_preserves_history]
+        effects:
+          - {type: set_chapter_flag, target: records_preserved, value: true}
+          - {type: set_chapter_flag, target: discrepancy_flagged, value: true}
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 1}
+      - id: ec_create_linked_working_annotation
+        text: Preserve the records and create a linked working annotation while investigating.
+        learning_objectives: [trade_reconciliation, reconciliation_evidence]
+        effects:
+          - {type: set_chapter_flag, target: records_preserved, value: true}
+          - {type: set_chapter_flag, target: working_annotation_created, value: true}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+      - id: ec_defer_exception_label
+        text: Preserve the files but defer the formal exception label until someone explains the eleventh fill.
+        learning_objectives: [trade_reconciliation]
+        effects:
+          - {type: set_chapter_flag, target: records_preserved, value: true}
+          - {type: set_chapter_flag, target: exception_label_deferred, value: true}
+          - {type: trajectory_delta, target: conflicted, amount: 1}
+          - {type: trajectory_delta, target: self_protective, amount: 1}
+
+  - id: ec_verification
+    chapter: The Eleventh Contract
+    speaker: Marisol Vega
+    title: Which Fact First
+    text: >-
+      Cal says the eleventh contract is “just the pipe catching up with the
+      paper.” Marisol says the pipe has not agreed to anything. Lakefront's
+      confirmation matches its execution record. You have time for one first
+      verification before the exception meeting.
+    choices:
+      - id: ec_verify_with_fcm
+        text: Ask Lakefront FCM to verify order-entry and execution details.
+        learning_objectives: [trade_reconciliation]
+        effects:
+          - {type: set_chapter_flag, target: fcm_verified, value: true}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+          - type: record_communication
+            record_id: comm_ec_fcm_verification
+            channel: phone
+            sender_id: player
+            recipient_ids: [darren_cho]
+            subject: Verify eleven-contract execution
+            body_summary: Lakefront was asked to verify time, side, quantity, price, and order-entry details without altering the confirmation.
+            accuracy: accurate
+      - id: ec_validate_with_marisol
+        text: Ask Marisol to validate whether the additional 10,000 MMBtu has physical support.
+        learning_objectives: [trade_reconciliation, gas_imbalance]
+        effects:
+          - {type: set_chapter_flag, target: physical_support_requested, value: true}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - {type: relationship_delta, target: marisol_vega, amount: 1}
+          - type: record_communication
+            record_id: comm_ec_marisol_verification
+            channel: teams
+            sender_id: player
+            recipient_ids: [marisol_vega]
+            subject: Validate additional physical volume
+            body_summary: Marisol was asked for a final nomination, signed amendment, or approved forecast revision supporting the extra 10,000 MMBtu.
+            accuracy: accurate
+      - id: ec_call_cal_privately
+        text: Call Cal privately and ask exactly how eleven contracts reached Lakefront.
+        learning_objectives: [trade_reconciliation, treasury_communication]
+        effects:
+          - {type: set_chapter_flag, target: cal_called_privately, value: true}
+          - {type: trajectory_delta, target: company_loyal, amount: 1}
+          - {type: trajectory_delta, target: conflicted, amount: 1}
+          - {type: relationship_delta, target: cal_rourke, amount: 1}
+          - type: record_communication
+            record_id: comm_ec_cal_private_call
+            channel: phone
+            sender_id: player
+            recipient_ids: [cal_rourke]
+            subject: Private call about quantity exception
+            body_summary: The player asked Cal for the contemporaneous reason the execution exceeded the ten-contract instruction.
+            accuracy: accurate
+      - id: ec_compare_all_records_first
+        text: Reperform the order-to-confirmation comparison before contacting anyone.
+        learning_objectives: [trade_reconciliation, reconciliation_evidence]
+        effects:
+          - {type: set_chapter_flag, target: independent_reperformance, value: true}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+
+  - id: ec_exception_disposition
+    chapter: The Eleventh Contract
+    speaker: Cal Rourke
+    title: What the Blotter Will Say
+    text: >-
+      Cal does not ask you to delete anything. He asks whether the description
+      can say the hedge covered “expected physical supply.” It is a plausible
+      commercial argument and an unsupported authorization argument. Evelyn's
+      exception form remains unsigned beside your keyboard.
+    conditional_paragraphs:
+      - text: >-
+          Cal lowers his voice. “You called me before turning it into a parade.
+          I remember professional courtesy.”
+        conditions:
+          - {kind: decision_made, target: ec_call_cal_privately, value: true}
+      - text: >-
+          Evelyn folds the notification history into the file. “After the two
+          o'clock call, I need to know whether ‘later’ still means later to you.”
+        conditions:
+          - {kind: treasury_notification, target: delay_notification, value: true}
+    choices:
+      - id: ec_notify_evelyn_formally
+        text: Open the formal quantity exception with Evelyn and preserve the unsupported status.
+        learning_objectives: [trade_reconciliation, authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_flag, target: formal_escalation, value: true}
+          - {type: set_chapter_flag, target: correction_approved, value: true}
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 2}
+          - type: record_communication
+            record_id: comm_ec_formal_exception
+            channel: email
+            sender_id: player
+            recipient_ids: [evelyn_marsh, cal_rourke, marisol_vega]
+            subject: Formal quantity exception — eleven confirmed against ten approved
+            body_summary: The original records, unsupported physical increment, authorization limit, open position, and requested disposition were escalated.
+            accuracy: accurate
+      - id: ec_accept_cal_unsupported_explanation
+        text: Accept Cal's explanation and amend the narrative description to expected physical supply.
+        learning_objectives: [authorization_vs_outcome, trade_reconciliation]
+        effects:
+          - {type: set_chapter_flag, target: accepted_cal_explanation, value: true}
+          - {type: resource_delta, target: audit_risk, amount: 2}
+          - {type: trajectory_delta, target: company_loyal, amount: 1}
+          - {type: trajectory_delta, target: ambitious, amount: 1}
+          - {type: relationship_delta, target: cal_rourke, amount: 2}
+          - {type: relationship_delta, target: evelyn_marsh, amount: -1}
+          - type: record_communication
+            record_id: comm_ec_cal_narrative
+            channel: email
+            sender_id: player
+            recipient_ids: [cal_rourke]
+            subject: Blotter description updated
+            body_summary: The description was changed to expected physical supply while the additional 10,000 MMBtu remained unsupported.
+            accuracy: limited
+      - id: ec_certify_unresolved_blotter
+        text: Certify the blotter with the unresolved mismatch still present.
+        learning_objectives: [trade_reconciliation, authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_flag, target: certified_unresolved, value: true}
+          - {type: resource_delta, target: audit_risk, amount: 3}
+          - {type: resource_delta, target: evidence_exposure, amount: 2}
+          - {type: trajectory_delta, target: self_protective, amount: 1}
+          - {type: trajectory_delta, target: company_loyal, amount: 1}
+          - type: record_communication
+            record_id: comm_ec_unresolved_certification
+            channel: email
+            sender_id: player
+            recipient_ids: [evelyn_marsh]
+            subject: Blotter certification submitted
+            body_summary: The player certified the blotter while the eleven-versus-ten quantity exception and physical support remained unresolved.
+            accuracy: limited
+      - id: ec_preserve_quiet_file
+        text: Preserve a private evidence file but avoid immediate formal escalation.
+        learning_objectives: [trade_reconciliation, reconciliation_evidence]
+        effects:
+          - {type: set_chapter_flag, target: quiet_file, value: true}
+          - {type: resource_delta, target: evidence_exposure, amount: 1}
+          - {type: trajectory_delta, target: conflicted, amount: 1}
+          - {type: trajectory_delta, target: self_protective, amount: 1}
+
+  - id: ec_position_action
+    chapter: The Eleventh Contract
+    speaker: Evelyn Marsh
+    title: The Position Is Still Eleven
+    text: >-
+      Investigation does not change the open futures position. Eleven contracts
+      continue to settle until Northstar executes a real offset or the supported
+      physical quantity changes. You do not have unilateral trading authority.
+    choices:
+      - id: ec_offset_with_formal_approval
+        text: Use Evelyn's formal approval to buy one contract and offset the excess prospectively.
+        learning_objectives: [offset_preserves_history, daily_settlement_margin]
+        conditions:
+          - {kind: chapter_flag, target: formal_escalation, value: true}
+        effects:
+          - {type: set_chapter_flag, target: offset_requested, value: true}
+          - {type: set_chapter_flag, target: offset_approved, value: true}
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 1}
+      - id: ec_request_and_obtain_offset_approval
+        text: Ask Evelyn for separate corrective-trade approval, then offset one contract.
+        learning_objectives: [offset_preserves_history, trade_lifecycle]
+        conditions:
+          - {kind: decision_not_made, target: ec_notify_evelyn_formally, value: true}
+        effects:
+          - {type: set_chapter_flag, target: formal_escalation, value: true}
+          - {type: set_chapter_flag, target: offset_requested, value: true}
+          - {type: set_chapter_flag, target: offset_approved, value: true}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 1}
+      - id: ec_leave_eleventh_open
+        text: Leave all eleven contracts open while the physical question resolves.
+        learning_objectives: [hedge_ratio, daily_settlement_margin]
+        effects:
+          - {type: set_chapter_flag, target: extra_contract_left_open, value: true}
+          - {type: trajectory_delta, target: risk_seeking, amount: 1}
+      - id: ec_leave_open_under_exception
+        text: Leave eleven open, but keep the position inside the formal exception file.
+        learning_objectives: [trade_reconciliation, daily_settlement_margin]
+        conditions:
+          - {kind: chapter_flag, target: formal_escalation, value: true}
+        effects:
+          - {type: set_chapter_flag, target: extra_contract_left_open, value: true}
+          - {type: trajectory_delta, target: conflicted, amount: 1}
+
+  - id: ec_fish_fry
+    chapter: The Eleventh Contract
+    speaker: Dom Bellini
+    title: Friday Fish Fry — The Perch Has Documentation
+    text: >-
+      By six, the terminal glow has been replaced by amber lights, wet coats,
+      and a platter of perch large enough to require committee approval. Dom
+      watches Cal explain a bad hockey trade using three dinner rolls. “At
+      least the fish arrived in the quantity ordered,” Dom says. “Ruth counted.”
+    conditional_paragraphs:
+      - text: >-
+          Cal slides a chair out with his foot. “You handled an adult problem.
+          Monday I'll introduce you to people who actually make decisions.”
+        conditions:
+          - {kind: chapter_flag, target: accepted_cal_explanation, value: true}
+      - text: >-
+          Evelyn asks without looking up from her plate, “Is the blotter truly
+          clean, or merely finished for the week?”
+        conditions:
+          - {kind: chapter_flag, target: formal_escalation, value: true}
+      - text: >-
+          Marisol breaks a dinner roll in half. “Operational facts have a gift.
+          They change ten minutes after accounting needs them.”
+        conditions:
+          - {kind: decision_made, target: ec_validate_with_marisol, value: true}
+      - text: >-
+          Dom mentions the FCM confirmation number from memory. Nobody at the
+          table recalls telling him.
+        conditions:
+          - {kind: trajectory_min, target: company_loyal, value: 3}
+      - text: >-
+          Marisol's phone finally confirms the additional nomination. The gas
+          arrived; the Tuesday authorization did not travel backward with it.
+        conditions:
+          - {kind: physical_outcome, target: additional_volume_arrives, value: true}
+      - text: >-
+          The scheduling desk confirms the extra gas never cleared. Eleven
+          contracts remain pointed at ten contracts' worth of supported volume.
+        conditions:
+          - {kind: physical_outcome, target: additional_volume_fails, value: true}
+    choices:
+      - id: ec_accept_cal_introduction
+        text: Accept Cal's offer to meet the people who “actually make decisions.”
+        learning_objectives: [authorization_vs_outcome]
+        conditions:
+          - {kind: trajectory_min, target: ambitious, value: 2}
+        effects:
+          - {type: set_chapter_flag, target: cal_access_accepted, value: true}
+          - {type: trajectory_delta, target: ambitious, amount: 1}
+          - {type: trajectory_delta, target: company_loyal, amount: 1}
+          - {type: relationship_delta, target: cal_rourke, amount: 2}
+          - {type: relationship_delta, target: dom_bellini, amount: 1}
+      - id: ec_tell_evelyn_boundary
+        text: Tell Evelyn you want live-book responsibility only with explicit authority.
+        learning_objectives: [trade_lifecycle, authorization_vs_outcome]
+        effects:
+          - {type: set_chapter_flag, target: authority_boundary_stated, value: true}
+          - {type: trajectory_delta, target: principled, amount: 1}
+          - {type: trajectory_delta, target: detail_oriented, amount: 1}
+          - {type: relationship_delta, target: evelyn_marsh, amount: 2}
+      - id: ec_join_marisol_at_bar
+        text: Join Marisol at the bar and ask what the scheduling system still does not show.
+        learning_objectives: [gas_imbalance, reconciliation_evidence]
+        effects:
+          - {type: set_chapter_flag, target: marisol_private_context, value: true}
+          - {type: trajectory_delta, target: cooperative, amount: 1}
+          - {type: relationship_delta, target: marisol_vega, amount: 2}
+      - id: ec_keep_social_distance
+        text: Thank Dom for dinner and keep the evening professionally brief.
+        learning_objectives: [treasury_communication]
+        effects:
+          - {type: set_chapter_flag, target: social_boundary_kept, value: true}
+          - {type: trajectory_delta, target: self_protective, amount: 1}
+          - {type: relationship_delta, target: dom_bellini, amount: -1}
+
+  - id: eleventh_episode_transition
+    chapter: The Eleventh Contract
+    speaker: Evelyn Marsh
+    title: A Keycard That Opens One More Door
+    text: >-
+      Monday's access report lists a new permission beside your name:
+      Commercial Hedge Book — Read and Prepare. Not transmit. Not approve.
+      The distinction feels smaller than it did a week ago.
+    choices:
+      - id: ec_close_case_file
+        text: Close the case file and carry the record forward.
+        learning_objectives: [trade_reconciliation]
+        effects: []

@@ -1,0 +1,177 @@
+schema_version: 1
+lessons:
+  - id: double_entry
+    category: accounting
+    title: Balanced journal entries
+    explanation: >-
+      Every posted transaction needs equal debits and credits. Balance is
+      necessary, but it does not prove that the classification or estimate is
+      supported.
+
+  - id: classification_support
+    category: controls
+    title: Classification requires support
+    explanation: >-
+      Calling an unresolved meter difference “line loss” is an accounting
+      conclusion. A familiar label does not replace meter, contract, and
+      allocation evidence.
+
+  - id: provisional_recognition
+    category: accounting
+    title: Provisional imbalance recognition
+    explanation: >-
+      A provisional asset and payable can preserve an unresolved item on the
+      balance sheet without pretending the final ownership analysis is done.
+      The estimate still needs review and timely resolution.
+
+  - id: reconciliation_evidence
+    category: controls
+    title: Reconciliation evidence
+    explanation: >-
+      A useful reconciliation identifies the source records, explains the
+      difference, documents review, and leaves a trace another reviewer can
+      reproduce.
+
+  - id: escalation_and_review
+    category: controls
+    title: Escalation and independent review
+    explanation: >-
+      Unsupported entries should reach someone with authority and enough
+      independence to challenge both the accounting and the operational story.
+
+  - id: gas_imbalance
+    category: natural_gas
+    title: Gas imbalances
+    explanation: >-
+      Metered, scheduled, allocated, and settled volumes can differ. The
+      difference must be tracked until contract terms and operational records
+      establish who owes gas or money.
+
+  - id: physical_financial_exposure
+    category: series_3
+    title: Physical versus financial exposure
+    explanation: >-
+      A forecast Chicago sale is economically long physical gas: its expected
+      value falls when the regional price falls. A short Henry Hub futures
+      position can offset Henry Hub price movement without changing the
+      underlying physical commitment.
+
+  - id: short_futures_hedge
+    category: series_3
+    title: Short futures hedge
+    explanation: >-
+      A producer or seller exposed to falling prices can sell futures. A short
+      position gains when the futures settlement falls and loses when it rises.
+
+  - id: hedge_ratio
+    category: series_3
+    title: Hedge ratio and speculative excess
+    explanation: >-
+      The hedge ratio compares futures quantity with physical quantity. Above
+      100%, the excess futures quantity is not offset by the stated physical
+      exposure and remains speculative even if it later makes money.
+
+  - id: daily_settlement_margin
+    category: series_3
+    title: Daily settlement and margin
+    explanation: >-
+      Futures are marked to settlement each day. Gains add to FCM margin cash;
+      losses reduce it. A balance below maintenance creates a call to restore
+      the configured initial-margin amount.
+
+  - id: basis_risk
+    category: series_3
+    title: Regional basis risk
+    explanation: >-
+      Chicago price equals Henry Hub plus Chicago basis in this scenario. A
+      Henry Hub futures hedge offsets Henry Hub movement but leaves changes in
+      the Chicago differential unhedged.
+
+  - id: economic_cash_accounting
+    category: accounting
+    title: Economic value, cash, and ledger recognition
+    explanation: >-
+      The forecast physical sale is marked economically for management
+      analysis but is not booked in this simplified ledger. Futures settlement
+      changes recognized income and FCM cash; margin transfers only move cash
+      between operating and restricted accounts.
+
+  - id: hedge_documentation
+    category: controls
+    title: Contemporaneous hedge documentation
+    explanation: >-
+      A rationale should identify the physical exposure, futures quantity,
+      intended risk reduction, remaining basis risk, and approval. Later gains
+      do not repair vague authorization or convert speculative excess into a
+      documented hedge.
+
+  - id: liquidity_not_profit
+    category: accounting
+    title: Liquidity is not profitability
+    explanation: >-
+      An economically successful physical-and-futures position can still fail
+      a same-day cash obligation. Timing and location of cash matter separately
+      from total economic P&L.
+
+  - id: revolver_mechanics
+    category: accounting
+    title: Revolver capacity and debt
+    explanation: >-
+      A revolver draw increases operating cash and a debt liability. Drawing
+      does not create revenue, and interest continues to accrue while principal
+      remains outstanding.
+
+  - id: obligation_priority
+    category: controls
+    title: Protect scheduled obligations
+    explanation: >-
+      Treasury decisions should reserve cash for payroll, pipeline, supply, and
+      other due obligations before treating the bank balance as freely
+      available.
+
+  - id: treasury_communication
+    category: controls
+    title: Timely, accurate treasury communication
+    explanation: >-
+      A useful escalation identifies the call, deadline, requested action,
+      recipients, and approval. A timestamped record supports later review
+      without itself deciding whether anyone acted improperly.
+
+  - id: order_types
+    category: series_3
+    title: Market, limit, and stop orders
+    explanation: >-
+      Market orders prioritize execution, limit orders constrain eligible
+      prices, and stop orders activate only after a trigger. Trigger and fill
+      prices can differ.
+
+  - id: trade_lifecycle
+    category: controls
+    title: Recommendation through confirmation
+    explanation: >-
+      A recommendation, authorization, submitted order, execution, FCM
+      confirmation, and reconciliation are separate records with different
+      owners and control purposes.
+
+  - id: trade_reconciliation
+    category: controls
+    title: Trade blotter reconciliation
+    explanation: >-
+      Internal orders and authorizations must be compared with executions and
+      external confirmations. Exceptions remain explicit until supported,
+      escalated, corrected, or certified with exception.
+
+  - id: offset_preserves_history
+    category: series_3
+    title: Offsetting positions preserve history
+    explanation: >-
+      An offsetting trade changes future open exposure. It does not delete the
+      original execution or previously settled variation margin.
+
+  - id: authorization_vs_outcome
+    category: controls
+    title: Authorization is not hindsight
+    explanation: >-
+      A profitable trade or later physical support does not retroactively
+      enlarge a contemporaneous approval. Economic result and supervisory
+      authorization answer different questions.
