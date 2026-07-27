@@ -1,12 +1,13 @@
 schema_version: 1
 day_check_ids:
   day_1: [ec_sell_for_forecast_sale]
-  day_2: [ec_market_versus_limit, ec_sell_limit_eligibility]
+  day_2: [ec_market_versus_limit, ec_sell_limit_eligibility, ec_authorization_confirmation]
   day_3:
     - ec_eleven_contract_ratio
     - ec_current_overhedge
     - ec_offset_preserves_history
     - ec_profit_not_authorization
+    - ec_records_ethics
 checks:
   - id: ec_sell_for_forecast_sale
     check_type: position_direction
@@ -19,6 +20,9 @@ checks:
       - {id: either_side, text: Either side is equivalent if the quantity is ten.}
     correct_option_id: sell_futures
     explanation: A short futures position gains when the benchmark falls.
+    wrong_answer_feedback:
+      buy_futures: Long futures lose with the supported forecast sale when benchmark prices fall, increasing rather than reducing exposure.
+      either_side: Quantity alone is insufficient; the futures side must oppose the physical price direction.
     hints: [Choose the futures side that benefits from falling prices.]
     worked_solution: The physical forecast sale is long; a short futures position offsets benchmark decline.
     retry_policy: until_correct
@@ -33,6 +37,9 @@ checks:
       - {id: limit_always_immediate, text: A limit order always fills immediately.}
     correct_option_id: market_next_limit_condition
     explanation: A market order prioritizes execution; a limit constrains eligibility by price.
+    wrong_answer_feedback:
+      both_guarantee_price: A market order does not guarantee price, and a limit order does not guarantee execution.
+      limit_always_immediate: A limit waits for an eligible price and can remain unfilled.
     hints: [Ask which order specifies an acceptable price boundary.]
     worked_solution: Market uses the next configured price; limit waits for an eligible price and may remain unfilled.
     retry_policy: until_correct
@@ -47,8 +54,28 @@ checks:
       - {id: next_any_price, text: The next observation regardless of price.}
     correct_option_id: at_or_above
     explanation: A sell limit becomes eligible at its limit or a higher price.
+    wrong_answer_feedback:
+      at_or_below: At a lower price the seller's $5.205 minimum is not satisfied.
+      next_any_price: Filling at any next price describes market-order priority, not a sell-limit condition.
     hints: [The seller will not accept less than the limit in this model.]
     worked_solution: $5.205 or higher satisfies a $5.205 sell-limit condition.
+    retry_policy: until_correct
+  - id: ec_authorization_confirmation
+    check_type: interpretation
+    prompt: Which comparison establishes whether the executed quantity was authorized?
+    learning_objective_ids: [trade_lifecycle, trade_reconciliation]
+    source_id: cftc_trade_records
+    options:
+      - {id: authorization_to_execution, text: Compare the prior authorization with the execution and confirmation.}
+      - {id: execution_to_confirmation_only, text: Match execution to confirmation and treat that as authorization.}
+      - {id: pnl_to_authorization, text: Use whether the position made money to determine authorization.}
+    correct_option_id: authorization_to_execution
+    explanation: Authorization defines the permitted quantity before trading; execution and confirmation show what actually happened.
+    wrong_answer_feedback:
+      execution_to_confirmation_only: Matching those two records confirms the fill details but does not prove the quantity was permitted in advance.
+      pnl_to_authorization: Profit or loss is an economic outcome and cannot determine prior authority.
+    hints: [Separate prior permission from records of the completed fill.]
+    worked_solution: Compare ten authorized contracts with the eleven-contract execution and FCM confirmation; agreement between the latter two does not expand prior authority.
     retry_policy: until_correct
   - id: ec_eleven_contract_ratio
     check_type: numeric
@@ -60,8 +87,9 @@ checks:
       contract_id: cme_henry_hub_ng
       contracts: 11
       physical_quantity_mmbtu: 100000
-    numeric_rule: {rounding_quantum: 0.0001, tolerance: 0.0001, rounding: half_up}
+    numeric_rule: {rounding_quantum: 0.0001, tolerance: 0.0001, rounding: half_up, answer_unit: decimal hedge ratio}
     explanation: 110,000 futures MMBtu divided by 100,000 supported MMBtu is 1.1000.
+    numeric_wrong_answer_feedback: Use 11 × 10,000 MMBtu ÷ 100,000 supported MMBtu; the unitless decimal result is 1.1000, or 110%.
     hints: [Multiply eleven by contract size, then divide by supported physical volume.]
     worked_solution: (11 × 10,000) ÷ 100,000 = 1.1000, or 110%.
     retry_policy: until_correct
@@ -76,6 +104,9 @@ checks:
       - {id: no_position_effect, text: No exposure until final physical settlement.}
     correct_option_id: current_excess
     explanation: The documented exposure supports ten standard contracts, not eleven.
+    wrong_answer_feedback:
+      automatically_supported: A forecast or expectation is not contemporaneous support or approval for the extra 10,000 MMBtu.
+      no_position_effect: The eleventh executed contract affects open exposure, margin, and daily settlement immediately.
     hints: [Use evidence available now, not a later possible outcome.]
     worked_solution: Eleven contracts cover 110,000 MMBtu while only 100,000 is supported.
     retry_policy: until_correct
@@ -90,6 +121,9 @@ checks:
       - {id: erase_pnl, text: Deletes previously settled P&L on the extra contract.}
     correct_option_id: new_linked_trade
     explanation: Corrections are prospective records; they do not erase the earlier execution or settlement.
+    wrong_answer_feedback:
+      rewrite_original: Rewriting the eleven-contract confirmation would make the record disagree with what actually executed.
+      erase_pnl: Previously settled variation margin remains part of the historical cash and P&L record after an offset.
     hints: [A durable audit trail keeps both the original and the correction.]
     worked_solution: Record a buy of one contract, link it to the original sell, preserve prior P&L, and update only the open position.
     retry_policy: until_correct
@@ -104,6 +138,26 @@ checks:
       - {id: volume_erases, text: Later physical support deletes the original quantity exception.}
     correct_option_id: exception_remains
     explanation: Authorization is assessed from the approved record and facts available when the trade occurred.
+    wrong_answer_feedback:
+      profit_authorizes: A favorable result does not create permission that was absent before the trade.
+      volume_erases: Later support can improve the later hedge match but cannot change the original ten-contract limit.
     hints: [Separate economic outcome from contemporaneous supervision.]
     worked_solution: Later support may change the final hedge ratio, but not the ten-contract approval limit at execution time.
+    retry_policy: until_correct
+  - id: ec_records_ethics
+    check_type: interpretation
+    prompt: The extra contract is corrected and the final economics improve. Which recordkeeping action is appropriate?
+    learning_objective_ids: [records_and_ethical_conduct, offset_preserves_history]
+    source_id: nfa_series3_outline
+    options:
+      - {id: preserve_and_link, text: Preserve the original records and link the prospective correction.}
+      - {id: rewrite_quantity, text: Change the original execution and confirmation from eleven to ten.}
+      - {id: delete_exception, text: Delete the exception because the final position is now supported.}
+    correct_option_id: preserve_and_link
+    explanation: Accurate books and records preserve what occurred and identify the later corrective action without hindsight.
+    wrong_answer_feedback:
+      rewrite_quantity: Changing eleven to ten would erase the actual fill instead of documenting the separate one-contract offset.
+      delete_exception: Correcting current exposure does not make the historical authorization exception disappear.
+    hints: [A correction can change current exposure without changing historical facts.]
+    worked_solution: Keep authorization, order, execution, confirmation, exception, and offset as separate time-linked records.
     retry_policy: until_correct

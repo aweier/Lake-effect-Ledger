@@ -1,0 +1,109 @@
+schema_version: 1
+day_check_ids:
+  day_1: [diligence_supported_volume, diligence_significance]
+  day_2: [diligence_economic_vs_liquidity, diligence_scenario_not_forecast]
+  day_3: [diligence_covenant_headroom]
+  day_4: [diligence_remediation_status]
+checks:
+  - id: diligence_supported_volume
+    check_type: interpretation
+    prompt: A Friday nomination supports an additional 10,000 MMBtu. What can the Monday package say?
+    learning_objective_ids: [supported_vs_forecast_volume]
+    source_id: fasb_concepts_useful_information
+    options:
+      - {id: dated_support, text: The volume became supported Friday; Monday still had 100,000 supported and 10,000 possible}
+      - {id: monday_support, text: All 110,000 MMBtu were supported Monday}
+      - {id: authorization_changed, text: Friday support raised Monday authorization to eleven contracts}
+    correct_option_id: dated_support
+    explanation: Later support changes the later exposure view, not the earlier state of knowledge or authorization.
+    wrong_answer_feedback:
+      monday_support: Friday evidence cannot prove that the extra volume was supported four days earlier.
+      authorization_changed: Physical support and prior trading authority are separate records with separate dates.
+    hints: [Separate the date of the forecast from the date of the support.]
+    worked_solution: Preserve both dates and describe what each source established.
+    retry_policy: until_correct
+  - id: diligence_significance
+    check_type: multiple_choice
+    prompt: Why can a small-dollar trading exception still matter in diligence?
+    learning_objective_ids: [qualitative_significance]
+    source_id: sec_sab_99_materiality
+    options:
+      - {id: context, text: Authorization, certification, recurrence, and credibility can be qualitatively significant}
+      - {id: never, text: Anything below a dollar threshold is automatically irrelevant}
+      - {id: profit, text: A profitable result automatically makes the exception insignificant}
+    correct_option_id: context
+    explanation: A review threshold does not replace consideration of surrounding circumstances.
+    wrong_answer_feedback:
+      never: A dollar threshold alone can miss authorization, recurrence, certification, and credibility concerns.
+      profit: Profit is an outcome and does not remove the control or disclosure significance of an unauthorized trade.
+    hints: [Ask what the issue says about control and credibility, not only its amount.]
+    worked_solution: Consider amount and context while leaving formal accounting and legal conclusions to their owners.
+    retry_policy: until_correct
+  - id: diligence_economic_vs_liquidity
+    check_type: interpretation
+    prompt: A short hedge offsets expected physical price exposure but loses cash today. Which explanation is accurate?
+    learning_objective_ids: [economic_pnl_vs_margin_liquidity]
+    source_id: cftc_economic_purpose
+    options:
+      - {id: timing, text: Economic offset and daily variation-margin liquidity are different views}
+      - {id: impossible, text: A hedge that works economically cannot require cash}
+      - {id: revenue, text: A margin deposit creates revenue}
+    correct_option_id: timing
+    explanation: Daily mark-to-market can create an immediate cash need before physical value is realized.
+    wrong_answer_feedback:
+      impossible: Economic offset and cash timing are different; a rising market can benefit physical value while draining short-futures margin cash.
+      revenue: Moving cash into a margin account is an asset transfer, not revenue.
+    hints: [Separate the economic position from where cash must be posted today.]
+    worked_solution: Reconcile physical economics, futures settlement, and operating liquidity separately.
+    retry_policy: until_correct
+  - id: diligence_scenario_not_forecast
+    check_type: multiple_choice
+    prompt: What makes the three diligence cases sensitivities rather than forecasts?
+    learning_objective_ids: [scenario_vs_forecast]
+    source_id: fasb_concepts_useful_information
+    options:
+      - {id: assumptions, text: They disclose fictional assumptions, assign no probabilities, and test consequences}
+      - {id: colors, text: They use a table rather than prose}
+      - {id: entries, text: They create accounting entries for each case}
+    correct_option_id: assumptions
+    explanation: A sensitivity asks what-if; it does not assert what is expected to occur.
+    wrong_answer_feedback:
+      colors: Presentation format does not distinguish a sensitivity from a forecast.
+      entries: A non-probabilistic what-if should not create entries in actual accounting state.
+    hints: [Look for probabilities and claims about the future.]
+    worked_solution: Label assumptions, methods, and limitations and keep the analysis out of actual state.
+    retry_policy: until_correct
+  - id: diligence_covenant_headroom
+    check_type: multiple_choice
+    prompt: Available liquidity is $3.70 million and the fictional minimum is $3.60 million. What is headroom?
+    learning_objective_ids: [covenant_headroom]
+    source_id: fasb_debt_overview
+    options:
+      - {id: one_hundred, text: $100,000}
+      - {id: three_six, text: $3.60 million}
+      - {id: seven_three, text: $7.30 million}
+    correct_option_id: one_hundred
+    explanation: Headroom is the calculated amount above the scenario-specific minimum.
+    wrong_answer_feedback:
+      three_six: $3.60 million is the minimum itself, not the excess above it.
+      seven_three: Adding the amounts does not measure headroom; subtract $3.60 million from $3.70 million.
+    hints: [Subtract the minimum from available liquidity.]
+    worked_solution: $3,700,000 minus $3,600,000 equals $100,000.
+    retry_policy: until_correct
+  - id: diligence_remediation_status
+    check_type: interpretation
+    prompt: Management approved an action plan, but no implementation or effectiveness test is documented. What status is supported?
+    learning_objective_ids: [remediation_status_evidence]
+    source_id: iia_global_standards
+    options:
+      - {id: approved, text: Approved, not implemented or tested}
+      - {id: tested, text: Tested and effective}
+      - {id: closed, text: Closed automatically}
+    correct_option_id: approved
+    explanation: Approval, implementation, testing, and closure are separate evidence states.
+    wrong_answer_feedback:
+      tested: No implementation or effectiveness-test evidence supports a tested status.
+      closed: Approval alone does not prove implementation, effective operation, or formal closure.
+    hints: [Ask which event the linked record actually proves.]
+    worked_solution: Retain approved until an implementation record exists, then test before claiming effectiveness.
+    retry_policy: until_correct

@@ -636,7 +636,7 @@ class EleventhContractScenario(BaseModel):
 
 class ChapterLearningFile(BaseModel):
     schema_version: Literal[1]
-    checks: list[KnowledgeCheckDefinition] = Field(min_length=7)
+    checks: list[KnowledgeCheckDefinition] = Field(min_length=7, max_length=10)
     day_check_ids: dict[Literal["day_1", "day_2", "day_3"], list[str]]
 
     @model_validator(mode="after")
@@ -647,8 +647,6 @@ class ChapterLearningFile(BaseModel):
         ]
         if len(check_ids) != len(set(check_ids)):
             raise ValueError("duplicate Eleventh Contract check ID")
-        if len(check_ids) != 7:
-            raise ValueError("The Eleventh Contract requires exactly seven checks")
         if len(assigned) != len(set(assigned)) or set(assigned) != set(check_ids):
             raise ValueError("each Eleventh Contract check must appear in exactly one day")
         return self

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import secrets
+import sys
 from decimal import Decimal
 from pathlib import Path
 from typing import Annotated
@@ -35,14 +36,41 @@ from lake_effect_ledger.commodity.presentation import (
     render_position_book,
     render_settlement_day,
 )
+from lake_effect_ledger.diligence.engine import DiligenceEngine
+from lake_effect_ledger.diligence.models import DiligenceStage
+from lake_effect_ledger.diligence.presentation import (
+    render_diligence_room_report,
+    render_diligence_scene,
+    render_package_versions,
+    render_q_and_a,
+    render_request_list,
+    render_risk_schedule,
+    render_scenario_analysis,
+)
+from lake_effect_ledger.diligence.report import build_diligence_room_report
 from lake_effect_ledger.education.hedge_report import build_hedge_book_report
 from lake_effect_ledger.education.report import build_learning_report
 from lake_effect_ledger.game import create_new_game
+from lake_effect_ledger.learning.core import (
+    CoreReviewEngine,
+    build_core_debrief,
+    chapter_calculation_lines,
+)
 from lake_effect_ledger.learning.engine import LearningEngine
-from lake_effect_ledger.learning.models import GameMode, KnowledgeCheckType, ShowMathMode
+from lake_effect_ledger.learning.models import (
+    CampaignTrack,
+    GameMode,
+    KnowledgeCheckType,
+    ReviewStyle,
+    ShowMathMode,
+)
 from lake_effect_ledger.learning.presentation import (
     render_check,
     render_check_math,
+    render_core_chapter_debrief,
+    render_core_chapter_opening,
+    render_core_debrief,
+    render_core_review_diagnostic,
     render_day,
     render_notebook,
 )
@@ -50,6 +78,7 @@ from lake_effect_ledger.narrative.engine import NarrativeEngine
 from lake_effect_ledger.narrative.models import ContentBundle
 from lake_effect_ledger.persistence.saves import SaveRepository
 from lake_effect_ledger.presentation import (
+    render_character_introduction,
     render_dashboard,
     render_debug,
     render_end_of_day,
@@ -81,6 +110,11 @@ DEFAULT_CONTENT_ROOT = PROJECT_ROOT / "content"
 DEFAULT_SAVE_DATABASE = Path("saves") / "lake_ledger.db"
 SCENE_ID = "december_difference"
 HEDGE_DOCUMENTATION_SCENE_ID = "hedge_documentation"
+PROLOGUE_CHARACTER_IDS = {
+    "rotation_day_1_board": ("evelyn_marsh", "marisol_vega"),
+    "rotation_day_2_basis": ("tj_morrow", "kasia_zielinska"),
+    "rotation_day_3_call": ("darren_cho", "june_halvorsen"),
+}
 CHAPTER_DAY_SCENES = {
     1: (
         "ec_volume_language",
@@ -341,14 +375,115 @@ AUDIT_PATH_CHOICES = {
         "ns_management_response": "ns_response_partial",
     },
 }
+DILIGENCE_DAY_SCENES = {
+    1: ("dr_package_scope", "dr_exception_language", "dr_package_review"),
+    2: ("dr_number_source", "dr_scenario_scope", "dr_remediation_status"),
+    3: ("dr_buyer_answer", "dr_lender_answer", "dr_management_draft"),
+    4: ("dr_inconsistency_action", "dr_committee_position", "dr_final_action"),
+}
+_DILIGENCE_CONSISTENT = {
+    "dr_package_scope": "dr_send_complete_package",
+    "dr_exception_language": "dr_include_exception_schedule",
+    "dr_package_review": "dr_review_with_evelyn_noah",
+    "dr_number_source": "dr_reconcile_all_sources",
+    "dr_scenario_scope": "dr_include_full_sensitivities",
+    "dr_remediation_status": "dr_label_actual_remediation",
+    "dr_buyer_answer": "dr_answer_buyer_completely",
+    "dr_lender_answer": "dr_answer_lender_completely",
+    "dr_management_draft": "dr_correct_management_draft",
+    "dr_inconsistency_action": "dr_issue_correction",
+    "dr_committee_position": "dr_support_noah_chronology",
+    "dr_final_action": "dr_final_correct_disclosure",
+}
+DILIGENCE_PATH_CHOICES = {
+    "full_consistent": dict(_DILIGENCE_CONSISTENT),
+    "limited_then_supplement": {
+        **_DILIGENCE_CONSISTENT,
+        "dr_package_scope": "dr_send_limited_package",
+        "dr_exception_language": "dr_call_corrected_error",
+        "dr_scenario_scope": "dr_include_sensitivity_summary",
+        "dr_remediation_status": "dr_call_remediation_planned",
+        "dr_lender_answer": "dr_refer_lender_to_june",
+        "dr_inconsistency_action": "dr_issue_supplement",
+    },
+    "inconsistent_versions": {
+        **_DILIGENCE_CONSISTENT,
+        "dr_package_scope": "dr_send_linked_summary",
+        "dr_exception_language": "dr_call_eleven_authorized",
+        "dr_package_review": "dr_review_with_cal",
+        "dr_number_source": "dr_use_later_support_monday",
+        "dr_buyer_answer": "dr_answer_buyer_narrowly",
+        "dr_inconsistency_action": "dr_leave_versions",
+        "dr_final_action": "dr_final_stay_silent",
+    },
+    "remediation_overstated": {
+        **_DILIGENCE_CONSISTENT,
+        "dr_package_scope": "dr_send_linked_summary",
+        "dr_package_review": "dr_review_with_cal",
+        "dr_scenario_scope": "dr_include_sensitivity_summary",
+        "dr_remediation_status": "dr_claim_remediation_implemented",
+        "dr_buyer_answer": "dr_acknowledge_buyer_uncertainty",
+        "dr_lender_answer": "dr_refer_lender_to_june",
+    },
+    "covenant_concern": {
+        **_DILIGENCE_CONSISTENT,
+        "dr_scenario_scope": "dr_escalate_scenario_assumptions",
+    },
+    "cal_aligned": {
+        **_DILIGENCE_CONSISTENT,
+        "dr_package_scope": "dr_send_limited_package",
+        "dr_exception_language": "dr_call_corrected_error",
+        "dr_package_review": "dr_review_with_cal",
+        "dr_scenario_scope": "dr_include_sensitivity_summary",
+        "dr_remediation_status": "dr_call_remediation_planned",
+        "dr_buyer_answer": "dr_answer_buyer_narrowly",
+        "dr_lender_answer": "dr_answer_lender_narrowly",
+        "dr_management_draft": "dr_accept_preferred_draft",
+        "dr_inconsistency_action": "dr_issue_supplement",
+        "dr_committee_position": "dr_protect_cal_explanation",
+    },
+    "buyer_walks": {
+        **_DILIGENCE_CONSISTENT,
+        "dr_package_scope": "dr_send_limited_package",
+        "dr_exception_language": "dr_call_eleven_authorized",
+        "dr_package_review": "dr_review_with_cal",
+        "dr_number_source": "dr_use_later_support_monday",
+        "dr_scenario_scope": "dr_include_sensitivity_summary",
+        "dr_remediation_status": "dr_claim_remediation_implemented",
+        "dr_buyer_answer": "dr_answer_buyer_narrowly",
+        "dr_lender_answer": "dr_answer_lender_narrowly",
+        "dr_management_draft": "dr_accept_preferred_draft",
+        "dr_inconsistency_action": "dr_leave_versions",
+        "dr_committee_position": "dr_protect_cal_explanation",
+        "dr_final_action": "dr_final_stay_silent",
+    },
+    "conditional_close": {
+        **_DILIGENCE_CONSISTENT,
+        "dr_package_scope": "dr_send_linked_summary",
+        "dr_management_draft": "dr_escalate_management_draft",
+        "dr_committee_position": "dr_acknowledge_incomplete_remediation",
+        "dr_final_action": "dr_final_correct_disclosure",
+    },
+}
 
 app = typer.Typer(
     add_completion=False,
     invoke_without_command=True,
     no_args_is_help=False,
-    help="Play Lake Effect Ledger through No Surprises.",
+    help="Play Lake Effect Ledger through The Diligence Room.",
 )
 console = Console()
+
+
+def _configure_windows_utf8_output() -> None:
+    """Keep Unicode narrative and Rich borders intact in terminals and pipes."""
+    if sys.platform != "win32":
+        return
+    for stream_name in ("stdout", "stderr"):
+        stream = getattr(sys, stream_name)
+        encoding = (getattr(stream, "encoding", "") or "").lower().replace("-", "")
+        if encoding != "utf8" and hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8")
 
 
 def _ask(prompt: object) -> object:
@@ -356,6 +491,28 @@ def _ask(prompt: object) -> object:
     if result is None:
         raise typer.Exit()
     return result
+
+
+def _introduce_characters(
+    state: GameState,
+    content: ContentBundle,
+    *character_ids: str,
+) -> None:
+    for character_id in character_ids:
+        if character_id in state.introduced_character_ids:
+            continue
+        render_character_introduction(console, content.character(character_id))
+        state.introduced_character_ids.append(character_id)
+
+
+def _introduce_speaker(
+    state: GameState,
+    content: ContentBundle,
+    speaker: str,
+) -> None:
+    character = content.character_for_speaker(speaker)
+    if character is not None and character.id != "player":
+        _introduce_characters(state, content, character.id)
 
 
 def _select_background(content: ContentBundle) -> Background:
@@ -393,8 +550,32 @@ def _select_game_mode(content: ContentBundle) -> GameMode:
     return GameMode(str(value))
 
 
-def _new_interactive_game(content: ContentBundle, game_mode: GameMode | None = None) -> GameState:
+def _select_campaign_track(content: ContentBundle) -> CampaignTrack:
+    value = _ask(
+        questionary.select(
+            "Choose a campaign track:",
+            choices=[
+                Choice(
+                    title=(
+                        f"{item.label}{' · Recommended' if item.recommended else ''}"
+                        f" — {item.description}"
+                    ),
+                    value=item.id.value,
+                )
+                for item in content.game_modes.campaign_tracks
+            ],
+        )
+    )
+    return CampaignTrack(str(value))
+
+
+def _new_interactive_game(
+    content: ContentBundle,
+    game_mode: GameMode | None = None,
+    campaign_track: CampaignTrack | None = None,
+) -> GameState:
     game_mode = game_mode or _select_game_mode(content)
+    campaign_track = campaign_track or _select_campaign_track(content)
     name = str(
         _ask(
             questionary.text(
@@ -411,6 +592,7 @@ def _new_interactive_game(content: ContentBundle, game_mode: GameMode | None = N
         seed=seed,
         content=content,
         game_mode=game_mode,
+        campaign_track=campaign_track,
     )
 
 
@@ -437,12 +619,13 @@ def _interactive_check(
     while not state.learning.checks.get(check_id) or not state.learning.checks[check_id].completed:
         render_check(console, check)
         if state.show_math == ShowMathMode.ALWAYS:
-            render_check_math(console, check)
+            render_check_math(console, check, content)
         command_choices = [Choice("Answer", value="answer")]
         if state.show_math == ShowMathMode.ON_REQUEST:
             command_choices.append(Choice("Show the math / reasoning frame", value="math"))
         command_choices.extend(
             [
+                Choice("Clear screen and ask again", value="repeat"),
                 Choice("Give me a hint", value="hint"),
                 Choice("Open Learning Notebook", value="notebook"),
                 Choice("I'm not sure — walk me through it", value="unsure"),
@@ -452,7 +635,10 @@ def _interactive_check(
             _ask(questionary.select("How do you want to proceed?", choices=command_choices))
         )
         if action == "math":
-            render_check_math(console, check)
+            render_check_math(console, check, content)
+            continue
+        if action == "repeat":
+            console.clear()
             continue
         if action == "hint":
             console.print(Panel(engine.hint(state, check_id), title="Hint"))
@@ -490,7 +676,13 @@ def _interactive_check(
             label = "demonstrated independently" if result.independent else "practiced"
             console.print(Panel(result.explanation, title=f"Correct · {label}"))
             return
-        console.print(Panel("Not yet. Try again; no story state changed.", title="Retry"))
+        console.print(
+            Panel(
+                f"{result.wrong_answer_feedback}\n\n"
+                "Try again; no story or financial state changed.",
+                title="Not yet",
+            )
+        )
 
 
 def _play_prologue(
@@ -515,13 +707,24 @@ def _play_prologue(
         return True
     if state.prologue.completed:
         return True
-    if strategy not in {"correct", "helped", "retry"}:
+    if strategy not in {"auto", "correct", "helped", "retry"}:
         raise typer.BadParameter(
-            "prologue strategy must be correct, helped, or retry",
+            "prologue strategy must be auto, correct, helped, or retry",
             param_hint="--prologue-strategy",
         )
     if state.prologue.current_day_index == 0:
         prologue = content.prologue.prologue
+        render_core_chapter_opening(console, content, "first_rotation")
+        chapter = content.core_chapter("first_rotation")
+        LearningEngine(content).introduce_objectives(
+            state,
+            [
+                *chapter.introduced_objective_ids,
+                *chapter.practiced_objective_ids,
+                *chapter.business_context_objective_ids,
+            ],
+            chapter_id="first_rotation",
+        )
         console.print(
             Panel(
                 f"Role: {state.player.role}\n"
@@ -539,7 +742,24 @@ def _play_prologue(
             break
         day = days[state.prologue.current_day_index]
         engine.introduce_day(state, day)
+        _introduce_characters(
+            state,
+            content,
+            *PROLOGUE_CHARACTER_IDS[day.id],
+        )
         render_day(console, day)
+        run_checks = state.game_mode == GameMode.GUIDED or strategy != "auto"
+        if interactive and state.game_mode == GameMode.STANDARD and strategy == "auto":
+            run_checks = bool(
+                _ask(
+                    questionary.confirm(
+                        "Open this day's optional learning checks?",
+                        default=False,
+                    )
+                )
+            )
+        if not run_checks:
+            state.prologue.current_check_index = len(day.check_ids)
         while state.prologue.current_check_index < len(day.check_ids):
             check_id = day.check_ids[state.prologue.current_check_index]
             progress = state.learning.checks.get(check_id)
@@ -550,12 +770,21 @@ def _play_prologue(
                 _interactive_check(state, content=content, engine=engine, check_id=check_id)
             elif strategy == "helped":
                 if state.show_math == ShowMathMode.ALWAYS:
-                    render_check_math(console, content.knowledge_check(check_id))
+                    render_check_math(
+                        console,
+                        content.knowledge_check(check_id),
+                        content,
+                    )
                 engine.walkthrough(state, check_id)
             else:
                 if state.show_math == ShowMathMode.ALWAYS:
-                    render_check_math(console, content.knowledge_check(check_id))
-                if strategy == "retry":
+                    render_check_math(
+                        console,
+                        content.knowledge_check(check_id),
+                        content,
+                    )
+                effective_strategy = "correct" if strategy == "auto" else strategy
+                if effective_strategy == "retry":
                     engine.submit(state, check_id, "999999999")
                 engine.submit(state, check_id, engine.expected_answer(check_id))
             state.prologue.current_check_index += 1
@@ -577,7 +806,7 @@ def _play_prologue(
                 )
             NarrativeEngine(content).choose(state, scene.id, selected)
             state.prologue.story_choice_id = selected
-        engine.complete_day(state, day)
+        engine.complete_day(state, day, require_checks=run_checks)
         completed_this_run += 1
         console.print(Panel(day.end_note, title=f"{day.title} complete", border_style="green"))
         if save_enabled:
@@ -594,6 +823,7 @@ def _play_prologue(
         )
         if save_enabled:
             repository.save(state)
+        _finish_core_chapter(state, content, "first_rotation")
         return True
     console.print(
         Panel(
@@ -618,6 +848,51 @@ def _choose_interactively(content: ContentBundle) -> str:
             )
         )
     )
+
+
+def _begin_core_chapter(
+    state: GameState,
+    content: ContentBundle,
+    chapter_id: str,
+) -> None:
+    chapter = content.core_chapter(chapter_id)
+    render_core_chapter_opening(console, content, chapter_id)
+    LearningEngine(content).introduce_objectives(
+        state,
+        [
+            *chapter.introduced_objective_ids,
+            *chapter.practiced_objective_ids,
+            *chapter.business_context_objective_ids,
+        ],
+        chapter_id=chapter_id,
+    )
+
+
+def _render_shared_engine_math(title: str, lines: list[str]) -> None:
+    console.print(
+        Panel(
+            "\n".join(lines),
+            title=f"SHOW THE MATH · {title}",
+            border_style="magenta",
+        )
+    )
+
+
+def _finish_core_chapter(
+    state: GameState,
+    content: ContentBundle,
+    chapter_id: str,
+) -> None:
+    if chapter_id in state.core_chapter_debrief_ids:
+        return
+    render_core_chapter_debrief(
+        console,
+        state,
+        content,
+        chapter_id,
+        chapter_calculation_lines(state, content, chapter_id),
+    )
+    state.core_chapter_debrief_ids.append(chapter_id)
 
 
 def _choose_hedge_interactively(content: ContentBundle) -> str:
@@ -699,7 +974,9 @@ def _play(
             render_debug(console, state)
         return
 
+    _begin_core_chapter(state, content, "december_difference")
     scene = content.scene(SCENE_ID)
+    _introduce_speaker(state, content, scene.speaker)
     render_scene(console, scene)
     selected_choice = choice_id or _choose_interactively(content)
     valid_choices = {choice.id for choice in scene.choices}
@@ -719,6 +996,7 @@ def _play(
 
     render_end_of_day(console, state)
     render_learning_report(console, build_learning_report(state, content))
+    _finish_core_chapter(state, content, "december_difference")
     if debug:
         render_debug(console, state)
     if save_enabled:
@@ -744,6 +1022,7 @@ def _play_hedge_book(
     reduce_contracts: int | None,
     pause_after_notification: bool,
 ) -> None:
+    starting_new_treasury = state.treasury is None
     try:
         engine = CommodityEngine(content, market_path_id=market_path_id)
     except ValueError as error:
@@ -758,6 +1037,16 @@ def _play_hedge_book(
         or state.treasury is not None
     )
     if state.hedge_book is None:
+        _begin_core_chapter(state, content, "hedge_book")
+        _introduce_characters(
+            state,
+            content,
+            "cal_rourke",
+            "tj_morrow",
+            "marisol_vega",
+            "kasia_zielinska",
+            "evelyn_marsh",
+        )
         render_hedge_briefings(console, content)
         while True:
             selected_level = hedge_level_id or _choose_hedge_interactively(content)
@@ -766,6 +1055,20 @@ def _play_hedge_book(
             except ValueError as error:
                 raise typer.BadParameter(str(error), param_hint="--hedge-choice") from error
             render_hedge_ticket(console, preview, content)
+            if state.show_math == ShowMathMode.ALWAYS:
+                contract = content.commodity_contract(engine.scenario.contract_id)
+                _render_shared_engine_math(
+                    "Hedge ticket",
+                    [
+                        (
+                            f"{preview.contracts} contracts × "
+                            f"{contract.contract_size_mmbtu:,.0f} "
+                            f"MMBtu = {preview.hedged_quantity_mmbtu:,.0f} MMBtu"
+                        ),
+                        f"Shared-engine hedge ratio: {preview.hedge_ratio:.4f}",
+                        (f"Shared-engine initial margin: ${preview.initial_margin_required:,.2f}"),
+                    ],
+                )
             if not interactive or bool(
                 _ask(questionary.confirm("Approve this hedge ticket?", default=True))
             ):
@@ -824,6 +1127,9 @@ def _play_hedge_book(
             processed += 1
             if book.next_settlement_index >= treasury_engine.scenario.trigger_settlement_day:
                 treasury_engine.initialize_crisis(state)
+                if starting_new_treasury:
+                    _begin_core_chapter(state, content, "two_oclock_call")
+                    starting_new_treasury = False
                 render_treasury_crisis(console, state, content)
             if save_enabled:
                 repository.save(state)
@@ -873,22 +1179,57 @@ def _play_hedge_book(
 
         result = engine.settle_next_day(state)
         render_settlement_day(console, result, show_explanation=show_daily_lessons)
+        if state.show_math == ShowMathMode.ALWAYS:
+            _render_shared_engine_math(
+                f"Settlement day {result.day_number}",
+                [
+                    (
+                        f"Henry Hub: ${result.previous_henry_hub_price:.3f}/MMBtu "
+                        f"→ ${result.henry_hub_price:.3f}/MMBtu"
+                    ),
+                    (f"Chicago = Henry Hub + basis = ${result.chicago_price:.3f}/MMBtu"),
+                    f"Shared-engine futures P&L: ${result.daily_futures_pnl:+,.2f}",
+                    f"Shared-engine margin call: ${result.margin_call_amount:,.2f}",
+                    (
+                        f"Operating cash ${result.operating_cash_end:,.2f}; "
+                        f"FCM cash ${result.margin_balance_end:,.2f}"
+                    ),
+                ],
+            )
         render_position_book(console, state)
         processed += 1
         if save_enabled:
             repository.save(state)
         if interactive and not book.completed:
-            action = _ask(
-                questionary.select(
-                    "Next action:",
-                    choices=[
-                        Choice("Continue to next settlement", value="continue"),
-                        Choice("Save and return to menu", value="save"),
-                    ],
-                )
-            )
-            if action == "save":
-                paused = True
+            while True:
+                action_choices = [
+                    Choice("Continue to next settlement", value="continue"),
+                    Choice("Save and return to menu", value="save"),
+                ]
+                if state.show_math == ShowMathMode.ON_REQUEST:
+                    action_choices.insert(
+                        1,
+                        Choice("Show the Math for this settlement", value="math"),
+                    )
+                action = _ask(questionary.select("Next action:", choices=action_choices))
+                if action == "math":
+                    _render_shared_engine_math(
+                        f"Settlement day {result.day_number}",
+                        [
+                            (
+                                f"${result.previous_henry_hub_price:.3f}/MMBtu "
+                                f"→ ${result.henry_hub_price:.3f}/MMBtu"
+                            ),
+                            f"Chicago price: ${result.chicago_price:.3f}/MMBtu",
+                            f"Futures P&L: ${result.daily_futures_pnl:+,.2f}",
+                            f"Margin call: ${result.margin_call_amount:,.2f}",
+                        ],
+                    )
+                    continue
+                if action == "save":
+                    paused = True
+                break
+            if paused:
                 break
 
     if book.completed:
@@ -898,6 +1239,9 @@ def _play_hedge_book(
         render_hedge_book_report(console, report)
         if state.treasury is not None:
             render_treasury_report(console, build_treasury_report(state, content))
+        _finish_core_chapter(state, content, "hedge_book")
+        if state.treasury is not None and state.treasury.completed:
+            _finish_core_chapter(state, content, "two_oclock_call")
     else:
         pause_reason = (
             "The notification is saved; load the autosave to choose funding."
@@ -1003,6 +1347,7 @@ def _run_chapter_scene(
     interactive: bool,
 ) -> None:
     narrative = NarrativeEngine(content)
+    _introduce_speaker(state, content, content.scene(scene_id).speaker)
     render_chapter_scene(console, state, content, scene_id)
     selected = (
         _choose_chapter_choice_interactively(state, content, scene_id)
@@ -1055,8 +1400,11 @@ def _play_eleventh_contract(
             "eleventh path must be one of: " + ", ".join(sorted(CHAPTER_PATH_CHOICES)),
             param_hint="--eleventh-path",
         )
+    starting_new_chapter = state.eleventh_contract is None
     engine = EleventhContractEngine(content)
     chapter = engine.initialize(state)
+    if starting_new_chapter:
+        _begin_core_chapter(state, content, "eleventh_contract")
     requested_path = chapter_path
     if chapter.selected_story_path_id is None:
         chapter.selected_story_path_id = (
@@ -1144,6 +1492,15 @@ def _play_eleventh_contract(
             engine.recommend_and_execute_order(state)
             render_order_and_authorization(console, state, content, debug=debug)
             render_trade_blotter(console, state)
+            if state.show_math == ShowMathMode.ALWAYS:
+                _render_shared_engine_math(
+                    "Eleventh Contract position",
+                    chapter_calculation_lines(
+                        state,
+                        content,
+                        "eleventh_contract",
+                    ),
+                )
             completed_this_run += 1
             if save_enabled:
                 repository.save(state)
@@ -1176,12 +1533,216 @@ def _play_eleventh_contract(
         engine.complete_chapter(state)
         report = build_analyst_case_file(state, content)
         render_case_file(console, report)
+        _finish_core_chapter(state, content, "eleventh_contract")
         completed_this_run += 1
         if save_enabled:
             repository.save(state)
             console.print(f"[dim]Autosaved to {repository.path.resolve()}[/dim]")
     if debug:
         render_debug(console, state)
+    return True
+
+
+def _play_core_review(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    repository: SaveRepository,
+    style_name: str | None,
+    strategy: str,
+    interactive: bool,
+    save_enabled: bool,
+) -> bool:
+    if state.core_campaign_completed:
+        return True
+    if strategy not in {"correct", "helped", "retry"}:
+        raise typer.BadParameter(
+            "review strategy must be correct, helped, or retry",
+            param_hint="--review-strategy",
+        )
+    review_engine = CoreReviewEngine(content)
+    review = state.learning.core_review
+    if review.style is None:
+        if style_name is not None:
+            try:
+                selected_style = ReviewStyle(style_name)
+            except ValueError as error:
+                raise typer.BadParameter(
+                    "review style must be learning or checkpoint",
+                    param_hint="--review-style",
+                ) from error
+        elif interactive:
+            selected_style = ReviewStyle(
+                str(
+                    _ask(
+                        questionary.select(
+                            "Choose the cumulative review style:",
+                            choices=[
+                                Choice(
+                                    "Learning Review — hints, walkthroughs, retry",
+                                    value=ReviewStyle.LEARNING.value,
+                                ),
+                                Choice(
+                                    "Checkpoint Review — one answer, explanations after",
+                                    value=ReviewStyle.CHECKPOINT.value,
+                                ),
+                            ],
+                        )
+                    )
+                )
+            )
+        else:
+            selected_style = (
+                ReviewStyle.LEARNING
+                if state.game_mode == GameMode.GUIDED
+                else ReviewStyle.CHECKPOINT
+            )
+        review_engine.start(state, selected_style)
+    elif style_name is not None and review.style.value != style_name:
+        raise typer.BadParameter(
+            f"the saved review already uses {review.style.value}",
+            param_hint="--review-style",
+        )
+
+    console.print(
+        Panel(
+            "Fifteen questions drawn only from concepts taught in the five core "
+            "chapters. First attempts remain visible even when Learning Review "
+            "allows a retry.",
+            title=f"Cumulative Core Review · {review.style.value}",
+            border_style="magenta",
+        )
+    )
+    while not review.completed:
+        reference = review_engine.current_reference(state)
+        check = content.knowledge_check(reference.check_id)
+        render_check(console, check)
+        if interactive:
+            choices = [
+                Choice("Answer", value="answer"),
+                Choice("Clear screen and ask again", value="repeat"),
+            ]
+            if review.style == ReviewStyle.LEARNING:
+                if state.show_math == ShowMathMode.ON_REQUEST:
+                    choices.append(Choice("Show the Math", value="math"))
+                choices.extend(
+                    [
+                        Choice("Give me a hint", value="hint"),
+                        Choice("Open Learning Notebook", value="notebook"),
+                        Choice("Walk me through it", value="walkthrough"),
+                        Choice("Save and return to menu", value="save"),
+                    ]
+                )
+            action = str(_ask(questionary.select("Review action:", choices=choices)))
+            if action == "save":
+                if save_enabled:
+                    repository.save(state)
+                console.print(
+                    Panel(
+                        "Review progress saved. Load this game to resume.",
+                        title="Core Review paused",
+                        border_style="yellow",
+                    )
+                )
+                return False
+            if action == "repeat":
+                console.clear()
+                continue
+            if action == "math":
+                render_check_math(console, check, content)
+                continue
+            if action == "hint":
+                console.print(Panel(review_engine.hint(state), title="Hint"))
+                continue
+            if action == "notebook":
+                render_notebook(console, state, content)
+                continue
+            if action == "walkthrough":
+                result = review_engine.walkthrough(state)
+                console.print(
+                    Panel(
+                        f"{result.explanation}\n\n{result.feedback}",
+                        title="Worked walkthrough · completed with help",
+                        border_style="yellow",
+                    )
+                )
+                if save_enabled:
+                    repository.save(state)
+                continue
+            if check.check_type == KnowledgeCheckType.NUMERIC:
+                answer = str(_ask(questionary.text("Your numeric answer:")))
+            else:
+                answer = str(
+                    _ask(
+                        questionary.select(
+                            "Your answer:",
+                            choices=[Choice(item.text, value=item.id) for item in check.options],
+                        )
+                    )
+                )
+            result = review_engine.submit(state, answer)
+            if review.style == ReviewStyle.LEARNING:
+                if result.correct:
+                    console.print(Panel(result.explanation, title="Correct"))
+                else:
+                    console.print(
+                        Panel(
+                            f"{result.feedback}\n\nTry again; the first attempt "
+                            "remains in your diagnostic.",
+                            title="Not yet",
+                        )
+                    )
+            else:
+                console.print("[dim]Answer recorded. Explanations follow completion.[/dim]")
+        else:
+            expected = LearningEngine(content).expected_answer(reference.check_id)
+            if review.style == ReviewStyle.LEARNING and strategy == "helped":
+                if review.current_question_index == 0:
+                    review_engine.walkthrough(state)
+                else:
+                    review_engine.hint(state)
+                    review_engine.submit(state, expected)
+            elif strategy == "retry":
+                wrong = (
+                    "999999999"
+                    if check.check_type == KnowledgeCheckType.NUMERIC
+                    else next(
+                        item.id for item in check.options if item.id != check.correct_option_id
+                    )
+                )
+                review_engine.submit(state, wrong)
+                if review.style == ReviewStyle.LEARNING:
+                    review_engine.submit(state, expected)
+            else:
+                review_engine.submit(state, expected)
+        if save_enabled:
+            repository.save(state)
+
+    if review.style == ReviewStyle.CHECKPOINT:
+        explanation_lines = []
+        for reference in content.curriculum.review_questions:
+            check = content.knowledge_check(reference.check_id)
+            explanation_lines.append(f"{reference.id}: {check.explanation} {check.worked_solution}")
+        console.print(
+            Panel(
+                "\n".join(explanation_lines),
+                title="Checkpoint explanations",
+                border_style="blue",
+            )
+        )
+    render_core_review_diagnostic(console, review_engine.diagnostic(state))
+    if not state.core_debrief_completed:
+        render_core_debrief(console, build_core_debrief(state, content))
+        state.core_debrief_completed = True
+    state.core_campaign_completed = True
+    state.record(
+        phase="system",
+        event_type="series3_core_completed",
+        source_id="series3_core_debrief",
+        message="Series 3 Core Campaign completed and returned to the menu boundary.",
+    )
+    if save_enabled:
+        repository.save(state)
     return True
 
 
@@ -1261,6 +1822,7 @@ def _run_audit_scene(
 ) -> None:
     engine = InternalAuditEngine(content)
     scene = content.audit_scene(scene_id)
+    _introduce_speaker(state, content, scene.speaker)
     render_audit_scene(console, state, scene)
     selected = (
         _choose_audit_choice_interactively(content, scene_id)
@@ -1484,6 +2046,303 @@ def _play_no_surprises(
     return True
 
 
+def _run_diligence_checks(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    day: int,
+    strategy: str,
+    interactive: bool,
+) -> None:
+    if strategy not in {"auto", "correct", "helped", "retry"}:
+        raise typer.BadParameter(
+            "diligence check strategy must be auto, correct, helped, or retry",
+            param_hint="--diligence-check-strategy",
+        )
+    should_run = state.game_mode == GameMode.GUIDED or strategy != "auto"
+    if interactive and state.game_mode == GameMode.STANDARD and strategy == "auto":
+        should_run = bool(
+            _ask(
+                questionary.confirm(
+                    "Open this day's optional diligence checks?",
+                    default=False,
+                )
+            )
+        )
+    if not should_run:
+        return
+    effective_strategy = "correct" if strategy == "auto" else strategy
+    learning = LearningEngine(content)
+    diligence = state.diligence_room
+    for check_id in content.diligence_learning.day_check_ids[f"day_{day}"]:
+        progress = state.learning.checks.get(check_id)
+        if progress is not None and progress.completed:
+            if check_id not in diligence.learning_check_ids:
+                diligence.learning_check_ids.append(check_id)
+            continue
+        if interactive:
+            _interactive_check(
+                state,
+                content=content,
+                engine=learning,
+                check_id=check_id,
+            )
+        elif effective_strategy == "helped":
+            learning.walkthrough(state, check_id)
+        else:
+            if effective_strategy == "retry":
+                learning.submit(state, check_id, "__wrong__")
+            learning.submit(state, check_id, learning.expected_answer(check_id))
+        if check_id not in diligence.learning_check_ids:
+            diligence.learning_check_ids.append(check_id)
+
+
+def _choose_diligence_choice_interactively(
+    content: ContentBundle,
+    scene_id: str,
+) -> str:
+    scene = content.diligence_scene(scene_id)
+    return str(
+        _ask(
+            questionary.select(
+                "What do you do?",
+                choices=[Choice(title=item.text, value=item.id) for item in scene.choices],
+            )
+        )
+    )
+
+
+def _run_diligence_scene(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    scene_id: str,
+    diligence_path: str,
+    interactive: bool,
+) -> None:
+    engine = DiligenceEngine(content)
+    scene = content.diligence_scene(scene_id)
+    _introduce_speaker(state, content, scene.speaker)
+    render_diligence_scene(console, state, scene)
+    selected = (
+        _choose_diligence_choice_interactively(content, scene_id)
+        if interactive
+        else DILIGENCE_PATH_CHOICES[diligence_path][scene_id]
+    )
+    valid_ids = {item.id for item in scene.choices}
+    if selected not in valid_ids:
+        raise typer.BadParameter(
+            f"diligence path {diligence_path!r} cannot select {selected!r} in {scene_id}",
+            param_hint="--diligence-path",
+        )
+    engine.apply_choice(state, scene_id, selected)
+
+
+def _diligence_pause(
+    state: GameState,
+    *,
+    repository: SaveRepository,
+    save_enabled: bool,
+    message: str,
+) -> None:
+    if save_enabled:
+        repository.save(state)
+    console.print(
+        Panel(
+            f"{message} Load the autosave to resume from the preserved diligence state.",
+            title="The Diligence Room paused",
+            border_style="yellow",
+        )
+    )
+
+
+def _play_diligence_room(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    repository: SaveRepository,
+    diligence_path: str | None,
+    check_strategy: str,
+    maximum_stages: int | None,
+    pause_before_committee: bool,
+    interactive: bool,
+    debug: bool,
+    save_enabled: bool,
+) -> bool:
+    if diligence_path is not None and diligence_path not in DILIGENCE_PATH_CHOICES:
+        raise typer.BadParameter(
+            "diligence path must be one of: " + ", ".join(sorted(DILIGENCE_PATH_CHOICES)),
+            param_hint="--diligence-path",
+        )
+    engine = DiligenceEngine(content)
+    diligence = engine.initialize(state)
+    requested_path = diligence_path
+    if diligence.selected_story_path_id is None:
+        diligence.selected_story_path_id = (
+            "interactive" if interactive else requested_path or "full_consistent"
+        )
+    elif (
+        requested_path is not None
+        and diligence.selected_story_path_id != requested_path
+        and diligence.selected_story_path_id != "interactive"
+    ):
+        raise typer.BadParameter(
+            f"the saved diligence chapter is already using path "
+            f"{diligence.selected_story_path_id!r}",
+            param_hint="--diligence-path",
+        )
+    diligence_path = requested_path or (
+        diligence.selected_story_path_id
+        if diligence.selected_story_path_id != "interactive"
+        else "full_consistent"
+    )
+    if diligence.completed:
+        render_diligence_room_report(
+            console,
+            build_diligence_room_report(state, content),
+        )
+        return True
+    console.print(
+        Panel(
+            "Four working days · about "
+            f"{content.diligence_scenario.estimated_minutes} minutes\n"
+            "Proposed majority acquisition by "
+            f"{content.diligence_scenario.buyer_name}.\n"
+            "You assemble and reconcile records; owners retain approval, legal, "
+            "accounting-materiality, and executive representations.",
+            title=content.diligence_scenario.title,
+            border_style="cyan",
+        )
+    )
+    completed_this_run = 0
+    while not diligence.completed:
+        if maximum_stages is not None and completed_this_run >= maximum_stages:
+            _diligence_pause(
+                state,
+                repository=repository,
+                save_enabled=save_enabled,
+                message=f"Completed {completed_this_run} diligence stage(s) in this run.",
+            )
+            return False
+        stage = diligence.current_stage
+        if stage == DiligenceStage.REQUEST_LIST:
+            render_request_list(console, state)
+            engine.advance_request_list(state)
+        elif stage == DiligenceStage.INITIAL_PACKAGE:
+            _run_diligence_checks(
+                state,
+                content=content,
+                day=1,
+                strategy=check_strategy,
+                interactive=interactive,
+            )
+            for scene_id in DILIGENCE_DAY_SCENES[1]:
+                _run_diligence_scene(
+                    state,
+                    content=content,
+                    scene_id=scene_id,
+                    diligence_path=diligence_path,
+                    interactive=interactive,
+                )
+                if save_enabled:
+                    repository.save(state)
+            engine.prepare_initial_packages(state)
+            render_package_versions(console, state)
+        elif stage == DiligenceStage.RISK_SCHEDULE:
+            _run_diligence_checks(
+                state,
+                content=content,
+                day=2,
+                strategy=check_strategy,
+                interactive=interactive,
+            )
+            for scene_id in DILIGENCE_DAY_SCENES[2]:
+                _run_diligence_scene(
+                    state,
+                    content=content,
+                    scene_id=scene_id,
+                    diligence_path=diligence_path,
+                    interactive=interactive,
+                )
+                if save_enabled:
+                    repository.save(state)
+            engine.prepare_risk_schedule(state)
+            render_risk_schedule(console, state)
+            render_scenario_analysis(console, state)
+        elif stage == DiligenceStage.Q_AND_A:
+            _run_diligence_checks(
+                state,
+                content=content,
+                day=3,
+                strategy=check_strategy,
+                interactive=interactive,
+            )
+            for scene_id in DILIGENCE_DAY_SCENES[3]:
+                _run_diligence_scene(
+                    state,
+                    content=content,
+                    scene_id=scene_id,
+                    diligence_path=diligence_path,
+                    interactive=interactive,
+                )
+                if save_enabled:
+                    repository.save(state)
+            engine.prepare_q_and_a(state)
+            render_q_and_a(console, state)
+        elif stage == DiligenceStage.SUPPLEMENTAL:
+            _run_diligence_checks(
+                state,
+                content=content,
+                day=4,
+                strategy=check_strategy,
+                interactive=interactive,
+            )
+            _run_diligence_scene(
+                state,
+                content=content,
+                scene_id="dr_inconsistency_action",
+                diligence_path=diligence_path,
+                interactive=interactive,
+            )
+            engine.prepare_supplement(state)
+            render_package_versions(console, state)
+        elif stage == DiligenceStage.BEFORE_COMMITTEE:
+            if pause_before_committee and not diligence.diligence_flags.get(
+                "paused_before_committee"
+            ):
+                diligence.diligence_flags["paused_before_committee"] = True
+                _diligence_pause(
+                    state,
+                    repository=repository,
+                    save_enabled=save_enabled,
+                    message="The supplemented record is saved before the committee meeting.",
+                )
+                return False
+            for scene_id in ("dr_committee_position", "dr_final_action"):
+                _run_diligence_scene(
+                    state,
+                    content=content,
+                    scene_id=scene_id,
+                    diligence_path=diligence_path,
+                    interactive=interactive,
+                )
+                if save_enabled:
+                    repository.save(state)
+            engine.complete(state)
+            render_diligence_room_report(
+                console,
+                build_diligence_room_report(state, content),
+            )
+        else:
+            raise ValueError(f"unsupported diligence stage: {stage}")
+        completed_this_run += 1
+        if save_enabled:
+            repository.save(state)
+    if debug:
+        render_debug(console, state)
+    return True
+
+
 def _load_interactive(repository: SaveRepository) -> GameState | None:
     saves = repository.list_saves()
     if not saves:
@@ -1626,6 +2485,13 @@ def main(
             help="Start a new game in guided or standard mode.",
         ),
     ] = None,
+    campaign_track: Annotated[
+        str | None,
+        typer.Option(
+            "--campaign-track",
+            help="Campaign scope: series3_core or extended_story.",
+        ),
+    ] = None,
     show_math: Annotated[
         str | None,
         typer.Option(
@@ -1644,9 +2510,9 @@ def main(
         str,
         typer.Option(
             "--prologue-strategy",
-            help="Script checks as correct, helped, or retry.",
+            help="Script checks as auto, correct, helped, or retry.",
         ),
-    ] = "correct",
+    ] = "auto",
     prologue_choice: Annotated[
         str | None,
         typer.Option(
@@ -1688,6 +2554,20 @@ def main(
             help="Run chapter checks as auto, correct, helped, or retry.",
         ),
     ] = "auto",
+    review_style: Annotated[
+        str | None,
+        typer.Option(
+            "--review-style",
+            help="Cumulative Core Review: learning or checkpoint.",
+        ),
+    ] = None,
+    review_strategy: Annotated[
+        str,
+        typer.Option(
+            "--review-strategy",
+            help="Script the Core Review as correct, helped, or retry.",
+        ),
+    ] = "correct",
     chapter_days: Annotated[
         int | None,
         typer.Option(
@@ -1738,8 +2618,43 @@ def main(
             help="Autosave the management response before the audit exit meeting.",
         ),
     ] = False,
+    diligence_path: Annotated[
+        str | None,
+        typer.Option(
+            "--diligence-path",
+            help=(
+                "Run The Diligence Room with full_consistent, limited_then_supplement, "
+                "inconsistent_versions, remediation_overstated, covenant_concern, "
+                "cal_aligned, buyer_walks, or conditional_close."
+            ),
+        ),
+    ] = None,
+    diligence_check_strategy: Annotated[
+        str,
+        typer.Option(
+            "--diligence-check-strategy",
+            help="Run diligence checks as auto, correct, helped, or retry.",
+        ),
+    ] = "auto",
+    diligence_stages: Annotated[
+        int | None,
+        typer.Option(
+            "--diligence-stages",
+            min=0,
+            max=6,
+            help="Complete at most this many Diligence Room stages, then autosave.",
+        ),
+    ] = None,
+    pause_before_committee: Annotated[
+        bool,
+        typer.Option(
+            "--pause-before-committee",
+            help="Autosave the supplemented record before the committee meeting.",
+        ),
+    ] = False,
 ) -> None:
-    """Play Lake Effect Ledger through No Surprises."""
+    """Play Lake Effect Ledger through The Diligence Room."""
+    _configure_windows_utf8_output()
     render_title(console)
     try:
         content = ContentBundle.load(DEFAULT_CONTENT_ROOT)
@@ -1764,6 +2679,21 @@ def main(
                 param_hint="--game-mode",
             ) from error
         try:
+            selected_track = (
+                CampaignTrack(campaign_track)
+                if campaign_track is not None
+                else (
+                    CampaignTrack.EXTENDED_STORY
+                    if audit_path is not None or diligence_path is not None
+                    else None
+                )
+            )
+        except ValueError as error:
+            raise typer.BadParameter(
+                "campaign track must be series3_core or extended_story",
+                param_hint="--campaign-track",
+            ) from error
+        try:
             selected_math = ShowMathMode(show_math) if show_math is not None else None
         except ValueError as error:
             raise typer.BadParameter(
@@ -1776,6 +2706,11 @@ def main(
             except (KeyError, ValueError) as error:
                 console.print(f"[bold red]Could not load autosave:[/bold red] {error}")
                 raise typer.Exit(code=2) from error
+            if selected_track is not None and state.campaign_track != selected_track:
+                raise typer.BadParameter(
+                    f"the autosave uses campaign track {state.campaign_track.value}",
+                    param_hint="--campaign-track",
+                )
         else:
             state = create_new_game(
                 name=player_name,
@@ -1783,13 +2718,14 @@ def main(
                 seed=seed,
                 content=content,
                 game_mode=selected_mode,
+                campaign_track=selected_track,
                 show_math=selected_math,
                 skip_prologue=skip_prologue,
             )
         if show_notebook:
             render_notebook(console, state, content)
             return
-        if state.game_mode == GameMode.GUIDED and not state.prologue.completed:
+        if not state.prologue.completed:
             finished_prologue = _play_prologue(
                 state,
                 content=content,
@@ -1813,9 +2749,31 @@ def main(
                 debug=debug and hedge_choice is None,
                 save_enabled=not no_save,
             )
-        audit_requested = audit_path is not None or state.no_surprises is not None
+        explicit_campaign = campaign_track is not None
+        resume_campaign = load_autosave and (
+            state.learning.core_review.started
+            or (
+                state.campaign_track == CampaignTrack.SERIES_3_CORE
+                and not state.core_campaign_completed
+            )
+        )
+        extended_track_requested = (
+            explicit_campaign or resume_campaign
+        ) and state.campaign_track == CampaignTrack.EXTENDED_STORY
+        diligence_requested = (
+            diligence_path is not None
+            or state.diligence_room is not None
+            or extended_track_requested
+        )
+        audit_requested = (
+            audit_path is not None or state.no_surprises is not None or diligence_requested
+        )
         chapter_requested = (
-            eleventh_path is not None or state.eleventh_contract is not None or audit_requested
+            eleventh_path is not None
+            or state.eleventh_contract is not None
+            or audit_requested
+            or explicit_campaign
+            or resume_campaign
         )
         if hedge_choice is not None or state.hedge_book is not None or chapter_requested:
             _play_hedge_book(
@@ -1848,7 +2806,7 @@ def main(
                 return
             if state.treasury is not None and not state.treasury.completed:
                 return
-            _play_eleventh_contract(
+            chapter_finished = _play_eleventh_contract(
                 state,
                 content=content,
                 repository=repository,
@@ -1860,6 +2818,31 @@ def main(
                 debug=debug,
                 save_enabled=not no_save,
             )
+            if not chapter_finished:
+                return
+            if not state.core_campaign_completed:
+                review_finished = _play_core_review(
+                    state,
+                    content=content,
+                    repository=repository,
+                    style_name=review_style,
+                    strategy=review_strategy,
+                    interactive=False,
+                    save_enabled=not no_save,
+                )
+                if not review_finished:
+                    return
+            if state.campaign_track == CampaignTrack.SERIES_3_CORE:
+                console.print(
+                    Panel(
+                        "Series 3 Core is complete. No Surprises and The Diligence "
+                        "Room remain available only in Extended Story. Returning to "
+                        "the main-menu boundary.",
+                        title="Core Campaign complete",
+                        border_style="green",
+                    )
+                )
+                return
         if audit_requested:
             if state.eleventh_contract is None or not state.eleventh_contract.completed:
                 return
@@ -1871,6 +2854,21 @@ def main(
                 check_strategy=audit_check_strategy,
                 maximum_stages=audit_stages,
                 pause_before_exit=pause_before_exit,
+                interactive=False,
+                debug=debug,
+                save_enabled=not no_save,
+            )
+        if diligence_requested:
+            if state.no_surprises is None or not state.no_surprises.completed:
+                return
+            _play_diligence_room(
+                state,
+                content=content,
+                repository=repository,
+                diligence_path=diligence_path,
+                check_strategy=diligence_check_strategy,
+                maximum_stages=diligence_stages,
+                pause_before_committee=pause_before_committee,
                 interactive=False,
                 debug=debug,
                 save_enabled=not no_save,
@@ -1897,7 +2895,14 @@ def main(
                 "game mode must be guided or standard",
                 param_hint="--game-mode",
             ) from error
-        state = _new_interactive_game(content, selected_mode)
+        try:
+            selected_track = CampaignTrack(campaign_track) if campaign_track is not None else None
+        except ValueError as error:
+            raise typer.BadParameter(
+                "campaign track must be series3_core or extended_story",
+                param_hint="--campaign-track",
+            ) from error
+        state = _new_interactive_game(content, selected_mode, selected_track)
     else:
         state = _load_interactive(repository)
     if state is None:
@@ -1913,12 +2918,12 @@ def main(
     if show_notebook:
         render_notebook(console, state, content)
         return
-    if state.game_mode == GameMode.GUIDED and not state.prologue.completed:
+    if not state.prologue.completed:
         finished_prologue = _play_prologue(
             state,
             content=content,
             repository=repository,
-            strategy="correct",
+            strategy="auto",
             story_choice_id=None,
             maximum_days=None,
             skip=skip_prologue,
@@ -1992,6 +2997,29 @@ def main(
         )
         if not chapter_finished:
             return
+        if not state.core_campaign_completed:
+            review_finished = _play_core_review(
+                state,
+                content=content,
+                repository=repository,
+                style_name=review_style,
+                strategy=review_strategy,
+                interactive=True,
+                save_enabled=not no_save,
+            )
+            if not review_finished:
+                return
+        if state.campaign_track == CampaignTrack.SERIES_3_CORE:
+            console.print(
+                Panel(
+                    "The Series 3 Core Campaign stops here. No Surprises and "
+                    "The Diligence Room were not entered. Returning to the "
+                    "main-menu boundary.",
+                    title="Core Campaign complete",
+                    border_style="green",
+                )
+            )
+            return
         continue_to_audit = state.no_surprises is not None or bool(
             _ask(
                 questionary.confirm(
@@ -2001,7 +3029,7 @@ def main(
             )
         )
         if continue_to_audit:
-            _play_no_surprises(
+            audit_finished = _play_no_surprises(
                 state,
                 content=content,
                 repository=repository,
@@ -2013,6 +3041,29 @@ def main(
                 debug=debug,
                 save_enabled=not no_save,
             )
+            if not audit_finished:
+                return
+            continue_to_diligence = state.diligence_room is not None or bool(
+                _ask(
+                    questionary.confirm(
+                        "Continue to The Diligence Room?",
+                        default=True,
+                    )
+                )
+            )
+            if continue_to_diligence:
+                _play_diligence_room(
+                    state,
+                    content=content,
+                    repository=repository,
+                    diligence_path=diligence_path,
+                    check_strategy=diligence_check_strategy,
+                    maximum_stages=diligence_stages,
+                    pause_before_committee=pause_before_committee,
+                    interactive=True,
+                    debug=debug,
+                    save_enabled=not no_save,
+                )
 
 
 if __name__ == "__main__":  # pragma: no cover

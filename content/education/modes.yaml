@@ -1,18 +1,43 @@
-schema_version: 1
+schema_version: 2
 modes:
   - id: guided
     label: Guided Career
     recommended: true
     description: >-
-      Begin as a junior commodity risk analyst with a three-day, 20–30 minute
-      First Rotation that teaches the market and treasury systems before Episode 1.
+      Learn each concept before applying it, with required checks, hints,
+      worked solutions, and retry support.
     default_show_math: on_request
-    starts_with_prologue: true
   - id: standard
     label: Standard Story
     recommended: false
     description: >-
-      Start at Episode 1 with the existing narrative, hedge, and treasury systems.
-      The Learning Notebook remains available but the First Rotation is skipped.
+      Keep the same chapter scope with compact explanations and optional checks.
+      Story decisions still record concepts practiced.
     default_show_math: "off"
-    starts_with_prologue: false
+campaign_tracks:
+  - id: series3_core
+    label: Series 3 Core Campaign
+    recommended: true
+    description: >-
+      The recommended beginner path. Play the five existing core chapters,
+      complete a cumulative review, receive an honest debrief, and stop.
+    chapter_ids:
+      - first_rotation
+      - december_difference
+      - hedge_book
+      - two_oclock_call
+      - eleventh_contract
+  - id: extended_story
+    label: Extended Story
+    recommended: false
+    description: >-
+      Play the complete core path, then continue into the optional No Surprises
+      and The Diligence Room business-context chapters.
+    chapter_ids:
+      - first_rotation
+      - december_difference
+      - hedge_book
+      - two_oclock_call
+      - eleventh_contract
+      - no_surprises
+      - diligence_room

@@ -6,7 +6,7 @@ from lake_effect_ledger.persistence.saves import SaveRepository
 runner = CliRunner()
 
 
-def test_guided_retry_completes_seven_checks_without_story_penalty(tmp_path) -> None:
+def test_guided_retry_completes_nine_checks_without_story_penalty(tmp_path) -> None:
     correct_db = tmp_path / "correct.db"
     retry_db = tmp_path / "retry.db"
     common = [
@@ -48,10 +48,12 @@ def test_guided_retry_completes_seven_checks_without_story_penalty(tmp_path) -> 
         "ec_sell_for_forecast_sale",
         "ec_market_versus_limit",
         "ec_sell_limit_eligibility",
+        "ec_authorization_confirmation",
         "ec_eleven_contract_ratio",
         "ec_current_overhedge",
         "ec_offset_preserves_history",
         "ec_profit_not_authorization",
+        "ec_records_ethics",
     }
     assert set(retry_state.eleventh_contract.learning_check_ids) == chapter_check_ids
     assert all(

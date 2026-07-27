@@ -15,10 +15,12 @@ def main() -> None:
     rotation_choices = sum(len(scene.choices) for scene in content.first_rotation.scenes)
     eleventh_choices = sum(len(scene.choices) for scene in content.eleventh_narrative.scenes)
     audit_choices = sum(len(scene.choices) for scene in content.audit_scenario.scenes)
+    diligence_choices = sum(len(scene.choices) for scene in content.diligence_scenario.scenes)
     all_checks = [
         *content.prologue.checks,
         *content.eleventh_learning.checks,
         *content.audit_learning.checks,
+        *content.diligence_learning.checks,
     ]
     numeric_checks = [item for item in all_checks if item.check_type == KnowledgeCheckType.NUMERIC]
     decision_scenes = (
@@ -27,6 +29,7 @@ def main() -> None:
         + 1
         + len(content.eleventh_narrative.scenes)
         + len(content.audit_scenario.scenes)
+        + len(content.diligence_scenario.scenes)
     )
     total_choices = (
         milestone_1_choices
@@ -34,6 +37,7 @@ def main() -> None:
         + rotation_choices
         + eleventh_choices
         + audit_choices
+        + diligence_choices
     )
     for check in numeric_checks:
         calculate_answer(check, content)
@@ -44,6 +48,11 @@ def main() -> None:
         f"{len(content.events.events)} delayed event(s), "
         f"{len(content.lessons.lessons)} lesson(s), "
         f"{len(content.game_modes.modes)} game mode(s), "
+        f"{len(content.game_modes.campaign_tracks)} campaign track(s), "
+        f"{len(content.characters.people) - 1} recurring character(s), "
+        f"{len(content.curriculum.objectives)} mapped objective(s), "
+        f"{len(content.curriculum.review_questions)} core review question(s), "
+        f"{len(content.curriculum.future_topics)} future topic(s), "
         f"{len(all_checks)} knowledge check(s), "
         f"{len(numeric_checks)} validated calculation(s), "
         f"{len(content.glossary.terms)} glossary term(s), "
@@ -54,7 +63,9 @@ def main() -> None:
         f"{len(content.treasury_scenarios.scenarios)} treasury scenario(s), "
         f"{len(content.eleventh_scenario.possible_outcomes)} Eleventh outcome(s), "
         f"{len(content.audit_scenario.control_objectives)} audit control(s), "
-        f"{len(content.audit_scenario.possible_outcomes)} No Surprises outcome(s)."
+        f"{len(content.audit_scenario.possible_outcomes)} No Surprises outcome(s), "
+        f"{len(content.diligence_scenario.possible_outcomes)} "
+        "Diligence Room outcome(s)."
     )
 
 

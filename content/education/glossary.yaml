@@ -36,6 +36,12 @@ terms:
     learning_objective_ids: [short_futures_hedge]
     source_ids: [cftc_glossary]
     series_3_topics: [Position terminology, Short hedging]
+  - id: long_hedge
+    term: Long hedge
+    definition: Buying futures to reduce the risk that a planned commodity purchase becomes more expensive.
+    learning_objective_ids: [long_futures_hedge]
+    source_ids: [nfa_series3_outline]
+    series_3_topics: [Long hedging]
   - id: contract_size
     term: Contract size
     definition: The standardized quantity represented by one futures contract; standard NG represents 10,000 MMBtu.
@@ -174,6 +180,12 @@ terms:
     learning_objective_ids: [offset_preserves_history]
     source_ids: [cme_closing_position]
     series_3_topics: [Offsetting positions]
+  - id: ethical_recordkeeping
+    term: Ethical recordkeeping
+    definition: Preserving accurate, time-linked records and correcting errors prospectively rather than rewriting what was authorized or executed.
+    learning_objective_ids: [records_and_ethical_conduct]
+    source_ids: [nfa_series3_outline, cftc_trade_records]
+    series_3_topics: [Just and equitable principles, Books and records]
   - id: preventive_control
     term: Preventive control
     definition: A control designed to stop or constrain an error before it occurs.
@@ -210,3 +222,33 @@ terms:
     learning_objective_ids: [remediation_preserves_history]
     source_ids: [iia_global_standards]
     series_3_topics: [Supervision and controls]
+  - id: covenant_headroom
+    term: Covenant headroom
+    definition: The amount by which a contract-defined financial measure exceeds its required minimum.
+    learning_objective_ids: [covenant_headroom]
+    source_ids: [fasb_debt_overview]
+    series_3_topics: [Financial safeguards]
+  - id: sensitivity_analysis
+    term: Sensitivity analysis
+    definition: A what-if calculation using disclosed assumptions without asserting a forecast or assigning probability.
+    learning_objective_ids: [scenario_vs_forecast]
+    source_ids: [fasb_concepts_useful_information]
+    series_3_topics: [Risk analysis]
+  - id: qualitative_significance
+    term: Qualitative significance
+    definition: Importance arising from surrounding circumstances such as authorization, behavior, recurrence, or credibility, not amount alone.
+    learning_objective_ids: [qualitative_significance]
+    source_ids: [sec_sab_99_materiality]
+    series_3_topics: [Ethics and supervision]
+  - id: remediation_status
+    term: Remediation status
+    definition: The evidence-supported stage of an action plan, such as approved, implemented, tested, or closed.
+    learning_objective_ids: [remediation_status_evidence]
+    source_ids: [iia_global_standards]
+    series_3_topics: [Supervision and controls]
+  - id: disclosure_package_version
+    term: Disclosure package version
+    definition: An immutable record of what a particular stakeholder received, when, from whom, and from which source records.
+    learning_objective_ids: [stakeholder_consistent_disclosure]
+    source_ids: [fasb_concepts_useful_information]
+    series_3_topics: [Books and records]

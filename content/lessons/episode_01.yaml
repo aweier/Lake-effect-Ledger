@@ -63,6 +63,14 @@ lessons:
       A producer or seller exposed to falling prices can sell futures. A short
       position gains when the futures settlement falls and loses when it rises.
 
+  - id: long_futures_hedge
+    category: series_3
+    title: Long futures hedge
+    explanation: >-
+      A buyer exposed to rising prices can buy futures. A long position gains
+      when the futures settlement rises, helping offset a higher later purchase
+      price. Northstar's forecast sale uses the opposite, short-hedge direction.
+
   - id: hedge_ratio
     category: series_3
     title: Hedge ratio and speculative excess
@@ -176,6 +184,14 @@ lessons:
       enlarge a contemporaneous approval. Economic result and supervisory
       authorization answer different questions.
 
+  - id: records_and_ethical_conduct
+    category: series_3
+    title: Introductory records and ethical conduct
+    explanation: >-
+      Accurate, time-linked records support supervision and fair dealing.
+      A later profit, explanation, or correction does not justify changing the
+      original authorization, order, execution, or confirmation history.
+
   - id: preventive_detective_controls
     category: controls
     title: Preventive and detective controls
@@ -224,3 +240,60 @@ lessons:
       Corrective action changes present exposure or future process. It does
       not erase an original authorization breach, late escalation, or the
       records used to reconstruct the event.
+
+  - id: economic_pnl_vs_margin_liquidity
+    category: series_3
+    title: Economic P&L and variation-margin liquidity
+    explanation: >-
+      A physical exposure and futures position can offset economically while
+      daily variation settlement creates an immediate cash need. Diligence
+      should reconcile economic effect and cash location separately.
+
+  - id: supported_vs_forecast_volume
+    category: controls
+    title: Supported, possible, and later-supported volume
+    explanation: >-
+      A forecast can contain supported and possible volume. Later support
+      updates the later exposure view but does not change what was documented,
+      known, or authorized at an earlier date.
+
+  - id: covenant_headroom
+    category: accounting
+    title: Covenant headroom
+    explanation: >-
+      Headroom is the amount by which the contract-defined measure exceeds its
+      required minimum. Northstar's available-liquidity definition and threshold
+      are fictional facility terms, not a universal banking formula.
+
+  - id: scenario_vs_forecast
+    category: accounting
+    title: Sensitivity analysis is not a forecast
+    explanation: >-
+      A sensitivity applies disclosed what-if assumptions without assigning
+      probabilities. It supports risk discussion but does not predict a result,
+      change actual state, or create an accounting entry.
+
+  - id: remediation_status_evidence
+    category: controls
+    title: Planned, implemented, tested, and closed remediation
+    explanation: >-
+      Approval supports a plan. Implementation requires evidence that the new
+      activity exists. Testing evaluates whether it works, and closure requires
+      the applicable owner and assurance process to accept that evidence.
+
+  - id: qualitative_significance
+    category: accounting
+    title: Quantitative and qualitative significance
+    explanation: >-
+      Amount is one input. Authorization, management behavior, inaccurate
+      certification, recurrence, liquidity, and record credibility can make a
+      small-dollar issue important. A fictional review threshold is not an
+      accounting-materiality or legal conclusion.
+
+  - id: stakeholder_consistent_disclosure
+    category: controls
+    title: Consistent facts for different stakeholders
+    explanation: >-
+      Buyers, lenders, and boards may need different detail and emphasis.
+      Shared facts should still reconcile to the same dated source records, and
+      later corrections should preserve what each audience received earlier.

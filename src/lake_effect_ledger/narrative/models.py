@@ -18,7 +18,15 @@ from lake_effect_ledger.commodity.models import (
     MarketPricePath,
     PositionSide,
 )
+from lake_effect_ledger.diligence.models import (
+    DiligenceLearningFile,
+    DiligenceScenario,
+)
 from lake_effect_ledger.learning.models import (
+    CampaignTrack,
+    CampaignTrackDefinition,
+    CurriculumClassification,
+    CurriculumMapFile,
     GameMode,
     GameModeDefinition,
     GameModeFile,
@@ -241,6 +249,16 @@ class CharacterFile(BaseModel):
     backgrounds: list[BackgroundDefinition]
     people: list[CharacterDefinition] = Field(default_factory=list)
 
+    @model_validator(mode="after")
+    def validate_people(self) -> CharacterFile:
+        ids = [item.id for item in self.people]
+        if len(ids) != len(set(ids)):
+            raise ValueError("duplicate character ID")
+        names = [item.name.casefold() for item in self.people]
+        if len(names) != len(set(names)):
+            raise ValueError("duplicate character name")
+        return self
+
 
 class JournalTemplate(BaseModel):
     id: str = Field(pattern=r"^[a-z0-9_]+$")
@@ -426,6 +444,7 @@ class ContentBundle:
         hedge_narrative: HedgeNarrativeFile,
         treasury_scenarios: TreasuryScenarioFile,
         game_modes: GameModeFile,
+        curriculum: CurriculumMapFile,
         sources: SourceReferenceFile,
         glossary: GlossaryFile,
         prologue: PrologueFile,
@@ -435,6 +454,8 @@ class ContentBundle:
         eleventh_narrative: SceneFile,
         audit_scenario: AuditScenario,
         audit_learning: AuditLearningFile,
+        diligence_scenario: DiligenceScenario,
+        diligence_learning: DiligenceLearningFile,
     ) -> None:
         self.characters = characters
         self.scenes = scenes
@@ -449,6 +470,7 @@ class ContentBundle:
         self.hedge_narrative = hedge_narrative
         self.treasury_scenarios = treasury_scenarios
         self.game_modes = game_modes
+        self.curriculum = curriculum
         self.sources = sources
         self.glossary = glossary
         self.prologue = prologue
@@ -458,6 +480,8 @@ class ContentBundle:
         self.eleventh_narrative = eleventh_narrative
         self.audit_scenario = audit_scenario
         self.audit_learning = audit_learning
+        self.diligence_scenario = diligence_scenario
+        self.diligence_learning = diligence_learning
         self._validate_references()
 
     @classmethod
@@ -492,6 +516,9 @@ class ContentBundle:
                 _read_yaml(root / "treasury" / "episode_01.yaml")
             ),
             game_modes=GameModeFile.model_validate(_read_yaml(root / "education" / "modes.yaml")),
+            curriculum=CurriculumMapFile.model_validate(
+                _read_yaml(root / "education" / "series3_curriculum.yaml")
+            ),
             sources=SourceReferenceFile.model_validate(
                 _read_yaml(root / "education" / "sources.yaml")
             ),
@@ -516,6 +543,12 @@ class ContentBundle:
             ),
             audit_learning=AuditLearningFile.model_validate(
                 _read_yaml(root / "education" / "no_surprises.yaml")
+            ),
+            diligence_scenario=DiligenceScenario.model_validate(
+                _read_yaml(root / "diligence" / "diligence_room.yaml")
+            ),
+            diligence_learning=DiligenceLearningFile.model_validate(
+                _read_yaml(root / "education" / "diligence_room.yaml")
             ),
         )
 
@@ -551,7 +584,9 @@ class ContentBundle:
             *prologue_check_ids,
             *[item.id for item in self.eleventh_learning.checks],
             *[item.id for item in self.audit_learning.checks],
+            *[item.id for item in self.diligence_learning.checks],
         ]
+        curriculum_objective_ids = [item.id for item in self.curriculum.objectives]
 
         for values, label in (
             (account_ids, "account"),
@@ -571,6 +606,7 @@ class ContentBundle:
             (source_ids, "source"),
             (glossary_ids, "glossary term"),
             (check_ids, "knowledge check"),
+            (curriculum_objective_ids, "curriculum objective"),
         ):
             self._unique(values, label)
 
@@ -579,6 +615,13 @@ class ContentBundle:
         valid_patterns = set(pattern_ids)
         valid_events = set(event_ids)
         valid_lessons = set(lesson_ids)
+        if set(curriculum_objective_ids) != valid_lessons:
+            missing = valid_lessons - set(curriculum_objective_ids)
+            extra = set(curriculum_objective_ids) - valid_lessons
+            raise ValueError(
+                f"curriculum map must classify every learning objective: "
+                f"missing={missing}, extra={extra}"
+            )
 
         for template in self.journals.templates:
             unknown = {line.account for line in template.lines} - valid_accounts
@@ -624,6 +667,21 @@ class ContentBundle:
             if unknown_people:
                 raise ValueError(
                     f"audit choice {choice.id} references unknown people: {unknown_people}"
+                )
+        diligence_choices = [
+            choice for scene in self.diligence_scenario.scenes for choice in scene.choices
+        ]
+        self._unique([choice.id for choice in diligence_choices], "diligence choice")
+        for choice in diligence_choices:
+            missing_lessons = set(choice.learning_objective_ids) - valid_lessons
+            if missing_lessons:
+                raise ValueError(
+                    f"diligence choice {choice.id} references unknown lessons: {missing_lessons}"
+                )
+            unknown_people = set(choice.effect.relationship_deltas) - set(person_ids)
+            if unknown_people:
+                raise ValueError(
+                    f"diligence choice {choice.id} references unknown people: {unknown_people}"
                 )
         communication_effects = [
             effect
@@ -673,6 +731,129 @@ class ContentBundle:
         valid_sources = set(source_ids)
         valid_glossary = set(glossary_ids)
         valid_checks = set(check_ids)
+        character_speakers = [
+            *[panel.speaker for day in self.prologue.prologue.days for panel in day.concept_panels],
+            *[item.speaker for item in self.hedge_narrative.briefings],
+            self.hedge_narrative.documentation_scene.speaker,
+            *[item.speaker for item in self.scenes.scenes],
+            *[item.speaker for item in self.first_rotation.scenes],
+            *[item.speaker for item in self.eleventh_narrative.scenes],
+            *[item.speaker for item in self.audit_scenario.scenes],
+            *[item.speaker for item in self.diligence_scenario.scenes],
+        ]
+        unknown_speakers = {
+            speaker for speaker in character_speakers if self.character_for_speaker(speaker) is None
+        }
+        if unknown_speakers:
+            raise ValueError(f"narrative references unknown character speakers: {unknown_speakers}")
+        for character in self.characters.people:
+            displayed = " ".join(
+                (
+                    character.name,
+                    character.role,
+                    character.origin,
+                    character.public_detail,
+                    character.interaction_reason,
+                )
+            )
+            if "\ufffd" in displayed:
+                raise ValueError(f"character {character.id} contains a replacement character")
+        if self.curriculum.outline.source_id not in valid_sources:
+            raise ValueError("curriculum outline references an unknown source")
+        curriculum_by_id = {item.id: item for item in self.curriculum.objectives}
+        for objective in self.curriculum.objectives:
+            if objective.source_id not in valid_sources:
+                raise ValueError(
+                    f"curriculum objective {objective.id} references an unknown source"
+                )
+            missing_checks = set(objective.check_ids) - valid_checks
+            if missing_checks:
+                raise ValueError(
+                    f"curriculum objective {objective.id} references checks {missing_checks}"
+                )
+            if objective.classification == CurriculumClassification.BUSINESS_CONTEXT:
+                if objective.counts_toward_core:
+                    raise ValueError(
+                        f"context objective {objective.id} cannot count toward Series 3 Core"
+                    )
+            for check_id in objective.check_ids:
+                if objective.id not in self.knowledge_check(check_id).learning_objective_ids:
+                    raise ValueError(
+                        f"curriculum objective {objective.id} does not match check {check_id}"
+                    )
+            actual_calculations = {
+                self.knowledge_check(check_id).calculation.kind
+                for check_id in objective.check_ids
+                if self.knowledge_check(check_id).calculation is not None
+            }
+            if set(objective.calculation_kinds) != actual_calculations:
+                raise ValueError(
+                    f"curriculum objective {objective.id} calculation mapping "
+                    "does not match the shared engine checks"
+                )
+        for check_id in valid_checks:
+            check = self.knowledge_check(check_id)
+            for objective_id in check.learning_objective_ids:
+                if check_id not in curriculum_by_id[objective_id].check_ids:
+                    raise ValueError(
+                        f"knowledge check {check_id} is missing from curriculum "
+                        f"objective {objective_id}"
+                    )
+        core_chapter_ids = [item.id for item in self.curriculum.core_chapters]
+        core_track = self.campaign_track(CampaignTrack.SERIES_3_CORE)
+        if core_track.chapter_ids != core_chapter_ids:
+            raise ValueError("Series 3 Core track and curriculum chapter order disagree")
+        for chapter in self.curriculum.core_chapters:
+            objective_groups = {
+                *chapter.introduced_objective_ids,
+                *chapter.practiced_objective_ids,
+                *chapter.business_context_objective_ids,
+            }
+            if objective_groups - valid_lessons:
+                raise ValueError(f"core chapter {chapter.id} references unknown objectives")
+            if any(
+                curriculum_by_id[item].classification != CurriculumClassification.BUSINESS_CONTEXT
+                for item in chapter.business_context_objective_ids
+            ):
+                raise ValueError(
+                    f"core chapter {chapter.id} mixes exam material into business context"
+                )
+            if chapter.id != "december_difference" and not chapter.practiced_objective_ids:
+                raise ValueError(
+                    f"Standard Story report for {chapter.id} would lack practiced concepts"
+                )
+        check_chapters = {
+            **{item.id: "first_rotation" for item in self.prologue.checks},
+            **{item.id: "eleventh_contract" for item in self.eleventh_learning.checks},
+        }
+        introduced_through_chapter: set[str] = set()
+        for chapter in self.curriculum.core_chapters:
+            introduced_through_chapter.update(chapter.introduced_objective_ids)
+            introduced_through_chapter.update(chapter.practiced_objective_ids)
+            introduced_through_chapter.update(chapter.business_context_objective_ids)
+            for check_id, check_chapter_id in check_chapters.items():
+                if check_chapter_id != chapter.id:
+                    continue
+                check = self.knowledge_check(check_id)
+                premature = set(check.learning_objective_ids) - introduced_through_chapter
+                if premature:
+                    raise ValueError(
+                        f"knowledge check {check_id} tests concepts before "
+                        f"introduction: {premature}"
+                    )
+        for reference in self.curriculum.review_questions:
+            if reference.check_id not in valid_checks:
+                raise ValueError(f"core review references unknown check {reference.check_id}")
+            check = self.knowledge_check(reference.check_id)
+            if not any(
+                curriculum_by_id[item].counts_toward_core for item in check.learning_objective_ids
+            ):
+                raise ValueError(
+                    f"core review question {reference.id} covers only business context"
+                )
+        for topic in self.curriculum.future_topics:
+            if topic.source_id not in valid_sources:
+                raise ValueError(f"future curriculum topic {topic.id} is missing a source")
         for term in self.glossary.terms:
             missing_lessons = set(term.learning_objective_ids) - valid_lessons
             missing_sources = set(term.source_ids) - valid_sources
@@ -685,6 +866,7 @@ class ContentBundle:
             *self.prologue.checks,
             *self.eleventh_learning.checks,
             *self.audit_learning.checks,
+            *self.diligence_learning.checks,
         ]:
             missing_lessons = set(check.learning_objective_ids) - valid_lessons
             if missing_lessons or check.source_id not in valid_sources:
@@ -745,6 +927,15 @@ class ContentBundle:
             for item in self.audit_scenario.request_specs
         ):
             raise ValueError("audit request references a nonexistent Eleventh Contract record")
+        if self.diligence_scenario.id != "diligence_room":
+            raise ValueError("missing transition from No Surprises to The Diligence Room")
+        if any(
+            set(item.source_record_ids) - self.diligence_expected_record_ids
+            for item in self.diligence_scenario.request_specs
+        ):
+            raise ValueError("diligence request references a nonexistent source record")
+        if len(set(self.diligence_scenario.possible_outcomes)) < 7:
+            raise ValueError("The Diligence Room requires at least seven reachable outcomes")
 
         for event in self.events.events:
             self._validate_effects(event.effects, event.id, valid_templates, valid_events)
@@ -842,6 +1033,21 @@ class ContentBundle:
     def background(self, background: Background) -> BackgroundDefinition:
         return next(item for item in self.characters.backgrounds if item.id == background)
 
+    def character(self, character_id: str) -> CharacterDefinition:
+        return next(item for item in self.characters.people if item.id == character_id)
+
+    def character_for_speaker(self, speaker: str) -> CharacterDefinition | None:
+        normalized = speaker.replace("_", " ").casefold()
+        return next(
+            (
+                item
+                for item in self.characters.people
+                if item.id.replace("_", " ").casefold() == normalized
+                or item.name.casefold() == normalized
+            ),
+            None,
+        )
+
     def scene(self, scene_id: str) -> SceneDefinition:
         if self.hedge_narrative.documentation_scene.id == scene_id:
             return self.hedge_narrative.documentation_scene
@@ -882,6 +1088,15 @@ class ContentBundle:
     def game_mode(self, game_mode: GameMode) -> GameModeDefinition:
         return next(item for item in self.game_modes.modes if item.id == game_mode)
 
+    def campaign_track(self, campaign_track: CampaignTrack) -> CampaignTrackDefinition:
+        return next(item for item in self.game_modes.campaign_tracks if item.id == campaign_track)
+
+    def curriculum_objective(self, objective_id: str):
+        return next(item for item in self.curriculum.objectives if item.id == objective_id)
+
+    def core_chapter(self, chapter_id: str):
+        return next(item for item in self.curriculum.core_chapters if item.id == chapter_id)
+
     def knowledge_check(self, check_id: str) -> KnowledgeCheckDefinition:
         return next(
             item
@@ -889,12 +1104,16 @@ class ContentBundle:
                 *self.prologue.checks,
                 *self.eleventh_learning.checks,
                 *self.audit_learning.checks,
+                *self.diligence_learning.checks,
             ]
             if item.id == check_id
         )
 
     def audit_scene(self, scene_id: str):
         return next(item for item in self.audit_scenario.scenes if item.id == scene_id)
+
+    def diligence_scene(self, scene_id: str):
+        return next(item for item in self.diligence_scenario.scenes if item.id == scene_id)
 
     def glossary_term(self, term_id: str) -> GlossaryTerm:
         return next(item for item in self.glossary.terms if item.id == term_id)
@@ -926,4 +1145,22 @@ class ContentBundle:
             "final_nomination_additional_10000",
             "comm_eleventh_market_brief",
             "analyst_case_file_eleventh_contract",
+        }
+
+    @property
+    def diligence_expected_record_ids(self) -> set[str]:
+        """Stable records the transaction-scoped diligence resolver may reference."""
+        return {
+            "northstar_commodity_risk_policy_v1",
+            "forecast_live_week_2028",
+            "blotter_eleventh_contract",
+            "auth_live_week_ten_short",
+            "episode_01_hedge_book",
+            "great_lakes_revolver",
+            "episode_01_two_oclock_call",
+            "analyst_case_file_eleventh_contract",
+            "internal_audit_walkthrough_no_surprises",
+            "audit_no_surprises_2028",
+            "reconciliation_eleventh_contract",
+            "comm_eleventh_market_brief",
         }

@@ -12,6 +12,7 @@ from lake_effect_ledger.learning.calculations import (
 )
 from lake_effect_ledger.learning.engine import LearningEngine
 from lake_effect_ledger.learning.models import (
+    CampaignTrack,
     GameMode,
     GlossaryFile,
     KnowledgeCheckDefinition,
@@ -49,6 +50,7 @@ def rebundle(content, **changes):
         "hedge_narrative": content.hedge_narrative,
         "treasury_scenarios": content.treasury_scenarios,
         "game_modes": content.game_modes,
+        "curriculum": content.curriculum,
         "sources": content.sources,
         "glossary": content.glossary,
         "prologue": content.prologue,
@@ -58,6 +60,8 @@ def rebundle(content, **changes):
         "eleventh_narrative": content.eleventh_narrative,
         "audit_scenario": content.audit_scenario,
         "audit_learning": content.audit_learning,
+        "diligence_scenario": content.diligence_scenario,
+        "diligence_learning": content.diligence_learning,
     }
     values.update(changes)
     return ContentBundle(**values)
@@ -78,9 +82,13 @@ def protected_state(state):
 def test_modes_and_prologue_content_are_complete(content) -> None:
     assert {item.id.value for item in content.game_modes.modes} == {"guided", "standard"}
     assert content.game_mode(GameMode.GUIDED).recommended
-    assert content.prologue.prologue.estimated_minutes == 25
+    assert content.prologue.prologue.estimated_minutes == 30
     assert [item.day_number for item in content.prologue.prologue.days] == [1, 2, 3]
-    assert len(content.prologue.checks) == 15
+    assert {item.id.value for item in content.game_modes.campaign_tracks} == {
+        "series3_core",
+        "extended_story",
+    }
+    assert len(content.prologue.checks) == 17
 
 
 def test_all_required_check_types_are_present(content) -> None:
@@ -110,7 +118,7 @@ def test_glossary_has_sources_topics_and_objectives(content) -> None:
         ("d1_tick_value", Decimal("10.00")),
         ("d2_regional_price", Decimal("5.500")),
         ("d2_hedge_ratio", Decimal("1.0000")),
-        ("d3_margin_call_amount", Decimal("75000.00")),
+        ("d3_margin_call_amount", Decimal("50000.00")),
     ],
 )
 def test_numeric_checks_use_shared_commodity_math(content, check_id, expected) -> None:
@@ -147,7 +155,7 @@ def test_background_introduces_but_does_not_demonstrate_objective(
     assert state.learning.objectives[objective].status == LearningStatus.INTRODUCED
 
 
-def test_standard_mode_preserves_direct_episode_start(content) -> None:
+def test_standard_mode_preserves_scope_but_makes_checks_optional(content) -> None:
     state = create_new_game(
         name="Standard",
         background=Background.FINANCE,
@@ -155,14 +163,16 @@ def test_standard_mode_preserves_direct_episode_start(content) -> None:
         content=content,
     )
     assert state.game_mode == GameMode.STANDARD
+    assert state.campaign_track == CampaignTrack.EXTENDED_STORY
     assert state.show_math == ShowMathMode.OFF
-    assert state.prologue.completed
-    assert state.prologue.transitioned_to_episode_1
+    assert not state.prologue.completed
+    assert not state.prologue.transitioned_to_episode_1
 
 
 def test_guided_mode_uses_junior_role_and_mode_math_default(content) -> None:
     state = guided_state(content)
     assert state.player.role == "Junior Commodity Risk Analyst"
+    assert state.campaign_track == CampaignTrack.SERIES_3_CORE
     assert state.show_math == ShowMathMode.ON_REQUEST
     assert not state.prologue.completed
 

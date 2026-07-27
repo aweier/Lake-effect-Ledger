@@ -1,7 +1,7 @@
 # Educational sources
 
 Checked July 26, 2026. These primary sources support the stable educational
-concepts used in Milestones 2 through 6. Runtime gameplay and tests use local
+concepts used in Milestones 2 through 7. Runtime gameplay and tests use local
 fictional configuration and do not require network access.
 
 ## CME Group
@@ -53,6 +53,15 @@ fictional configuration and do not require network access.
 
 ## FASB
 
+- [Concepts Statement No. 8, Chapter 3 — Qualitative Characteristics of Useful Financial Information](https://storage.fasb.org/Concepts%20Statement%208%20Chapter%203%20As%20Amended.pdf)
+  - Supports the chapter's educational use of faithful representation,
+    comparability, and verifiability.
+  - Verification can include checking inputs and recalculating outputs; useful
+    forward-looking information also requires transparent methods and
+    assumptions.
+  - The Diligence Room uses those concepts for source-linked schedules and
+    clearly labeled sensitivities. It does not present the packages as GAAP
+    financial statements.
 - [FASB Accounting Standards Updates](https://www.fasb.org/standards/accounting-standard-updates)
   - The FASB Codification is the authoritative source of nongovernmental U.S.
     GAAP; Topic 470 covers debt and Topic 835 covers interest.
@@ -67,6 +76,19 @@ fictional configuration and do not require network access.
 The game's debit-cash/credit-debt draw and debit-interest-expense/credit-accrued-
 interest entries are deliberately simplified teaching patterns, not a complete
 GAAP conclusion for any real facility.
+
+## SEC
+
+- [Staff Accounting Bulletin No. 99 — Materiality](https://www.sec.gov/interps/account/sab99.htm)
+  - Illustrates why a numerical threshold cannot replace consideration of all
+    relevant quantitative and qualitative circumstances.
+  - The Diligence Room uses this limited principle to keep authorization,
+    certification, liquidity, recurrence, and credibility in view even when an
+    amount is below a fictional review threshold.
+
+Northstar is fictional and private. The chapter does not conclude that SEC
+reporting rules apply, make an accounting-materiality determination, or provide
+legal guidance.
 
 ## GAO internal-control framework
 
@@ -83,11 +105,14 @@ federal entity.
 
 ## The Institute of Internal Auditors
 
-- [2024 Global Internal Audit Standards](https://www.theiia.org/en/standards/2024-standards/global-internal-audit-standards/)
+- [2024 Global Internal Audit Standards](https://www.theiia.org/globalassets/site/standards/globalinternalauditstandards_2024january9.pdf)
   - The current Standards are effective for quality assessments beginning
     January 9, 2025.
   - They support the chapter's evidence-based engagement work, professional
     skepticism, communication of results, and monitoring of action plans.
+  - Standard 15.2 supports following up on implementation and using
+    risk-based inquiry, testing, or status-tracking. The game therefore keeps
+    approval, implementation, testing, closure, and risk acceptance distinct.
   - Noah's fictional walkthrough borrows these professional concepts. It does
     not claim that a four-day single-transaction game chapter is a complete
     standards-conforming internal-audit engagement.
@@ -95,9 +120,15 @@ federal entity.
 ## NFA
 
 - [NFA Study Outline for Futures Industry Exams](https://www.nfa.futures.org/registration-membership/study-outlines/index.html)
-  - Identifies short and long hedging, basis, hedge calculations, initial and
-    maintenance margin, variation, settlement, and substantial price movements
-    as exam-study concepts.
+  - The local curriculum map was reviewed against the current Series 3 outline
+    on July 26, 2026.
+  - Implemented Core material includes futures foundations, short and long
+    hedging, basis, hedge calculations, daily settlement, initial and
+    maintenance margin, margin calls, basic order types, offsets, and selected
+    recordkeeping and ethical-conduct concepts.
+  - The outline also contains substantial material that the game does not yet
+    teach. `content/education/series3_curriculum.yaml` lists those topics
+    explicitly as future curriculum rather than implying full exam coverage.
 - [NFA Rulebook](https://www.nfa.futures.org/rulebook/rules.aspx)
   - Includes NFA Compliance Rule 2-9 supervision requirements and related
     interpretive materials for NFA members.
@@ -130,6 +161,10 @@ requirements:
 - The No Surprises engagement, request list, control objectives and activities,
   Northstar severity labels, test results, findings, target dates, management
   responses, outcomes, and board/lender/buyer interest.
+- The Diligence Room majority-acquisition structure, dates, Great Lakes
+  Infrastructure Partners, request lists, package contents, delivery history,
+  $50,000 review threshold, sensitivity changes, management representations,
+  transaction statuses, and stakeholder outcomes.
 - Full fills at the next configured eligible observation, with no order-book
   depth, queue priority, fees, slippage, exchange price protection, or partial
   fills in the authored path. The typed order model can still represent partial,

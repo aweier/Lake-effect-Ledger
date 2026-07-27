@@ -13,6 +13,7 @@ from rich.text import Text
 from lake_effect_ledger.education.report import LearningReport
 from lake_effect_ledger.narrative.models import SceneDefinition
 from lake_effect_ledger.state import GameState
+from lake_effect_ledger.treasury.models import CharacterDefinition
 
 
 def _money(value: Decimal) -> str:
@@ -27,6 +28,20 @@ def render_title(console: Console) -> None:
         justify="center",
     )
     console.print(Panel(Text.assemble(title, "\n", subtitle), border_style="blue"))
+
+
+def render_character_introduction(
+    console: Console,
+    character: CharacterDefinition,
+) -> None:
+    body = (
+        f"[bold]{character.name}[/bold]\n"
+        f"{character.role}\n"
+        f"[cyan]{character.origin}[/cyan]\n\n"
+        f"{character.public_detail}\n"
+        f"[dim]{character.interaction_reason}[/dim]"
+    )
+    console.print(Panel(body, title="NEW CONTACT", border_style="bright_blue"))
 
 
 def render_dashboard(console: Console, state: GameState) -> None:
@@ -156,6 +171,15 @@ def render_debug(console: Console, state: GameState) -> None:
             ],
         ]
         market_path_debug = f"\nSelected market path: {path.id}\nFull embedded path: {prices}"
+    diligence_debug = ""
+    if state.diligence_room is not None:
+        diligence_debug = (
+            f"\nDiligence path: {state.diligence_room.selected_story_path_id}"
+            f"\nDiligence stage: {state.diligence_room.current_stage.value}"
+            f"\nDiligence flags: {state.diligence_room.diligence_flags}"
+            f"\nDiligence outcome: "
+            f"{state.diligence_room.outcome.value if state.diligence_room.outcome else None}"
+        )
     console.print(
         Panel(
             f"Seed: {state.seed}\n"
@@ -163,7 +187,8 @@ def render_debug(console: Console, state: GameState) -> None:
             f"Pending events: {[item.model_dump() for item in state.scheduled_events]}\n"
             f"Career tag weights: {state.career_trajectory.tag_weights}\n"
             f"Career tendencies: {state.career_trajectory.tendencies}"
-            f"{market_path_debug}",
+            f"{market_path_debug}"
+            f"{diligence_debug}",
             title="DEBUG · reproducibility",
             border_style="yellow",
         )

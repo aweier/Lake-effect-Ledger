@@ -57,6 +57,9 @@ class CharacterDefinition(BaseModel):
     id: str = Field(pattern=r"^[a-z0-9_]+$")
     name: str = Field(min_length=1)
     role: str = Field(min_length=1)
+    origin: str = Field(min_length=1)
+    public_detail: str = Field(min_length=1, max_length=180)
+    interaction_reason: str = Field(min_length=1, max_length=180)
 
 
 class ObligationDefinition(BaseModel):

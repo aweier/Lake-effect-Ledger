@@ -14,7 +14,9 @@ scenes:
       - text: >-
           Marisol taps the old rotation memo. “Last time, you kept my
           qualification where I put it. That bought you the longer version:
-          I don't trust this extra gas yet.”
+          I don't trust this extra gas yet. My first winter scheduling out of
+          Racine taught me that a friendly estimate can miss a nomination
+          deadline just as efficiently as a hostile one.”
         conditions:
           - {kind: decision_made, target: preserve_scheduling_qualification, value: true}
       - text: >-
@@ -57,6 +59,14 @@ scenes:
       paragraph once. “Ten is what accounting can prove. Eleven is what the
       pipe will probably prove on Friday. Your note needs a recommendation,
       not a weather report wearing loafers.”
+    conditional_paragraphs:
+      - text: >-
+          T.J. calls you directly after reading the retained scheduling
+          qualification. He once left a faster Houston desk after its storm
+          model repeatedly outranked field calls. “I like money,” he says.
+          “I just don't like pretending it makes the pipe wider.”
+        conditions:
+          - {kind: decision_made, target: preserve_scheduling_qualification, value: true}
     choices:
       - id: ec_recommend_hold_ten
         text: Recommend holding the hedge recommendation at ten contracts.
@@ -264,6 +274,15 @@ scenes:
       paper.” Marisol says the pipe has not agreed to anything. Lakefront's
       confirmation matches its execution record. You have time for one first
       verification before the exception meeting.
+    conditional_paragraphs:
+      - text: >-
+          Because you asked scheduling before sending the recommendation,
+          Kasia stays to compare the system extracts. Her mother in Gdańsk
+          still keeps utility receipts in a kitchen drawer. “I build systems
+          for a living,” Kasia says, smiling at the contradiction, “and she
+          trusts paper because institutions change faster than pipes.”
+        conditions:
+          - {kind: decision_made, target: ec_ask_marisol_before_recommendation, value: true}
     choices:
       - id: ec_verify_with_fcm
         text: Ask Lakefront FCM to verify order-entry and execution details.
@@ -453,6 +472,8 @@ scenes:
       and a platter of perch large enough to require committee approval. Dom
       watches Cal explain a bad hockey trade using three dinner rolls. “At
       least the fish arrived in the quantity ordered,” Dom says. “Ruth counted.”
+      His parents ran a South Side tavern where vendor tabs and family favors
+      occupied different notebooks, even when the same name appeared in both.
     conditional_paragraphs:
       - text: >-
           Cal slides a chair out with his foot. “You handled an adult problem.

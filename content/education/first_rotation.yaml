@@ -4,7 +4,7 @@ prologue:
   title: First Rotation
   role_title: Junior Commodity Risk Analyst
   start_date: 2028-01-13
-  estimated_minutes: 25
+  estimated_minutes: 30
   episode_1_transition_scene_id: first_rotation_episode_transition
   transition_text: >-
     Three days later, the practice book closes and Episode 1 begins. Your learning
@@ -19,22 +19,32 @@ prologue:
           title: Northstar's physical position
           speaker: Evelyn Marsh
           text: >-
-            You support accounting, commercial, scheduling, and treasury. A forecast
-            sale means Northstar is long physical gas: falling regional prices reduce
-            expected sale value. A short futures hedge offsets benchmark-price decline.
-          learning_objective_ids: [physical_financial_exposure, short_futures_hedge]
-          glossary_ids: [physical_exposure, long_position, short_position, hedger]
+            Definition: a futures contract is a standardized exchange-traded
+            obligation. A long position benefits from a rise; a short benefits
+            from a fall. Why it matters: Northstar's forecast sale is long physical
+            gas, so falling Chicago prices reduce expected value. Hedge direction:
+            a seller uses short futures; a future buyer uses long futures. Example:
+            a short entered at $5.80 gains when settlement falls to $5.70.
+          learning_objective_ids:
+            [physical_financial_exposure, short_futures_hedge, long_futures_hedge]
+          glossary_ids:
+            [physical_exposure, futures_contract, long_position, short_position, long_hedge, hedger]
         - id: d1_contract_math
           title: One standard NG contract
           speaker: Marisol Vega
           text: >-
-            Henry Hub is the benchmark. Standard NG represents 10,000 MMBtu and moves
-            in minimum ticks of $0.001 per MMBtu. One tick is therefore $10 per contract.
+            Definition: contract size is the quantity one futures contract
+            represents; a tick is its minimum price move. Why it matters: quantity
+            and price moves become real dollars. Formula: tick value = $0.001/MMBtu
+            × 10,000 MMBtu. Worked example: three ticks across two standard NG
+            contracts move 3 × $0.001 × 10,000 × 2 = $60. Use the contract count
+            and the long/short sign in every calculation.
           learning_objective_ids: [physical_financial_exposure, daily_settlement_margin]
           glossary_ids: [henry_hub, futures_contract, contract_size, tick, tick_value]
       check_ids:
         - d1_physical_direction
         - d1_hedge_direction
+        - d1_long_hedge_direction
         - d1_futures_pnl
         - d1_tick_value
       end_note: A hedge starts with the direction and size of the actual commercial risk.
@@ -45,20 +55,24 @@ prologue:
       concept_panels:
         - id: d2_regional_basis
           title: Chicago is not Henry Hub
-          speaker: Marisol Vega
+          speaker: Travis “T.J.” Morrow
           text: >-
-            In this scenario, regional price equals Henry Hub plus Chicago basis.
-            Henry Hub futures can offset benchmark movement, but a changing regional
-            differential remains basis risk.
+            Definition: basis is regional cash price minus the futures benchmark.
+            Why it matters: Henry Hub futures cannot remove Chicago location risk.
+            Formula: Chicago price = Henry Hub + Chicago basis. Worked example:
+            $6.10 + (-$0.25) = $5.85/MMBtu; a later basis change still affects the
+            physical sale.
           learning_objective_ids: [basis_risk]
           glossary_ids: [regional_price, basis, basis_risk]
         - id: d2_ratio_roles
           title: Quantity changes the role
-          speaker: Marisol Vega
+          speaker: Katarzyna “Kasia” Zielińska
           text: >-
-            Hedge ratio is futures quantity divided by physical quantity. Fifty,
-            one hundred, and one hundred fifty percent produce different remaining
-            risk. Quantity beyond the physical exposure is speculative excess.
+            Definition: hedge ratio compares futures quantity with physical
+            quantity. Formula: contracts × 10,000 MMBtu ÷ physical MMBtu. Worked
+            example: 4 × 10,000 ÷ 80,000 = 50%. Why it matters: a 50% hedge leaves
+            half the benchmark exposure open; 10 contracts against 80,000 MMBtu
+            would be 125%, creating 20,000 MMBtu of speculative excess.
           learning_objective_ids: [hedge_ratio, physical_financial_exposure]
           glossary_ids: [hedge_ratio, underhedge, overhedge, hedger, speculator]
       check_ids:
@@ -67,6 +81,7 @@ prologue:
         - d2_quantity_comparison
         - d2_remaining_risk
         - d2_speculative_excess
+        - d2_hedger_vs_speculator
       story_scene_id: first_rotation_qualification
       end_note: A perfect benchmark quantity still leaves regional basis and documentation risk.
     - id: rotation_day_3_call
@@ -78,18 +93,23 @@ prologue:
           title: Daily settlement and the call
           speaker: Darren Cho
           text: >-
-            Futures gains and losses settle daily into FCM margin cash. If the balance
-            falls below maintenance, Northstar must restore it to the configured initial
-            requirement. The transfer relocates cash; it is not new expense.
+            Definition: initial margin opens or restores the account; maintenance
+            is the call threshold; variation margin is daily futures cash settlement.
+            Why it matters: a sound hedge can need cash before the physical sale.
+            Formula here: if balance is below maintenance, call = initial requirement
+            - balance. Example: with $120,000 initial, $95,000 maintenance, and an
+            $80,000 balance, the call is $120,000 - $80,000 = $40,000.
           learning_objective_ids: [daily_settlement_margin, economic_cash_accounting]
           glossary_ids: [initial_margin, maintenance_margin, variation_margin]
         - id: d3_liquidity_controls
           title: Purpose, authorization, and liquidity
           speaker: June Halvorsen
           text: >-
-            Economic P&L and same-day liquidity are separate. A useful authorization
-            states the exposure, quantity, direction, purpose, remaining risk, and
-            approval before the result is known.
+            Definition: liquidity is cash available where and when an obligation
+            is due. Why it matters: expected physical value cannot fund today's FCM
+            call. Worked example: moving $40,000 from operating cash to FCM margin
+            relocates an asset; it is not a second loss. Record exposure, quantity,
+            direction, purpose, remaining risk, and approval before the result.
           learning_objective_ids: [liquidity_not_profit, hedge_documentation]
           glossary_ids: [liquidity, hedge_documentation]
       check_ids:
@@ -112,6 +132,9 @@ checks:
       - {id: no_exposure, text: No exposure until the invoice is booked.}
     correct_option_id: long_physical
     explanation: A forecast sale benefits from higher prices and is economically long physical gas.
+    wrong_answer_feedback:
+      short_physical: A forecast sale is harmed by falling, not rising, prices; calling it short reverses the exposure.
+      no_exposure: Forecast commercial exposure exists before invoicing because the expected sale value already changes with price.
     hints: [Ask whether the expected sale becomes more or less valuable when price rises.]
     worked_solution: Higher regional price increases the expected sale value, so the forecast sale is long physical.
     retry_policy: until_correct
@@ -126,8 +149,28 @@ checks:
       - {id: both_sides, text: Hold equal long and short positions.}
     correct_option_id: short_futures
     explanation: Short futures gain when settlement falls, offsetting benchmark-driven loss on a forecast sale.
+    wrong_answer_feedback:
+      long_futures: Long futures also lose when price falls, so they reinforce rather than offset this seller's risk.
+      both_sides: Equal long and short futures offset each other and leave the physical falling-price exposure unhedged.
     hints: [Choose the futures position that gains as price falls.]
     worked_solution: A short position has P&L of previous settlement minus current settlement, times quantity.
+    retry_policy: until_correct
+  - id: d1_long_hedge_direction
+    check_type: position_direction
+    prompt: A utility expects to buy gas next month and is harmed if prices rise. Which futures direction is the basic hedge?
+    learning_objective_ids: [long_futures_hedge]
+    source_id: nfa_series3_outline
+    options:
+      - {id: buy_futures, text: Buy (long) futures.}
+      - {id: sell_futures, text: Sell (short) futures.}
+      - {id: no_position, text: Wait; a planned purchase has no price exposure.}
+    correct_option_id: buy_futures
+    explanation: Long futures gain as prices rise and can offset the higher cost of a later purchase.
+    wrong_answer_feedback:
+      sell_futures: Short futures lose as prices rise, adding a loss to the buyer's higher physical purchase cost.
+      no_position: A planned purchase has price exposure because its expected cost changes before the invoice exists.
+    hints: [Choose the position that gains when the commodity becomes more expensive.]
+    worked_solution: A future buyer is exposed to rising prices, so buying futures creates the offsetting long hedge.
     retry_policy: until_correct
   - id: d1_futures_pnl
     check_type: numeric
@@ -141,8 +184,9 @@ checks:
       previous_price: 5.800
       current_price: 5.820
       contracts: 1
-    numeric_rule: {rounding_quantum: 0.01, tolerance: 0.01, rounding: half_up}
+    numeric_rule: {rounding_quantum: 0.01, tolerance: 0.01, rounding: half_up, answer_unit: USD}
     explanation: Price rose $0.020; the short loses $0.020 × 10,000 = $200.
+    numeric_wrong_answer_feedback: Keep the short sign and use dollars per MMBtu × 10,000 MMBtu × 1 contract; the result is -$200.00.
     hints: [For a short, use previous settlement minus current settlement.]
     worked_solution: ($5.800 - $5.820) × 10,000 MMBtu × 1 = -$200.00.
     retry_policy: until_correct
@@ -152,8 +196,9 @@ checks:
     learning_objective_ids: [daily_settlement_margin]
     source_id: cme_ng_overview
     calculation: {kind: tick_value, contract_id: cme_henry_hub_ng}
-    numeric_rule: {rounding_quantum: 0.01, tolerance: 0.01, rounding: half_up}
+    numeric_rule: {rounding_quantum: 0.01, tolerance: 0.01, rounding: half_up, answer_unit: USD per contract}
     explanation: Tick value is minimum tick multiplied by contract size.
+    numeric_wrong_answer_feedback: Multiply $0.001 per MMBtu by 10,000 MMBtu; the MMBtu units cancel and one tick is $10.00 per contract.
     hints: [Multiply $0.001/MMBtu by 10,000 MMBtu.]
     worked_solution: $0.001 × 10,000 = $10.00 per contract.
     retry_policy: until_correct
@@ -163,8 +208,9 @@ checks:
     learning_objective_ids: [basis_risk]
     source_id: cftc_glossary
     calculation: {kind: regional_price, henry_hub_price: 5.80, regional_basis: -0.30}
-    numeric_rule: {rounding_quantum: 0.001, tolerance: 0.001, rounding: half_up}
+    numeric_rule: {rounding_quantum: 0.001, tolerance: 0.001, rounding: half_up, answer_unit: USD per MMBtu}
     explanation: Regional price equals Henry Hub plus basis.
+    numeric_wrong_answer_feedback: Retain the negative basis sign; $5.80/MMBtu + (-$0.30/MMBtu) equals $5.500/MMBtu.
     hints: [Keep the negative sign on the basis.]
     worked_solution: $5.80 + (-$0.30) = $5.50/MMBtu.
     retry_policy: until_correct
@@ -178,8 +224,9 @@ checks:
       contract_id: cme_henry_hub_ng
       contracts: 10
       physical_quantity_mmbtu: 100000
-    numeric_rule: {rounding_quantum: 0.0001, tolerance: 0.0001, rounding: half_up}
+    numeric_rule: {rounding_quantum: 0.0001, tolerance: 0.0001, rounding: half_up, answer_unit: decimal hedge ratio}
     explanation: Ten contracts represent 100,000 MMBtu, matching the physical quantity.
+    numeric_wrong_answer_feedback: Convert 10 contracts to 100,000 MMBtu, then divide by 100,000 MMBtu; the result is 1.0000, not 100.
     hints: [Divide futures quantity by physical quantity.]
     worked_solution: (10 × 10,000) ÷ 100,000 = 1.0000, or 100%.
     retry_policy: until_correct
@@ -194,6 +241,9 @@ checks:
       - {id: all_full, text: Any positive contract count is a 100% hedge.}
     correct_option_id: correct_map
     explanation: Each contract represents 10,000 MMBtu, so the three quantities are 50,000, 100,000, and 150,000.
+    wrong_answer_feedback:
+      reverse_map: Contract quantity rises with contract count; five contracts cannot represent more MMBtu than fifteen.
+      all_full: A positive position is not automatically full-sized; each count must be compared with 100,000 MMBtu.
     hints: [Multiply each contract count by 10,000 MMBtu.]
     worked_solution: Divide 50,000, 100,000, and 150,000 by the 100,000 MMBtu exposure.
     retry_policy: until_correct
@@ -208,6 +258,9 @@ checks:
       - {id: contract_size, text: The exchange can retroactively change this trade's contract size.}
     correct_option_id: basis_change
     explanation: The benchmark quantity can match while the local cash-futures differential still changes.
+    wrong_answer_feedback:
+      no_risk: Matching Henry Hub quantity does not remove Chicago basis changes or margin-liquidity timing.
+      contract_size: Contract specifications are not the residual price risk in this authored trade; the Chicago differential is.
     hints: [The physical sale is Chicago-priced, while the futures contract references Henry Hub.]
     worked_solution: Regional = Henry Hub + basis; futures offset Henry Hub movement, leaving basis movement.
     retry_policy: until_correct
@@ -223,8 +276,29 @@ checks:
       - {id: excess_zero, text: Zero, because the position is called a hedge}
     correct_option_id: excess_50000
     explanation: Fifteen contracts represent 150,000 MMBtu; 50,000 exceeds the stated exposure.
+    wrong_answer_feedback:
+      excess_100000: This treats the entire supported exposure as excess instead of subtracting it from 150,000 MMBtu.
+      excess_150000: This calls the whole futures position excess even though 100,000 MMBtu offsets supported physical volume.
+      excess_zero: Calling a position a hedge does not supply physical support for quantity above the documented exposure.
     hints: [Subtract physical quantity from futures quantity.]
     worked_solution: (15 × 10,000) - 100,000 = 50,000 MMBtu speculative excess.
+    retry_policy: until_correct
+  - id: d2_hedger_vs_speculator
+    check_type: interpretation
+    prompt: Which participant is acting as a hedger in this scenario?
+    learning_objective_ids: [physical_financial_exposure, hedge_ratio]
+    source_id: cftc_market_basics
+    options:
+      - {id: supported_sale, text: Northstar sells futures against its supported forecast gas sale.}
+      - {id: profit_only, text: A desk sells futures only because it predicts a price decline.}
+      - {id: excess_only, text: A desk sells quantity beyond every supported commercial exposure.}
+    correct_option_id: supported_sale
+    explanation: The supported sale supplies the commercial exposure that the futures position is intended to reduce.
+    wrong_answer_feedback:
+      profit_only: A price view pursued only for profit lacks the offsetting commercial exposure that defines a hedge.
+      excess_only: Quantity beyond every supported exposure adds speculative risk rather than reducing commercial risk.
+    hints: [Look for an offsetting physical or commercial exposure.]
+    worked_solution: A hedger transfers risk tied to commercial exposure; a position taken only for profit, or beyond support, is speculative.
     retry_policy: until_correct
   - id: d3_below_maintenance
     check_type: prediction
@@ -237,28 +311,32 @@ checks:
       - {id: expense_only, text: An expense is booked but no cash is required.}
     correct_option_id: call_to_initial
     explanation: The balance is below maintenance, so the configured model calls back to initial margin.
+    wrong_answer_feedback:
+      no_call: A positive balance can still be below the $120,000 maintenance threshold and trigger a call.
+      expense_only: The $75,000 balance creates a cash-funding requirement; calling it only an expense ignores margin mechanics.
     hints: [Compare $75,000 with the $120,000 maintenance threshold.]
     worked_solution: $75,000 is below $120,000; required restoration is measured to $150,000.
     retry_policy: until_correct
   - id: d3_margin_call_amount
     check_type: numeric
-    prompt: With initial margin $150,000, maintenance $120,000, and balance $75,000, what is the call amount?
+    prompt: With initial margin $140,000, maintenance $110,000, and balance $90,000, what is the call amount?
     learning_objective_ids: [daily_settlement_margin]
     source_id: cftc_glossary
     calculation:
       kind: margin_call
-      initial_requirement: 150000
-      maintenance_requirement: 120000
-      margin_balance: 75000
-    numeric_rule: {rounding_quantum: 0.01, tolerance: 0.01, rounding: half_up}
+      initial_requirement: 140000
+      maintenance_requirement: 110000
+      margin_balance: 90000
+    numeric_rule: {rounding_quantum: 0.01, tolerance: 0.01, rounding: half_up, answer_unit: USD}
     explanation: Once below maintenance, this scenario restores the account to initial margin.
+    numeric_wrong_answer_feedback: Because $90,000 is below $110,000 maintenance, subtract the $90,000 balance from $140,000 initial margin for a $50,000 call.
     hints: [Subtract the current balance from initial margin, not maintenance margin.]
-    worked_solution: $150,000 - $75,000 = $75,000.
+    worked_solution: $140,000 - $90,000 = $50,000.
     retry_policy: until_correct
   - id: d3_cash_vs_pnl
     check_type: interpretation
     prompt: Northstar transfers $75,000 from operating cash to the FCM margin account. What is the immediate accounting meaning?
-    learning_objective_ids: [economic_cash_accounting]
+    learning_objective_ids: [daily_settlement_margin, economic_cash_accounting]
     source_id: cftc_economic_purpose
     options:
       - {id: cash_relocation, text: Cash moves between accounts; the transfer itself is not revenue or expense.}
@@ -266,6 +344,9 @@ checks:
       - {id: new_revenue, text: The transfer creates revenue because margin is an asset.}
     correct_option_id: cash_relocation
     explanation: Futures P&L and cash location are distinct; funding margin relocates cash.
+    wrong_answer_feedback:
+      new_expense: The futures loss was recognized through variation settlement; the later $75,000 transfer moves cash between asset accounts.
+      new_revenue: Receiving an asset in the FCM account does not create revenue because operating cash decreases by the same amount.
     hints: [Separate the settlement loss from the later transfer that funds the account.]
     worked_solution: Debit FCM margin cash and credit operating cash; no revenue or expense is created by the transfer.
     retry_policy: until_correct
@@ -280,6 +361,9 @@ checks:
       - {id: cash_irrelevant, text: Expected physical value guarantees cash is available today.}
     correct_option_id: effective_but_cash_pressure
     explanation: Timing and location of cash can threaten operations even when combined economics are sound.
+    wrong_answer_feedback:
+      hedge_failed: A margin call reflects daily futures cash timing, not by itself the final combined physical-and-futures economics.
+      cash_irrelevant: Expected physical value is not current operating cash and cannot automatically meet today's FCM deadline.
     hints: [Ask when the physical cash arrives versus when variation margin is due.]
     worked_solution: Daily futures cash settlement precedes the later physical sale, creating a timing mismatch.
     retry_policy: until_correct
@@ -294,6 +378,9 @@ checks:
       - {id: vague_purpose, text: Trade as needed for general market reasons.}
     correct_option_id: complete_purpose
     explanation: The complete record ties quantity and direction to the exposure and discloses remaining risk and approval.
+    wrong_answer_feedback:
+      profit_purpose: A profit view does not document risk reduction against the 100,000 MMBtu forecast sale.
+      vague_purpose: General market reasons omit the exposure, quantity rationale, remaining basis risk, and prior approval.
     hints: [Look for exposure, quantity, direction, purpose, remaining risk, and authorization.]
     worked_solution: Ten contracts equal the 100,000 MMBtu exposure; short addresses falling benchmark prices while basis remains.
     retry_policy: until_correct
@@ -308,6 +395,9 @@ checks:
       - {id: no_daily_effect, text: Nothing happens until contract expiration.}
     correct_option_id: loss_and_lower_margin
     explanation: Short futures lose when settlement rises, and the loss is settled daily.
+    wrong_answer_feedback:
+      gain_and_higher_margin: This is the long-position sign; a short uses previous settlement minus current settlement.
+      no_daily_effect: Futures are marked to settlement daily, so the loss affects FCM margin before expiration.
     hints: [Recall the Day 1 short-position sign.]
     worked_solution: For a short, P&L uses previous minus current settlement; a rise makes that difference negative.
     retry_policy: until_correct

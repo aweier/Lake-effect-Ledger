@@ -1,0 +1,520 @@
+schema_version: 1
+id: diligence_room
+title: The Diligence Room
+estimated_minutes: 48
+day_dates:
+  day_1: 2028-02-14
+  day_2: 2028-02-15
+  day_3: 2028-02-16
+  day_4: 2028-02-17
+purpose: >-
+  Support Great Lakes Infrastructure Partners' proposed majority acquisition
+  of Northstar with source-linked commodity-risk, liquidity, control, and
+  remediation information while preserving the records each stakeholder
+  actually received.
+transaction_structure: Proposed majority acquisition of Northstar Midstream & Trading
+buyer_name: Great Lakes Infrastructure Partners
+fictional_review_threshold: 50000
+stakeholders:
+  - stakeholder_id: great_lakes_infrastructure
+    name: Great Lakes Infrastructure Partners
+    role: Proposed majority buyer
+    kind: buyer
+    concerns:
+      - Scalable commodity-risk controls
+      - Management credibility
+      - Recurrence and remediation
+  - stakeholder_id: sofia_marin
+    name: Sofia Marin
+    role: Vice President, Commercial Diligence
+    kind: buyer
+    concerns:
+      - Commodity exposure and hedge discipline
+      - Consistency across delivered versions
+      - Whether the business can scale
+  - stakeholder_id: ingrid_holtz
+    name: Ingrid Holtz
+    role: Independent director and audit-committee representative
+    kind: board
+    concerns:
+      - Oversight and escalation
+      - Noah's findings and residual risk
+      - What management knew and when
+  - stakeholder_id: mara_voss
+    name: Mara Voss
+    role: Great Lakes Commercial Bank relationship manager
+    kind: lender
+    concerns:
+      - Cash, debt, and undrawn availability
+      - Covenant headroom and margin liquidity
+      - Reporting accuracy and remediation
+  - stakeholder_id: northstar_management
+    name: Northstar management
+    role: Seller management team
+    kind: management
+    concerns:
+      - Transaction continuity
+      - Commercial context
+      - Avoiding unsupported representations
+  - stakeholder_id: noah_shah
+    name: Noah Shah
+    role: Internal audit manager
+    kind: internal_audit
+    concerns:
+      - Accurate use of the final audit report
+      - Finding and action-plan status
+      - Preservation of the chronology
+request_specs:
+  - item_id: req_commodity_policy
+    label: Commodity-risk policy
+    source_record_ids: [northstar_commodity_risk_policy_v1]
+  - item_id: req_physical_exposure
+    label: Current physical exposure and support
+    source_record_ids: [forecast_live_week_2028]
+  - item_id: req_futures_positions
+    label: Current and historical futures positions
+    source_record_ids: [blotter_eleventh_contract]
+  - item_id: req_hedge_authorizations
+    label: Hedge authorizations
+    source_record_ids: [auth_live_week_ten_short]
+  - item_id: req_margin_history
+    label: Historical margin calls and cash movements
+    source_record_ids: [episode_01_hedge_book]
+  - item_id: req_revolver
+    label: Revolver draws and undrawn availability
+    source_record_ids: [great_lakes_revolver]
+  - item_id: req_covenant
+    label: Covenant calculations and headroom
+    source_record_ids: [episode_01_two_oclock_call]
+  - item_id: req_eleventh_records
+    label: The Eleventh Contract record chain
+    source_record_ids: [analyst_case_file_eleventh_contract]
+  - item_id: req_audit_report
+    label: No Surprises final internal-audit report
+    source_record_ids: [internal_audit_walkthrough_no_surprises]
+  - item_id: req_open_findings
+    label: Open internal-audit findings
+    source_record_ids: [audit_no_surprises_2028]
+  - item_id: req_management_response
+    label: Management responses
+    source_record_ids: [audit_no_surprises_2028]
+  - item_id: req_remediation
+    label: Remediation status
+    source_record_ids: [audit_no_surprises_2028]
+  - item_id: req_exceptions
+    label: Material disputes and exception schedule
+    source_record_ids: [reconciliation_eleventh_contract]
+  - item_id: req_communications
+    label: Relevant management and board communications
+    source_record_ids: [comm_eleventh_market_brief]
+sensitivities:
+  - scenario_id: hh_down_basis_weaker
+    label: Henry Hub down; Chicago basis weaker
+    henry_hub_change: -0.60
+    chicago_basis_change: -0.25
+  - scenario_id: hh_flat_basis_deteriorates
+    label: Henry Hub approximately unchanged; basis deteriorates
+    henry_hub_change: 0.00
+    chicago_basis_change: -0.40
+  - scenario_id: hh_up_margin_squeeze
+    label: Henry Hub up; margin-liquidity squeeze
+    henry_hub_change: 0.90
+    chicago_basis_change: -0.10
+simplifying_assumptions:
+  - The majority-acquisition structure, buyer, lender review, dates, and review threshold are fictional.
+  - The sensitivity cases assign no probabilities and are not forecasts.
+  - Favorable variation margin remains at the FCM and does not increase available-liquidity headroom in this simplified view.
+  - The chapter does not reach a legal conclusion, accounting-materiality conclusion, valuation, or covenant waiver.
+  - Packages contain structured references and fact snapshots, not stored files or a general-purpose virtual data room.
+scenes:
+  - id: dr_package_scope
+    day: 1
+    speaker: Sofia Marin
+    title: The Upload List
+    text: >-
+      Sofia's list is organized by question, not by department. "A summary is
+      useful if it points to the records underneath it. A summary that replaces
+      them is a different product." Evelyn asks what the first buyer package will contain.
+    choices:
+      - id: dr_send_complete_package
+        text: Provide the complete source-linked package, including Noah's full report.
+        effect:
+          disclosure_scope: complete
+          relationship_deltas: {sofia_marin: 2, noah_shah: 1, evelyn_marsh: 1}
+          trajectory_deltas: {precision: 1, candor: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_send_linked_summary
+        text: Provide a management summary that links to the complete report and schedules.
+        effect:
+          disclosure_scope: management_summary_linked
+          relationship_deltas: {sofia_marin: 1, evelyn_marsh: 1}
+          trajectory_deltas: {commercial_judgment: 1, stakeholder_aware: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_send_limited_package
+        text: Provide only the least controversial available records pending scope review.
+        effect:
+          disclosure_scope: limited
+          relationship_deltas: {sofia_marin: -1, cal_rourke: 1}
+          trajectory_deltas: {self_protective: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_escalate_disclosure_scope
+        text: Escalate uncertain disclosure scope to Evelyn and Noah before delivery.
+        effect:
+          disclosure_scope: escalated_review
+          relationship_deltas: {evelyn_marsh: 1, noah_shah: 1}
+          trajectory_deltas: {control_minded: 1, stakeholder_aware: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+  - id: dr_exception_language
+    day: 1
+    speaker: Noah Shah
+    title: Eleven Against Ten, Again
+    text: >-
+      Noah places his final report beside the upload index. "The correction is
+      part of the history. It is not a synonym for the history." Cal wants the
+      item called a corrected trading error and left there.
+    choices:
+      - id: dr_include_exception_schedule
+        text: Include the Eleventh Contract in a sourced exception schedule.
+        effect:
+          exception_description: exception_schedule
+          relationship_deltas: {noah_shah: 2, sofia_marin: 1, cal_rourke: -1}
+          trajectory_deltas: {control_minded: 1, candor: 1}
+        learning_objective_ids: [qualitative_significance]
+      - id: dr_call_corrected_error
+        text: Describe it as a corrected trading error and link Noah's report for context.
+        effect:
+          exception_description: corrected_trading_error
+          relationship_deltas: {cal_rourke: 1, sofia_marin: -1}
+          trajectory_deltas: {commercial_judgment: 1}
+        learning_objective_ids: [qualitative_significance]
+      - id: dr_call_eleven_authorized
+        text: Accept a draft saying all eleven contracts were authorized by the business.
+        effect:
+          exception_description: authorized_eleven
+          flags: {authorization_overstated: true}
+          relationship_deltas: {cal_rourke: 2, noah_shah: -2, evelyn_marsh: -2}
+          trajectory_deltas: {company_loyal: 1, conflicted: 1}
+        learning_objective_ids: [supported_vs_forecast_volume]
+  - id: dr_package_review
+    day: 1
+    speaker: Evelyn Marsh
+    title: Names in the Footer
+    text: >-
+      The package needs a reviewer. Evelyn can reconcile the financial language;
+      Noah can check use of his report. Cal offers to make the description
+      "commercially literate." The footer will preserve whoever reviewed it.
+    choices:
+      - id: dr_review_with_evelyn_noah
+        text: Ask Evelyn and Noah to review their respective source-linked sections.
+        effect:
+          reviewer_choice: evelyn_and_noah
+          relationship_deltas: {evelyn_marsh: 1, noah_shah: 1}
+          trajectory_deltas: {stakeholder_aware: 1, precision: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_review_with_cal
+        text: Let Cal review the commodity narrative before delivery.
+        effect:
+          reviewer_choice: cal
+          relationship_deltas: {cal_rourke: 2, noah_shah: -1}
+          trajectory_deltas: {company_loyal: 1, commercial_judgment: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_review_with_marisol
+        text: Ask Marisol to verify the dated physical-volume statements.
+        effect:
+          reviewer_choice: marisol
+          relationship_deltas: {marisol_vega: 2, evelyn_marsh: 1}
+          trajectory_deltas: {precision: 1, stakeholder_aware: 1}
+        learning_objective_ids: [supported_vs_forecast_volume]
+      - id: dr_self_review
+        text: Complete the junior-analyst package without an owner review.
+        effect:
+          reviewer_choice: self
+          relationship_deltas: {evelyn_marsh: -1, sofia_marin: -1}
+          trajectory_deltas: {ambitious: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+  - id: dr_number_source
+    day: 2
+    speaker: Marisol Vega
+    title: Supported When
+    text: >-
+      Marisol points at the date column. "A Friday nomination can support Friday.
+      It cannot travel back to Monday because the buyer likes round numbers."
+      The schedule needs one treatment for supported and possible volume.
+    choices:
+      - id: dr_reconcile_all_sources
+        text: Reconcile supported, possible, and later-supported volume by source date.
+        effect:
+          numbers_posture: reconcile_sources
+          relationship_deltas: {marisol_vega: 2, sofia_marin: 1, evelyn_marsh: 1}
+          trajectory_deltas: {precision: 1, control_minded: 1}
+        learning_objective_ids: [supported_vs_forecast_volume]
+      - id: dr_use_later_support_monday
+        text: Present later-supported volume as though it existed on the trade date.
+        effect:
+          numbers_posture: later_support_as_trade_date
+          flags: {volume_date_overstated: true}
+          relationship_deltas: {cal_rourke: 1, marisol_vega: -2, sofia_marin: -2}
+          trajectory_deltas: {company_loyal: 1}
+        learning_objective_ids: [supported_vs_forecast_volume]
+      - id: dr_omit_margin_history
+        text: Reconcile volumes but omit the known margin call from the lender schedule.
+        effect:
+          numbers_posture: omit_margin_call
+          flags: {margin_call_omitted: true}
+          relationship_deltas: {mara_voss: -2, evelyn_marsh: -1}
+          trajectory_deltas: {self_protective: 1}
+        learning_objective_ids: [economic_pnl_vs_margin_liquidity]
+  - id: dr_scenario_scope
+    day: 2
+    speaker: Sofia Marin
+    title: Three Winters That Did Not Happen
+    text: >-
+      Sofia asks for sensitivities, not a prediction. "Show me what breaks the
+      cash plan. Do not give fictional weather a confidence interval because
+      the table looks lonely."
+    choices:
+      - id: dr_include_full_sensitivities
+        text: Include all three cases with assumptions, cash movement, and headroom.
+        effect:
+          scenario_posture: full
+          relationship_deltas: {sofia_marin: 2, mara_voss: 1}
+          trajectory_deltas: {precision: 1, stakeholder_aware: 1}
+        learning_objective_ids: [scenario_vs_forecast]
+      - id: dr_include_sensitivity_summary
+        text: Include a summarized sensitivity view with the full table available.
+        effect:
+          scenario_posture: summary
+          relationship_deltas: {sofia_marin: 1}
+          trajectory_deltas: {commercial_judgment: 1}
+        learning_objective_ids: [scenario_vs_forecast]
+      - id: dr_escalate_scenario_assumptions
+        text: Escalate uncertainty about liquidity treatment before releasing the table.
+        effect:
+          scenario_posture: escalate
+          relationship_deltas: {evelyn_marsh: 1, mara_voss: 1}
+          trajectory_deltas: {control_minded: 1}
+        learning_objective_ids: [scenario_vs_forecast]
+  - id: dr_remediation_status
+    day: 2
+    speaker: Noah Shah
+    title: Approved Is a Verb, Too
+    text: >-
+      Management approved an action plan. Noah has not tested a new control.
+      "If the status says implemented, give me the implementation record. If it
+      says effective, give me the test."
+    choices:
+      - id: dr_label_actual_remediation
+        text: Label the plan approved or risk accepted exactly as the audit record supports.
+        effect:
+          remediation_posture: actual_status
+          relationship_deltas: {noah_shah: 2, ingrid_holtz: 1}
+          trajectory_deltas: {candor: 1, control_minded: 1}
+        learning_objective_ids: [remediation_status_evidence]
+      - id: dr_claim_remediation_implemented
+        text: Accept management's draft saying remediation is implemented.
+        effect:
+          remediation_posture: implemented_claim
+          flags: {remediation_overstated: true}
+          relationship_deltas: {cal_rourke: 2, noah_shah: -3, ingrid_holtz: -2}
+          trajectory_deltas: {company_loyal: 1, self_protective: 1}
+        learning_objective_ids: [remediation_status_evidence]
+      - id: dr_call_remediation_planned
+        text: Use planned as a cautious summary and link the approved response.
+        effect:
+          remediation_posture: planned_label
+          relationship_deltas: {noah_shah: 1, evelyn_marsh: 1}
+          trajectory_deltas: {precision: 1}
+        learning_objective_ids: [remediation_status_evidence]
+  - id: dr_buyer_answer
+    day: 3
+    speaker: Sofia Marin
+    title: Why Eleven
+    text: >-
+      Sofia asks why eleven contracts executed against ten authorized, when the
+      difference was discovered, and whether it could recur. She waits for one
+      answer rather than three fragments.
+    choices:
+      - id: dr_answer_buyer_completely
+        text: Answer from authorization, execution, chronology, and open remediation.
+        effect:
+          buyer_answer_posture: complete
+          relationship_deltas: {sofia_marin: 2, noah_shah: 1}
+          trajectory_deltas: {candor: 1, precision: 1}
+        learning_objective_ids: [qualitative_significance]
+      - id: dr_answer_buyer_narrowly
+        text: Confirm that the position was corrected without volunteering the authorization gap.
+        effect:
+          buyer_answer_posture: narrow
+          relationship_deltas: {sofia_marin: -2, cal_rourke: 1}
+          trajectory_deltas: {self_protective: 1}
+        learning_objective_ids: [qualitative_significance]
+      - id: dr_acknowledge_buyer_uncertainty
+        text: Acknowledge what the record cannot establish and refer control effectiveness to Noah.
+        effect:
+          buyer_answer_posture: acknowledge_uncertainty
+          relationship_deltas: {sofia_marin: 1, noah_shah: 1}
+          trajectory_deltas: {stakeholder_aware: 1}
+        learning_objective_ids: [remediation_status_evidence]
+  - id: dr_lender_answer
+    day: 3
+    speaker: Mara Voss
+    title: Cash Is Not Headroom
+    text: >-
+      Mara asks whether Northstar approached its fictional available-liquidity
+      covenant and why a hedge that reduced price exposure needed cash that afternoon.
+    choices:
+      - id: dr_answer_lender_completely
+        text: Reconcile operating cash, margin, revolver availability, obligations, and covenant headroom.
+        effect:
+          lender_answer_posture: complete
+          relationship_deltas: {mara_voss: 2, evelyn_marsh: 1}
+          trajectory_deltas: {precision: 1, stakeholder_aware: 1}
+        learning_objective_ids: [covenant_headroom, economic_pnl_vs_margin_liquidity]
+      - id: dr_answer_lender_narrowly
+        text: State that the covenant passed without describing the margin-liquidity pressure.
+        effect:
+          lender_answer_posture: narrow
+          relationship_deltas: {mara_voss: -2, cal_rourke: 1}
+          trajectory_deltas: {self_protective: 1}
+        learning_objective_ids: [covenant_headroom]
+      - id: dr_refer_lender_to_june
+        text: Provide the reconciled schedule and refer facility interpretation to June.
+        effect:
+          lender_answer_posture: refer_to_owner
+          relationship_deltas: {mara_voss: 1, evelyn_marsh: 1}
+          trajectory_deltas: {stakeholder_aware: 1, commercial_judgment: 1}
+        learning_objective_ids: [covenant_headroom]
+  - id: dr_management_draft
+    day: 3
+    speaker: Cal Rourke
+    title: Substantially in All Respects
+    text: >-
+      Cal's draft says the hedge was authorized, no liquidity issue occurred,
+      and remediation is complete. Each sentence has a nearby fact and a missing adjective.
+    choices:
+      - id: dr_correct_management_draft
+        text: Correct the draft to match the authorization, liquidity, and remediation records.
+        effect:
+          representation_posture: correct
+          relationship_deltas: {evelyn_marsh: 2, noah_shah: 1, cal_rourke: -2}
+          trajectory_deltas: {challenges_management: 1, candor: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_accept_preferred_draft
+        text: Accept management's preferred but incomplete wording.
+        effect:
+          representation_posture: preferred_incomplete
+          flags: {management_representation_incomplete: true}
+          relationship_deltas: {cal_rourke: 3, evelyn_marsh: -2, sofia_marin: -2}
+          trajectory_deltas: {company_loyal: 1, ambitious: 1}
+        learning_objective_ids: [qualitative_significance]
+      - id: dr_escalate_management_draft
+        text: Escalate the representation to Evelyn without making a legal conclusion.
+        effect:
+          representation_posture: escalate
+          relationship_deltas: {evelyn_marsh: 2, cal_rourke: -1}
+          trajectory_deltas: {challenges_management: 1, control_minded: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+  - id: dr_inconsistency_action
+    day: 4
+    speaker: Ingrid Holtz
+    title: Two Packets, One Monday
+    text: >-
+      Ingrid reads the buyer and lender summaries side by side. She asks what the
+      team will do if a date, quantity, margin call, or remediation label does not
+      agree. Silence would preserve both deliveries, but not their credibility.
+    choices:
+      - id: dr_issue_correction
+        text: Issue a versioned correction to every affected stakeholder.
+        effect:
+          inconsistency_action: correct
+          relationship_deltas: {ingrid_holtz: 2, sofia_marin: 1, mara_voss: 1}
+          trajectory_deltas: {candor: 1, stakeholder_aware: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_issue_supplement
+        text: Add the missing record as a dated supplement without replacing prior versions.
+        effect:
+          inconsistency_action: supplement
+          relationship_deltas: {noah_shah: 1, sofia_marin: 1}
+          trajectory_deltas: {precision: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_leave_versions
+        text: Leave the delivered versions in place and do not flag the conflict.
+        effect:
+          inconsistency_action: leave
+          flags: {known_inconsistency_left_open: true}
+          relationship_deltas: {cal_rourke: 2, ingrid_holtz: -3, sofia_marin: -3}
+          trajectory_deltas: {company_loyal: 1, self_protective: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+  - id: dr_committee_position
+    day: 4
+    speaker: Evelyn Marsh
+    title: The Committee Room
+    text: >-
+      Evelyn may let the junior analyst present the schedules if the prior work
+      has been reliable. Vince asks whether an operationally closed exception
+      needs another meeting; Ingrid asks who tested the closure. Noah owns his
+      conclusion. Management owns its response. The player owns the sentences
+      attached to their name.
+    choices:
+      - id: dr_support_noah_chronology
+        text: Support Noah's chronology and explain the source-linked schedules.
+        effect:
+          committee_posture: support_chronology
+          relationship_deltas: {noah_shah: 2, ingrid_holtz: 1}
+          trajectory_deltas: {candor: 1, precision: 1}
+        learning_objective_ids: [qualitative_significance]
+      - id: dr_protect_cal_explanation
+        text: Protect Cal's commercial explanation where it conflicts with the chronology.
+        effect:
+          committee_posture: protect_cal
+          relationship_deltas: {cal_rourke: 3, noah_shah: -2, sofia_marin: -2}
+          trajectory_deltas: {company_loyal: 1}
+        learning_objective_ids: [qualitative_significance]
+      - id: dr_acknowledge_incomplete_remediation
+        text: Acknowledge that approved remediation remains incomplete and untested.
+        effect:
+          committee_posture: acknowledge_incomplete
+          relationship_deltas: {ingrid_holtz: 2, noah_shah: 1, cal_rourke: -1}
+          trajectory_deltas: {control_minded: 1, candor: 1}
+        learning_objective_ids: [remediation_status_evidence]
+  - id: dr_final_action
+    day: 4
+    speaker: Sofia Marin
+    title: What the Room Can Rely On
+    text: >-
+      Sofia says favorable presentation is not the problem. "The problem is
+      making me discover which adjective changed between audiences." The final
+      action can repair a version, escalate a representation, or leave the room
+      to reconcile Northstar by itself.
+    choices:
+      - id: dr_final_correct_disclosure
+        text: Correct any remaining inconsistent disclosure and preserve every prior delivery.
+        effect:
+          final_action: correct_disclosure
+          relationship_deltas: {sofia_marin: 2, ingrid_holtz: 1, mara_voss: 1}
+          trajectory_deltas: {stakeholder_aware: 1, candor: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+      - id: dr_final_escalate_representation
+        text: Escalate the unsupported management representation to Evelyn and the committee.
+        effect:
+          final_action: escalate_representation
+          relationship_deltas: {evelyn_marsh: 2, ingrid_holtz: 2, cal_rourke: -2}
+          trajectory_deltas: {challenges_management: 1, control_minded: 1}
+        learning_objective_ids: [qualitative_significance]
+      - id: dr_final_stay_silent
+        text: Stay silent and allow two descriptions to remain.
+        effect:
+          final_action: stay_silent
+          flags: {final_silence: true}
+          relationship_deltas: {cal_rourke: 2, sofia_marin: -3, ingrid_holtz: -3}
+          trajectory_deltas: {self_protective: 1, company_loyal: 1}
+        learning_objective_ids: [stakeholder_consistent_disclosure]
+possible_outcomes:
+  - clean_room
+  - price_of_candor
+  - three_versions_of_monday
+  - remediation_on_paper
+  - covenant_conversation
+  - bellandi_confidence
+  - buyer_walks
+  - conditional_close

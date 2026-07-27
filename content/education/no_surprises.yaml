@@ -16,6 +16,9 @@ checks:
       - {id: monthly_training, text: A monthly policy reminder}
     correct_option_id: support_gate
     explanation: The gate constrains the action before release; the next-day match is detective.
+    wrong_answer_feedback:
+      next_day_match: A next-day comparison can detect an overrun only after the order was released.
+      monthly_training: Training may support behavior but does not block an unsupported quantity at release.
     hints: [Ask whether the activity operates before or after the order.]
     worked_solution: A physical-support gate is preventive because it stops the unsupported quantity before release.
     retry_policy: until_correct
@@ -30,6 +33,9 @@ checks:
       - {id: no_exception, text: The original exception never existed}
     correct_option_id: later_support_only
     explanation: Later evidence can resolve exposure but cannot be backdated.
+    wrong_answer_feedback:
+      retroactive_authority: Friday support does not change the Monday approval record or what was known then.
+      no_exception: The original exception remains historical even if later physical support changes current exposure.
     hints: [Separate what the document proves from when it was created.]
     worked_solution: Treat the Friday document as later support and retain Monday's state of knowledge.
     retry_policy: until_correct
@@ -44,6 +50,9 @@ checks:
       - {id: physical_support, text: The confirmation proves physical volume}
     correct_option_id: execution_match
     explanation: Confirmation and authorization answer different questions.
+    wrong_answer_feedback:
+      authorization: An external confirmation records the fill; it does not grant Northstar's prior approval.
+      physical_support: A trade confirmation contains execution facts, not physical nomination evidence.
     hints: [Identify the records being compared.]
     worked_solution: The confirmation supports execution accuracy; compare authorization separately.
     retry_policy: until_correct
@@ -58,6 +67,9 @@ checks:
       - {id: neither, text: Neither design nor operation}
     correct_option_id: operation
     explanation: The control may be capable of working, but it did not operate that day.
+    wrong_answer_feedback:
+      design: A skipped sound procedure is an operating failure; design alone does not describe what happened Tuesday.
+      neither: At least operation failed because the required review was not performed.
     hints: [Ask whether the procedure was incapable or simply not performed.]
     worked_solution: Classify the exception as an operating failure unless evidence also shows a design gap.
     retry_policy: until_correct
@@ -72,6 +84,9 @@ checks:
       - {id: self_review, text: Trader transmits and later certifies the exception alone}
     correct_option_id: separate_review
     explanation: Independent approval and review reduce incompatible-duty risk.
+    wrong_answer_feedback:
+      one_owner: Combining transmission, approval, reconciliation, and correction removes independent challenge.
+      self_review: A trader certifying the trader's own exception is not independent review.
     hints: [Look for initiation, approval, recording, and review in different hands.]
     worked_solution: Separate transmission, approval, reconciliation, and correction authority.
     retry_policy: until_correct
@@ -86,6 +101,9 @@ checks:
       - {id: authorizes, text: Retroactively authorizes the original quantity}
     correct_option_id: prospective
     explanation: Correction changes the current position, not the past record.
+    wrong_answer_feedback:
+      erases: An offset is a new opposite trade and cannot delete the original execution or its settled P&L.
+      authorizes: Corrective approval applies prospectively and does not expand the earlier authorization.
     hints: [Distinguish current exposure from historical authorization.]
     worked_solution: Link the offset to the original record and retain both transactions and settled P&L.
     retry_policy: until_correct

@@ -118,7 +118,7 @@ def test_pause_after_day_two_and_resume(tmp_path) -> None:
     assert SaveRepository(database).load().prologue.completed
 
 
-def test_standard_mode_skips_rotation_output(tmp_path) -> None:
+def test_standard_mode_keeps_rotation_with_optional_checks(tmp_path) -> None:
     result = runner.invoke(
         app,
         [
@@ -130,8 +130,11 @@ def test_standard_mode_skips_rotation_output(tmp_path) -> None:
         ],
     )
     assert result.exit_code == 0, result.output
-    assert "Day 1 — The Board" not in result.output
+    assert "Day 1 — The Board" in result.output
     assert "The December Difference" in result.output
+    state = SaveRepository(tmp_path / "standard.db").load()
+    assert state.prologue.completed
+    assert not any(item.completed for item in state.learning.checks.values())
 
 
 def test_saved_notebook_can_be_opened_without_advancing_story(tmp_path) -> None:

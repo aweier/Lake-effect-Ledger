@@ -12,7 +12,9 @@ from pydantic import BaseModel, ConfigDict, Field
 from lake_effect_ledger.accounting.models import Ledger
 from lake_effect_ledger.audit.models import NoSurprisesState
 from lake_effect_ledger.commodity.models import HedgeBookState
+from lake_effect_ledger.diligence.models import DiligenceRoomState
 from lake_effect_ledger.learning.models import (
+    CampaignTrack,
     CareerTrajectory,
     GameMode,
     LearningProfile,
@@ -22,7 +24,7 @@ from lake_effect_ledger.learning.models import (
 from lake_effect_ledger.trading.models import EleventhContractState
 from lake_effect_ledger.treasury.models import CommunicationRecord, TreasuryState
 
-SAVE_SCHEMA_VERSION = 6
+SAVE_SCHEMA_VERSION = 9
 CONTENT_SCHEMA_VERSION = 1
 
 
@@ -100,7 +102,7 @@ class ScheduledEvent(BaseModel):
 class GameState(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
 
-    save_schema_version: Literal[6] = SAVE_SCHEMA_VERSION
+    save_schema_version: Literal[9] = SAVE_SCHEMA_VERSION
     content_schema_version: Literal[1] = CONTENT_SCHEMA_VERSION
     game_id: str
     seed: int = Field(ge=0)
@@ -108,6 +110,7 @@ class GameState(BaseModel):
     day_number: int = Field(default=1, ge=1)
     player: Player
     game_mode: GameMode = GameMode.STANDARD
+    campaign_track: CampaignTrack = CampaignTrack.EXTENDED_STORY
     show_math: ShowMathMode = ShowMathMode.ON_REQUEST
     prologue: PrologueState = Field(default_factory=PrologueState)
     learning: LearningProfile = Field(default_factory=LearningProfile)
@@ -130,6 +133,11 @@ class GameState(BaseModel):
     evidence_log: list[CommunicationRecord] = Field(default_factory=list)
     eleventh_contract: EleventhContractState | None = None
     no_surprises: NoSurprisesState | None = None
+    diligence_room: DiligenceRoomState | None = None
+    introduced_character_ids: list[str] = Field(default_factory=list)
+    core_chapter_debrief_ids: list[str] = Field(default_factory=list)
+    core_debrief_completed: bool = False
+    core_campaign_completed: bool = False
     completed: bool = False
 
     def record(

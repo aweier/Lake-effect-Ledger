@@ -3,10 +3,10 @@
 `Lake Effect Ledger` is a fictional Python CLI narrative-management game about
 natural-gas accounting, hedging, liquidity, evidence, and loyalty.
 
-The repository now contains a Guided Career prologue and five connected playable
-chapters:
+The repository contains seven connected playable chapters organized into two
+campaign tracks. **Series 3 Core** is the recommended beginner path:
 
-1. **First Rotation** — a three-day, 25-minute introduction to physical and
+1. **First Rotation** — a three-day, 30-minute introduction to physical and
    futures exposure, basis, hedge quantities, daily settlement, margin,
    liquidity, and authorization.
 2. **The December Difference** — investigate or account for a 2,500 MMBtu
@@ -19,9 +19,15 @@ chapters:
 5. **The Eleventh Contract** — prepare a live-book recommendation, observe a
    supervised order, then reconcile ten authorized contracts against an
    eleven-contract execution and FCM confirmation.
+
+**Extended Story** continues with two optional business-context chapters:
+
 6. **No Surprises** — answer Noah Shah's internal-audit request, reconstruct the
    transaction from preserved records, test eight controls, and draft a
    management response and remediation plan.
+7. **The Diligence Room** — prepare source-linked buyer, lender, and
+   audit-committee packages for a proposed majority acquisition without changing
+   the financial, trade, treasury, or audit records beneath them.
 
 The product source of truth supplied for this project is
 [`../Lake_Effect_Ledger_Game_Concept.txt`](../Lake_Effect_Ledger_Game_Concept.txt).
@@ -30,6 +36,47 @@ The prompt calls it `.md`; the attached source is a complete Markdown-formatted
 
 All companies, people, prices, transactions, and events are fictional.
 Educational material is not legal, tax, accounting, trading, or investment advice.
+
+## Series 3 Core Campaign
+
+Game mode and campaign track are independent:
+
+| Selector | Choices | Controls |
+|---|---|---|
+| Game mode | Guided Career, Standard Story | Teaching support, checks, hints, retries, and math defaults |
+| Campaign track | Series 3 Core, Extended Story | Which chapters are played |
+
+Guided Career plus Series 3 Core is the recommended first play. Standard Story
+still begins with First Rotation and reports the concepts practiced through story
+decisions, but it skips optional chapter checks by default. Extended Story
+preserves all seven chapters.
+
+After The Eleventh Contract, both tracks receive a 15-question cumulative review
+and an honest Core Debrief. Learning Review permits hints, walkthroughs, and
+retry; Checkpoint Review records one answer per question. Progress distinguishes
+correct first attempts, correct retries, helped completions, unknown legacy
+history, and review recommendations. It never converts chapter completion into
+independent mastery.
+
+Series 3 Core stops before No Surprises and The Diligence Room. Those chapters
+remain playable in Extended Story and are labeled business context rather than
+exam coverage. The five Core chapters take about 120 minutes; the cumulative
+review and debrief bring a typical first play to about 140–150 minutes. See
+[`PLAYTEST_GUIDE.md`](PLAYTEST_GUIDE.md) for the recommended four-session manual
+playtest.
+
+The local curriculum map is
+[`content/education/series3_curriculum.yaml`](content/education/series3_curriculum.yaml).
+It maps every implemented learning objective to the current NFA outline source,
+chapter, checks, calculations, notebook section, coverage status, and
+exam-versus-context classification. It also lists material not yet covered. This
+is a focused foundation, not a complete Series 3 course or mock exam.
+
+Important characters now receive a concise, saved NEW CONTACT card at first
+meeting. Houston market analyst T.J. Morrow and Gdańsk-born risk-systems analyst
+Kasia Zielińska appear in First Rotation and recur later without changing any
+financial outcome. Author-only motivations and reveal guidance live in
+[`CHARACTER_BIBLE.md`](CHARACTER_BIBLE.md), which is never shown during gameplay.
 
 ## Current playable systems
 
@@ -76,9 +123,9 @@ Educational material is not legal, tax, accounting, trading, or investment advic
 
 ### Milestone 4: First Rotation
 
-- **Guided Career** (recommended) and **Standard Story** start modes.
+- **Guided Career** (recommended) and **Standard Story** teaching modes.
 - Three data-driven tutorial days: The Board, The Basis, and The Call.
-- Fifteen stable-ID checks covering multiple choice, numeric work, direction,
+- Seventeen stable-ID checks covering multiple choice, numeric work, direction,
   interpretation, and prediction.
 - Exact financial answers routed through the same commodity functions used by
   the Hedge Book.
@@ -87,7 +134,7 @@ Educational material is not legal, tax, accounting, trading, or investment advic
   or hidden-trajectory effects.
 - Hints and “I'm not sure” walkthroughs recorded as `practiced_with_help`, never
   as independent demonstration.
-- A persistent Learning Notebook with 21 sourced glossary terms, formulas,
+- A persistent Learning Notebook with 42 sourced glossary terms, formulas,
   objective progress, worked examples, source titles, and Series 3 topics.
 - A subtle, durable Day 2 documentation choice involving Marisol and Cal. It
   changes communication evidence and long-run career signals, but not market P&L.
@@ -117,7 +164,7 @@ Educational material is not legal, tax, accounting, trading, or investment advic
   margin through balanced entries.
 - Seed-selected physical support that is stored from chapter start but revealed
   only on Day 3. Later gas support changes economics, never prior authorization.
-- Seven small Guided checks with unlimited learning-only retry; Standard mode
+- Nine small Guided checks with unlimited learning-only retry; Standard mode
   skips them unless explicitly requested.
 - Six state-derived case-file outcomes, durable relationship shifts, new
   detail-oriented and risk-seeking career tendencies, and v5 save/resume.
@@ -151,17 +198,45 @@ Educational material is not legal, tax, accounting, trading, or investment advic
 - Seven state-derived outcomes, conditional Noah/Evelyn/Cal/Marisol trust, and
   v6 pause/resume through the pre-exit-meeting boundary.
 
+### Milestone 7: The Diligence Room
+
+- Four working days and twelve durable decisions: Upload List, Numbers,
+  Questions, and Committee Room.
+- A proposed majority acquisition by fictional Great Lakes Infrastructure
+  Partners, with distinct buyer, lender, board, management, and internal-audit
+  concerns.
+- Three overlapping but non-identical request lists and frozen, append-only
+  disclosure-package versions. Corrections and supplements preserve every
+  delivered predecessor.
+- Source-linked commodity, exposure, authorization, execution, margin, cash,
+  revolver, covenant, audit-finding, and remediation schedules. The diligence
+  layer creates no ledger, position, cash, or audit source of truth.
+- Three explicitly fictional sensitivities that separate physical economics,
+  futures effects, basis, variation-margin cash, and liquidity headroom. They
+  assign no probability, create no journal entries, and cannot mutate actual
+  state.
+- Six timestamped stakeholder Q&A records, supplemental responses, source-checked
+  management representations, typed inconsistencies, and access/delivery records.
+- Approval, implementation, effectiveness testing, closure, and risk acceptance
+  remain distinct remediation states.
+- Six learning-only Guided checks; Standard Story derives practiced concepts from
+  the twelve actual decisions.
+- Eight state-derived outcomes, conduct-dependent stakeholder and career
+  consequences, every-stage pause/resume, a pre-committee pause, and save schema
+  v7.
+
 ## Architecture and data flow
 
 ```text
 content/
   accounting/                    Accounts, static templates, dynamic patterns
   audit/                         No Surprises request, controls, scenes, outcomes
+  diligence/                     Diligence requests, scenes, sensitivities, outcomes
   chapters/                      All authored decision scenes
   commodity/                     Contract, price path, scenario, hedge levels
   events/                        Milestone 1 delayed consequences
   lessons/                       Separable educational explanations
-  education/                     Modes, checks, glossary, and source registry
+  education/                     Modes, curriculum, checks, glossary, and sources
   market_scenarios/              Milestone 1 dashboard market
 src/lake_effect_ledger/
   accounting/                    Balanced journal primitives and ledger
@@ -184,16 +259,39 @@ src/lake_effect_ledger/
     engine.py                    Record resolution, chronology, tests, severity, outcomes
     presentation.py              Request List, Timeline, findings, and report views
     report.py                    State-derived Internal Audit Walkthrough Report
+  diligence/
+    models.py                    Packages, versions, schedules, Q&A, findings, status
+    engine.py                    Source projection, reconciliation, sensitivity, outcomes
+    presentation.py              Request, package, schedule, Q&A, and report views
+    report.py                    State-derived Diligence Room Report
   education/                     Entry-derived and Hedge Book reports
-  learning/                      Check rules, shared calculations, notebook, rendering
+  learning/                      Check rules, Core review/debrief, notebook, rendering
   narrative/                     YAML schemas, references, typed-effect engine
-  persistence/                   Versioned SQLite saves and v1-through-v6 migration
+  persistence/                   Versioned SQLite saves and v1-through-v9 migration
   cli.py                         Typer/Questionary interaction boundary
   game.py                        Initial-state construction
   presentation.py               Milestone 1 Rich rendering
   state.py                       Versioned aggregate game state
 tests/                           Domain, content, migration, report, and CLI tests
 ```
+
+Campaign learning data flow:
+
+```text
+validated NFA curriculum map + independent campaign track and game mode
+  → chapter opening with scope, objectives, formulas, and time estimate
+  → authored story plus shared-engine calculations
+  → first-answer, retry, hint, walkthrough, and final-answer history
+  → chapter debrief and sectioned Learning Notebook
+  → saved 15-question Learning or Checkpoint Review
+  → Core Debrief using only implemented, Core-counting objectives
+  → stop at the Core boundary or continue into Extended Story context
+```
+
+Optional chapters cannot inflate Core progress because their objectives are
+classified as business context and fail validation if marked as Core-counting.
+Calculation mappings also fail validation if their declared formula kind drifts
+from the shared commodity-engine check.
 
 Milestone 2 and 3 data flow:
 
@@ -270,6 +368,26 @@ findings, and remediation. It does not copy cash, P&L, positions, authorization,
 or accounting into a second source of truth. The subsystem evaluates one
 selected transaction and is deliberately not a generalized GRC platform.
 
+The Diligence Room adds an equally narrow projection layer:
+
+```text
+completed commodity + treasury + Eleventh Contract + No Surprises records
+  → three stakeholder-specific request lists
+  → frozen initial disclosure-package versions and delivery records
+  → source-resolved risk and exception schedules
+  → three non-probabilistic commodity/liquidity sensitivities
+  → timestamped buyer, lender, and board Q&A
+  → append-only corrections or supplements plus typed inconsistencies
+  → committee conduct, stakeholder reactions, transaction status, and report
+```
+
+The subsystem stores references, disclosure conduct, and stakeholder
+interpretations. Every amount is rebuilt from the existing domain state when the
+report is generated. Source reconciliation and sensitivity reconstruction fail
+closed if a saved schedule, package link, or formula no longer agrees. See
+[`DILIGENCE_DESIGN.md`](DILIGENCE_DESIGN.md) for invariants, failure modes, and
+scope boundaries.
+
 ## Setup
 
 Python 3.12 is required. From this directory in PowerShell:
@@ -310,10 +428,28 @@ Without activation on Windows:
 .\.venv\Scripts\lake-ledger.exe
 ```
 
-New Game first offers Guided Career (recommended) or Standard Story. Guided Career
-plays First Rotation before Episode 1; Standard Story preserves the direct
-story opening. Every completed tutorial check, settlement, treasury decision, and
-live-book scene autosaves to `saves/lake_ledger.db`. Use **Load Game** to resume.
+New Game separately offers a teaching mode and campaign track. Guided Career plus
+Series 3 Core is recommended. Both modes begin with First Rotation; Guided Career
+requires the learning checks while Standard Story skips them by default. Every
+completed tutorial check, settlement, treasury decision, live-book scene, and
+Core Review response autosaves to `saves/lake_ledger.db`. Use **Load Game** to
+resume.
+
+Launch the recommended Core Campaign with a dedicated playtest save:
+
+```powershell
+.\.venv\Scripts\lake-ledger.exe --game-mode guided `
+  --campaign-track series3_core `
+  --show-math on_request `
+  --save-db .\saves\series3_core_playtest.db
+```
+
+Resume it with:
+
+```powershell
+.\.venv\Scripts\lake-ledger.exe --load-autosave `
+  --save-db .\saves\series3_core_playtest.db
+```
 
 Debug mode also reveals the selected path and all future embedded prices. Normal
 play does not disclose future prices:
@@ -345,6 +481,84 @@ lake-ledger --load-autosave --show-notebook
 ```
 
 ## Scripted play and acceptance paths
+
+### Series 3 Core acceptance paths
+
+Run the complete recommended path with correct answers:
+
+```powershell
+lake-ledger --quick-start --game-mode guided `
+  --campaign-track series3_core --show-math always `
+  --prologue-strategy correct --chapter-check-strategy correct `
+  --review-style learning --review-strategy correct
+```
+
+Exercise help and retry without awarding independent mastery:
+
+```powershell
+lake-ledger --quick-start --game-mode guided `
+  --campaign-track series3_core --prologue-strategy retry `
+  --chapter-check-strategy helped --review-style learning `
+  --review-strategy helped
+```
+
+Run the one-answer diagnostic:
+
+```powershell
+lake-ledger --quick-start --game-mode standard `
+  --campaign-track series3_core --review-style checkpoint
+```
+
+### Milestone 7 acceptance paths
+
+Run the complete, consistent disclosure path with all six Guided checks:
+
+```powershell
+lake-ledger --quick-start --game-mode guided --seed 1728 `
+  --eleventh-path formal_correction --audit-path full_disclosure `
+  --diligence-path full_consistent --diligence-check-strategy correct
+```
+
+Exercise all eight state-derived outcomes:
+
+```powershell
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path full_consistent
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path limited_then_supplement
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path inconsistent_versions
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path remediation_overstated
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path covenant_concern
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path cal_aligned
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path buyer_walks
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path conditional_close
+```
+
+Specifying a diligence path automatically completes the required prior chapters
+when using `--quick-start`. Guided checks support `correct`, `helped`, and
+`retry`. Standard Story skips them with the default `auto` strategy while still
+reporting concepts practiced through decisions.
+
+Pause after any of the six durable diligence stages, or at the dedicated
+pre-committee boundary:
+
+```powershell
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path conditional_close --diligence-stages 4 `
+  --save-db .\saves\diligence_resume.db
+lake-ledger --load-autosave --save-db .\saves\diligence_resume.db
+
+lake-ledger --quick-start --game-mode standard --seed 1728 `
+  --diligence-path limited_then_supplement --pause-before-committee `
+  --save-db .\saves\diligence_committee.db
+lake-ledger --load-autosave --save-db .\saves\diligence_committee.db
+```
 
 ### Milestone 6 acceptance paths
 
@@ -613,6 +827,35 @@ lake-ledger --load-autosave --funding-choice revolver `
   --save-db .\saves\treasury_resume.db
 ```
 
+## Fictional Diligence Room scenario
+
+Great Lakes Infrastructure Partners is evaluating a majority acquisition of
+Northstar. Sofia Marin leads commercial diligence; Ingrid Holtz represents the
+board audit committee; Mara Voss represents the existing lender relationship.
+They use the same financial and control truth but ask different questions:
+scalability and recurrence for the buyer, oversight and credibility for the
+board, and cash, debt, margin liquidity, and covenant headroom for the lender.
+
+The three scenario rows are sensitivities, not forecasts:
+
+| Case | Henry Hub change | Chicago basis change |
+| --- | ---: | ---: |
+| Henry Hub down; Chicago basis weaker | -$0.60/MMBtu | -$0.25/MMBtu |
+| Henry Hub approximately unchanged; basis deteriorates | $0.00/MMBtu | -$0.40/MMBtu |
+| Henry Hub up; margin-liquidity squeeze | +$0.90/MMBtu | -$0.10/MMBtu |
+
+For each row, the engine applies the configured changes to the saved supported
+physical volume and existing futures position, shows the basis component
+separately, treats futures mark-to-market as the estimated variation-margin cash
+movement, and adjusts the saved fictional covenant headroom only for cash that
+would leave operating liquidity. No probability is assigned. The rows are
+fictional what-if calculations, do not change actual state, and are not
+accounting entries.
+
+The $50,000 significance amount is a fictional Northstar review threshold. It
+does not decide accounting materiality or legal significance and cannot suppress
+authorization, certification, liquidity, recurrence, or credibility factors.
+
 ## Fictional Eleventh Contract scenario
 
 | Record or input | Authored value |
@@ -800,16 +1043,21 @@ network access.
 
 ## Save compatibility
 
-The save schema is version 6.
+The save schema is version 9.
 
-- Version 1 Milestone 1 saves migrate through the full chain to version 6.
-- Version 2 Hedge Book saves migrate through the full chain to version 6.
-- Version 3 Treasury saves migrate through versions 4, 5, and 6.
-- Version 4 First Rotation saves migrate through versions 5 and 6.
-- Version 5 Eleventh Contract saves migrate explicitly to version 6 with an
-  empty audit state; the completed chapter is not replayed.
+- Versions 1 through 6 migrate through the existing chain to version 7, then
+  explicitly through versions 8 and 9.
+- Version 7 Diligence Room saves migrate explicitly through versions 8 and 9.
+- Version 8 Core Campaign saves migrate explicitly to version 9.
 - Migration preserves the player, resources, decisions, event log, and ledger.
-- All old saves enter Standard Story with First Rotation already bypassed.
+- Legacy saves default to Extended Story so previously available chapters do not
+  disappear.
+- Completed legacy checks remain completed, but missing first-attempt history is
+  labeled `completed_history_unknown`; migration does not invent independent
+  mastery.
+- Legacy completed campaigns are not forced through the new chapter debrief or
+  cumulative-review sequence.
+- Older pre-learning saves retain Standard Story and bypass First Rotation.
 - The new evidence-exposure resource receives a documented default of 10.
 - No Hedge Book is silently invented for an old save.
 - No treasury crisis or evidence record is silently invented for a v2 save.
@@ -827,6 +1075,16 @@ The save schema is version 6.
 - Version 6 persists the audit stage, selected path, request and package
   responses, chronology, walkthrough explanations, tests, exceptions, findings,
   management responses, remediation, relationship shifts, checks, and outcome.
+- Version 7 persists the diligence engagement, stakeholder requests, immutable
+  package versions, delivery records, source references, risk and sensitivity
+  schedules, Q&A, supplements, representations, inconsistencies, findings,
+  reactions, decisions, checks, transaction status, and outcome.
+- Version 8 persists campaign track, completed Core chapter debriefs, Learning or
+  Checkpoint Review position and responses, first-answer/final-answer/help
+  history, review recommendations, and Core completion state.
+- Version 9 persists one-time character introductions. Migration infers
+  previously met existing characters from chapter progress without pretending
+  the two newly added contacts appeared in older content.
 - Early native-v5 chapter saves without the explicit reconciliation envelope
   rebuild that typed link from the preserved lifecycle records when play resumes.
 
@@ -848,8 +1106,21 @@ Run formatting, linting, and the complete suite:
 
 The suite covers:
 
-- Guided and Standard mode defaults, background introductions, all 28 check
-  answers, five check types, glossary/source/topic references, and broken content;
+- independent Guided/Standard modes and Core/Extended tracks, background
+  introductions, all 38 check answers, five check types, glossary/source/topic
+  references, and broken content;
+- all 37 implemented objectives mapped exactly once to curriculum status,
+  chapter, checks, calculations, notebook section, source, and Core eligibility;
+- rejection of missing mappings, context counted as Core, covered objectives
+  without practice, formula drift, concepts tested before introduction, missing
+  wrong-answer feedback or units, and context-only review questions;
+- correct first attempts, correct retries, helped completions, repeated-error
+  review recommendations, and unknown legacy learning history;
+- five Core chapter openings and debriefs, both cumulative-review styles, honest
+  final diagnostics, the Core stopping boundary, and Extended Story continuation;
+- four-session Core save/resume and a fully interactive menu-to-debrief path;
+- first-meeting character cards, no-repeat behavior, save/resume, v8 legacy
+  inference, Unicode names, conditional reveals, and spoiler-field isolation;
 - correct, helped, unsure, and retry learning paths with protected-state
   invariants;
 - First Rotation story durability, communication evidence, multi-decision career
@@ -860,8 +1131,8 @@ The suite covers:
 - initial margin, maintenance breaches, calls, insufficient cash, and release;
 - balanced entries and cash/FCM reconciliation after every settlement;
 - deterministic replay and mid-scenario save/resume;
-- explicit v1-through-v6, v2-through-v6, v3-through-v6, v4-through-v6, and
-  v5-to-v6 migration;
+- explicit v1-through-v9, v2-through-v9, v3-through-v9, v4-through-v9,
+  v5-through-v9, v6-through-v9, v7-through-v9, and v8-to-v9 migration;
 - invalid contract, path, date, price, side, margin, hedge, effect, and lesson data;
 - documentation independence from market P&L;
 - actual-path learning-report reconciliation;
@@ -879,7 +1150,7 @@ The suite covers:
 - all six case-file outcomes and both hidden physical-volume results;
 - eleven-contract settlement, 110% exposure, margin, cash, and ledger reconciliation;
 - prospective offset P&L/history preservation and margin release;
-- seven Guided chapter checks with retry-state isolation; and
+- nine Guided chapter checks with retry-state isolation; and
 - Standard-mode Case File concepts derived from story decisions;
 - conditional prior-conduct and physical-outcome dialogue; and
 - before-order, post-confirmation, open-exception, and post-offset resume plus v4 migration.
@@ -891,20 +1162,40 @@ The suite covers:
   remediation types, risk acceptance, and materially different reports;
 - six Guided audit checks with protected-state retry and Standard
   decision-derived concepts;
-- all scripted audit paths plus every saved stage and pre-exit pause/resume.
+- all scripted audit paths plus every saved stage and pre-exit pause/resume;
+- overlapping stakeholder requests, complete and limited packages, supplements,
+  frozen version history, delivery chronology, source resolution, and typed
+  inconsistencies;
+- saved-state risk schedules, three sensitivity rows, treasury reconciliation,
+  qualitative significance, and no scenario mutation or accounting entries;
+- Q&A, supplemental responses, management representations, remediation-state
+  distinctions, stakeholder reactions, and career effects;
+- six Guided diligence checks with protected-state retry and Standard
+  decision-derived concepts;
+- all eight Diligence Room outcomes, all scripted CLI paths, every saved stage,
+  and pre-committee pause/resume.
 
 ## Known limitations
 
 This remains a vertical-slice prototype:
 
 - One commodity, one active physical exposure per chapter, two Hedge Book paths,
-  one Eleventh Contract intraday tape, and one selected audit transaction.
+  one Eleventh Contract intraday tape, one selected audit transaction, and one
+  majority-acquisition diligence engagement.
 - Fixed fictional margin requirements; no SPAN, portfolio offsets, or intraday calls.
 - Futures gains remain in the FCM account until final release.
 - No commissions, bid/ask spread, taxes, borrowing-base model, or interest on
   margin.
 - No physical delivery through the futures contract.
-- No options, spreads, position-limit engine, live prices, or full hedge accounting.
+- Series 3 Core is not a complete exam-preparation product or mock exam. It does
+  not yet teach clearinghouse and delivery mechanics; first-notice, last-trading,
+  spot-month, price-limit, normal/inverted-market, and full carry concepts;
+  spreads; speculative return/margin calculations; options; technical or
+  fundamental analysis; registration categories; customer-account rules;
+  CPO/CTA rules; promotional material; reporting and position limits; or the
+  broader regulatory, arbitration, and disciplinary outline.
+- No options, spread engine, position-limit engine, live prices, or full hedge
+  accounting.
 - The chapter tape assumes complete fills and omits market depth, partial authored
   fills, queue priority, slippage, fees, and exchange-specific protection logic.
 - SQLite still stores each save as a versioned JSON state blob.
@@ -912,8 +1203,13 @@ This remains a vertical-slice prototype:
   model; they need more authored decisions before supporting a broader campaign.
 - The audit subsystem is transaction-scoped. It is not a SOX program, legal
   conclusion, statistical sampling engine, or enterprise GRC repository.
+- The diligence subsystem stores structured references and versions, not files.
+  It is not a virtual data room, valuation model, covenant-waiver tool, legal
+  opinion workflow, or generalized M&A platform.
 - Source-tree editable installation is supported; wheel resource packaging is not
   yet configured.
+- The CLI returns at a clearly rendered main-menu boundary after Core completion;
+  it does not redraw the menu within the same process invocation.
 
 This is still a production-shaped prototype, not a production treasury or trading
 system. Live prices, exchange/FCM margin models, legal lender terms, multi-user

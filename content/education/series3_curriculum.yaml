@@ -1,0 +1,523 @@
+schema_version: 1
+outline:
+  source_id: nfa_series3_outline
+  title: Series 3 — National Commodity Futures Examination Study Outline
+  url: https://www.nfa.futures.org/registration-membership/study-outlines/index.html
+  reviewed_on: 2026-07-26
+  authority_note: >-
+    This locally validated map uses the current NFA outline as the exam-content
+    authority. It is a scope map, not a complete exam-readiness claim.
+
+objectives:
+  - id: double_entry
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Double-entry accounting
+    game_concept_label: Balanced journal entries
+    source_id: fasb_concepts_useful_information
+    coverage_status: context_only
+    chapter_ids: [december_difference]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: classification_support
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Accounting classification support
+    game_concept_label: Classification requires evidence
+    source_id: fasb_concepts_useful_information
+    coverage_status: context_only
+    chapter_ids: [december_difference]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: provisional_recognition
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Provisional accounting recognition
+    game_concept_label: Preserve uncertainty in the ledger
+    source_id: fasb_concepts_useful_information
+    coverage_status: context_only
+    chapter_ids: [december_difference]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: reconciliation_evidence
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Reconciliation evidence
+    game_concept_label: Reproducible support
+    source_id: gao_green_book_2025
+    coverage_status: context_only
+    chapter_ids: [first_rotation, december_difference, eleventh_contract]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: escalation_and_review
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Independent accounting review
+    game_concept_label: Escalation and review
+    source_id: gao_green_book_2025
+    coverage_status: context_only
+    chapter_ids: [first_rotation, december_difference]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: gas_imbalance
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Natural-gas operational imbalance
+    game_concept_label: Metered, scheduled, and settled volume
+    source_id: cme_ng_overview
+    coverage_status: context_only
+    chapter_ids: [december_difference, eleventh_contract]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+
+  - id: physical_financial_exposure
+    official_outline_section: Part 1 — Futures Trading Theory and Basic Functions Terminology
+    official_topic_label: Hedging theory; risk reduction
+    game_concept_label: Physical exposure and futures position
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [first_rotation, hedge_book]
+    check_ids: [d1_physical_direction, d2_hedger_vs_speculator]
+    classification: exam_material
+    notebook_section: Futures Foundations
+    counts_toward_core: true
+  - id: short_futures_hedge
+    official_outline_section: Part 1 — Futures Trading Theory and Basic Functions Terminology
+    official_topic_label: Short hedging
+    game_concept_label: Seller's falling-price hedge
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [first_rotation, hedge_book, eleventh_contract]
+    check_ids: [d1_hedge_direction, d1_futures_pnl, d3_short_price_rise, ec_sell_for_forecast_sale]
+    calculation_kinds: [futures_pnl]
+    classification: exam_material
+    notebook_section: Hedging and Basis
+    counts_toward_core: true
+  - id: long_futures_hedge
+    official_outline_section: Part 1 — Futures Trading Theory and Basic Functions Terminology
+    official_topic_label: Long hedging
+    game_concept_label: Buyer's rising-price hedge
+    source_id: nfa_series3_outline
+    coverage_status: introduced_only
+    chapter_ids: [first_rotation]
+    check_ids: [d1_long_hedge_direction]
+    classification: exam_material
+    notebook_section: Hedging and Basis
+    counts_toward_core: true
+  - id: hedge_ratio
+    official_outline_section: Part 1 — Basic Hedging, Basis Calculations, Hedging Futures
+    official_topic_label: Hedging calculations
+    game_concept_label: Hedge quantity and speculative excess
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [first_rotation, hedge_book, eleventh_contract]
+    check_ids:
+      [d2_hedge_ratio, d2_quantity_comparison, d2_speculative_excess, d2_hedger_vs_speculator, ec_eleven_contract_ratio, ec_current_overhedge]
+    calculation_kinds: [hedge_ratio]
+    classification: exam_material
+    notebook_section: Hedging and Basis
+    counts_toward_core: true
+  - id: daily_settlement_margin
+    official_outline_section: Part 1 — Futures Margins, Price Limits, Futures Settlements, Delivery
+    official_topic_label: Initial and maintenance margin; variation; settlement
+    game_concept_label: Daily futures cash and margin calls
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [first_rotation, hedge_book, two_oclock_call, eleventh_contract]
+    check_ids:
+      [d1_futures_pnl, d1_tick_value, d3_below_maintenance, d3_margin_call_amount, d3_cash_vs_pnl, d3_short_price_rise]
+    calculation_kinds: [futures_pnl, tick_value, margin_call]
+    classification: exam_material
+    notebook_section: Margin and Settlement
+    counts_toward_core: true
+  - id: basis_risk
+    official_outline_section: Part 1 — Basic Hedging, Basis Calculations, Hedging Futures
+    official_topic_label: The basis; effect on hedgers
+    game_concept_label: Henry Hub versus Chicago
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [first_rotation, hedge_book]
+    check_ids: [d2_regional_price, d2_remaining_risk]
+    calculation_kinds: [regional_price]
+    classification: exam_material
+    notebook_section: Hedging and Basis
+    counts_toward_core: true
+  - id: economic_cash_accounting
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Accounting recognition versus economic mark
+    game_concept_label: Cash relocation and recognized P&L
+    source_id: fasb_concepts_useful_information
+    coverage_status: context_only
+    chapter_ids: [first_rotation, hedge_book, two_oclock_call]
+    check_ids: [d3_cash_vs_pnl]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: hedge_documentation
+    official_outline_section: Business context — Northstar internal control
+    official_topic_label: Internal commercial hedge documentation
+    game_concept_label: Purpose, quantity, remaining risk, and approval
+    source_id: cftc_market_basics
+    coverage_status: context_only
+    chapter_ids: [first_rotation, hedge_book]
+    check_ids: [d3_trade_purpose]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: liquidity_not_profit
+    official_outline_section: Part 1 — Futures Margins, Price Limits, Futures Settlements, Delivery
+    official_topic_label: Effects of substantial price movement
+    game_concept_label: Economic hedge versus interim cash need
+    source_id: nfa_series3_outline
+    coverage_status: partially_covered
+    chapter_ids: [first_rotation, hedge_book, two_oclock_call]
+    check_ids: [d3_effective_hedge_liquidity]
+    classification: exam_material
+    notebook_section: Margin and Settlement
+    counts_toward_core: true
+  - id: revolver_mechanics
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Revolving debt and interest
+    game_concept_label: Drawn and undrawn liquidity
+    source_id: fasb_debt_overview
+    coverage_status: context_only
+    chapter_ids: [two_oclock_call]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: obligation_priority
+    official_outline_section: Business context — outside the Series 3 outline
+    official_topic_label: Treasury obligation prioritization
+    game_concept_label: Protect payroll and operating obligations
+    source_id: gao_green_book_2025
+    coverage_status: context_only
+    chapter_ids: [two_oclock_call]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: treasury_communication
+    official_outline_section: Business context — Northstar internal control
+    official_topic_label: Treasury escalation and evidence
+    game_concept_label: Timely funding communication
+    source_id: gao_green_book_2025
+    coverage_status: context_only
+    chapter_ids: [two_oclock_call, eleventh_contract]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+
+  - id: order_types
+    official_outline_section: Part 1 — Types of Orders, Customer Accounts, Price Analysis
+    official_topic_label: Market and stop orders; additional order types
+    game_concept_label: Market, limit, and stop behavior
+    source_id: nfa_series3_outline
+    coverage_status: partially_covered
+    chapter_ids: [eleventh_contract]
+    check_ids: [ec_market_versus_limit, ec_sell_limit_eligibility]
+    classification: exam_material
+    notebook_section: Orders and Positions
+    counts_toward_core: true
+  - id: trade_lifecycle
+    official_outline_section: Part 2 — Regulations; FCM/IB Regulations
+    official_topic_label: Order records and time-stamping
+    game_concept_label: Authorization through confirmation
+    source_id: nfa_series3_outline
+    coverage_status: partially_covered
+    chapter_ids: [eleventh_contract]
+    check_ids: [ec_authorization_confirmation]
+    classification: exam_material
+    notebook_section: Orders and Positions
+    counts_toward_core: true
+  - id: trade_reconciliation
+    official_outline_section: Part 2 — Regulations; FCM/IB Regulations
+    official_topic_label: Books, records, and supervision
+    game_concept_label: Compare authorization, fill, and confirmation
+    source_id: nfa_series3_outline
+    coverage_status: introduced_only
+    chapter_ids: [eleventh_contract]
+    check_ids: [ec_authorization_confirmation, ec_offset_preserves_history]
+    classification: exam_material
+    notebook_section: Regulations and Ethics
+    counts_toward_core: true
+  - id: offset_preserves_history
+    official_outline_section: Part 1 — Futures Contract; Offsetting Contracts
+    official_topic_label: Offset provisions; liquidating positions
+    game_concept_label: Opposite trade closes exposure prospectively
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [eleventh_contract]
+    check_ids: [ec_offset_preserves_history, ec_records_ethics]
+    classification: exam_material
+    notebook_section: Orders and Positions
+    counts_toward_core: true
+  - id: authorization_vs_outcome
+    official_outline_section: Part 2 — Regulations; General
+    official_topic_label: Just and equitable principles; supervision
+    game_concept_label: Prior authority cannot be created by hindsight
+    source_id: nfa_series3_outline
+    coverage_status: introduced_only
+    chapter_ids: [eleventh_contract]
+    check_ids: [ec_current_overhedge, ec_profit_not_authorization]
+    classification: exam_material
+    notebook_section: Regulations and Ethics
+    counts_toward_core: true
+  - id: records_and_ethical_conduct
+    official_outline_section: Part 2 — Regulations; General and FCM/IB Regulations
+    official_topic_label: Just and equitable principles; records
+    game_concept_label: Preserve original trade records
+    source_id: nfa_series3_outline
+    coverage_status: introduced_only
+    chapter_ids: [eleventh_contract]
+    check_ids: [ec_records_ethics]
+    classification: exam_material
+    notebook_section: Regulations and Ethics
+    counts_toward_core: true
+
+  - id: preventive_detective_controls
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Internal-control classification
+    game_concept_label: Prevent or detect an exception
+    source_id: gao_green_book_2025
+    coverage_status: context_only
+    chapter_ids: [no_surprises]
+    check_ids: [audit_preventive_detective]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: authorization_reconciliation_roles
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Internal-control roles
+    game_concept_label: Authorization versus reconciliation
+    source_id: gao_green_book_2025
+    coverage_status: context_only
+    chapter_ids: [no_surprises]
+    check_ids: [audit_authorization_reconciliation]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: design_operating_effectiveness
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Control design and operation
+    game_concept_label: A sound control that was skipped
+    source_id: gao_green_book_2025
+    coverage_status: context_only
+    chapter_ids: [no_surprises]
+    check_ids: [audit_design_operation]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: contemporaneous_evidence
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Audit evidence timing
+    game_concept_label: Evidence cannot be backdated
+    source_id: iia_global_standards
+    coverage_status: context_only
+    chapter_ids: [no_surprises]
+    check_ids: [audit_contemporaneous_evidence]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: segregation_of_duties
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Incompatible responsibilities
+    game_concept_label: Independent approval and review
+    source_id: gao_green_book_2025
+    coverage_status: context_only
+    chapter_ids: [no_surprises]
+    check_ids: [audit_segregation]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: remediation_preserves_history
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Internal-audit remediation
+    game_concept_label: Correct the present without rewriting the past
+    source_id: iia_global_standards
+    coverage_status: context_only
+    chapter_ids: [no_surprises]
+    check_ids: [audit_remediation_history]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: economic_pnl_vs_margin_liquidity
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Diligence presentation of hedge economics
+    game_concept_label: Reconcile economics and cash location
+    source_id: fasb_concepts_useful_information
+    coverage_status: context_only
+    chapter_ids: [diligence_room]
+    check_ids: [diligence_economic_vs_liquidity]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: supported_vs_forecast_volume
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Dated forecast support
+    game_concept_label: Supported, possible, and later-supported volume
+    source_id: fasb_concepts_useful_information
+    coverage_status: context_only
+    chapter_ids: [diligence_room]
+    check_ids: [diligence_supported_volume]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: covenant_headroom
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Fictional debt-covenant headroom
+    game_concept_label: Available liquidity above minimum
+    source_id: fasb_debt_overview
+    coverage_status: context_only
+    chapter_ids: [diligence_room]
+    check_ids: [diligence_covenant_headroom]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: scenario_vs_forecast
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Sensitivity disclosure
+    game_concept_label: A what-if is not a forecast
+    source_id: fasb_concepts_useful_information
+    coverage_status: context_only
+    chapter_ids: [diligence_room]
+    check_ids: [diligence_scenario_not_forecast]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: remediation_status_evidence
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Remediation status
+    game_concept_label: Approved, implemented, tested, and closed
+    source_id: iia_global_standards
+    coverage_status: context_only
+    chapter_ids: [diligence_room]
+    check_ids: [diligence_remediation_status]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: qualitative_significance
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Accounting significance
+    game_concept_label: Context matters alongside amount
+    source_id: sec_sab_99_materiality
+    coverage_status: context_only
+    chapter_ids: [diligence_room]
+    check_ids: [diligence_significance]
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+  - id: stakeholder_consistent_disclosure
+    official_outline_section: Business context — optional Extended Story
+    official_topic_label: Source-linked diligence disclosure
+    game_concept_label: Different audiences, consistent dated facts
+    source_id: fasb_concepts_useful_information
+    coverage_status: context_only
+    chapter_ids: [diligence_room]
+    check_ids: []
+    classification: business_context
+    notebook_section: Business Context
+    counts_toward_core: false
+
+core_chapters:
+  - id: first_rotation
+    title: First Rotation
+    sequence: 1
+    introduced_objective_ids:
+      [physical_financial_exposure, short_futures_hedge, long_futures_hedge, basis_risk, hedge_ratio, daily_settlement_margin, liquidity_not_profit]
+    practiced_objective_ids:
+      [physical_financial_exposure, short_futures_hedge, long_futures_hedge, basis_risk, hedge_ratio, daily_settlement_margin, liquidity_not_profit]
+    business_context_objective_ids:
+      [hedge_documentation, economic_cash_accounting, reconciliation_evidence]
+    estimated_minutes: 30
+  - id: december_difference
+    title: The December Difference
+    sequence: 2
+    introduced_objective_ids: []
+    practiced_objective_ids: []
+    business_context_objective_ids:
+      [double_entry, classification_support, provisional_recognition, reconciliation_evidence, escalation_and_review, gas_imbalance]
+    estimated_minutes: 12
+    teaching_notes:
+      - This chapter is accounting and business context. It does not materially increase Series 3 Core progress.
+  - id: hedge_book
+    title: The Hedge Book
+    sequence: 3
+    introduced_objective_ids: []
+    practiced_objective_ids:
+      [physical_financial_exposure, short_futures_hedge, basis_risk, hedge_ratio, daily_settlement_margin]
+    business_context_objective_ids: [hedge_documentation, economic_cash_accounting]
+    estimated_minutes: 25
+    teaching_notes:
+      - Use the position book to keep physical value, Henry Hub futures cash, Chicago basis, and FCM margin cash separate.
+  - id: two_oclock_call
+    title: The Two O'Clock Call
+    sequence: 4
+    introduced_objective_ids: []
+    practiced_objective_ids: [daily_settlement_margin, liquidity_not_profit]
+    business_context_objective_ids:
+      [revolver_mechanics, obligation_priority, treasury_communication]
+    estimated_minutes: 18
+    teaching_notes:
+      - Variation margin is daily futures cash. A later physical benefit cannot meet an earlier FCM deadline; operating cash and FCM cash are different locations.
+  - id: eleventh_contract
+    title: The Eleventh Contract
+    sequence: 5
+    introduced_objective_ids:
+      [order_types, trade_lifecycle, trade_reconciliation, offset_preserves_history, authorization_vs_outcome, records_and_ethical_conduct]
+    practiced_objective_ids:
+      [short_futures_hedge, hedge_ratio, order_types, trade_lifecycle, trade_reconciliation, offset_preserves_history, authorization_vs_outcome, records_and_ethical_conduct]
+    business_context_objective_ids: [gas_imbalance, reconciliation_evidence, treasury_communication]
+    estimated_minutes: 35
+    teaching_notes:
+      - A market order prioritizes execution, a limit requires its price or better, and a stop activates only after its trigger. A $5.205 sell limit cannot fill below $5.205 in this simplified tape.
+      - Authorization says what may happen; execution and confirmation say what did happen. Offset with a new opposite trade and preserve every earlier record.
+
+review_questions:
+  - {id: review_long_short, check_id: d1_physical_direction}
+  - {id: review_short_hedge, check_id: d1_hedge_direction}
+  - {id: review_tick_value, check_id: d1_tick_value}
+  - {id: review_futures_pnl, check_id: d1_futures_pnl}
+  - {id: review_regional_price, check_id: d2_regional_price}
+  - {id: review_hedge_ratio, check_id: d2_hedge_ratio}
+  - {id: review_basis_risk, check_id: d2_remaining_risk}
+  - {id: review_margin_threshold, check_id: d3_below_maintenance}
+  - {id: review_margin_call, check_id: d3_margin_call_amount}
+  - {id: review_variation_cash, check_id: d3_cash_vs_pnl}
+  - {id: review_order_type, check_id: ec_market_versus_limit}
+  - {id: review_offset, check_id: ec_offset_preserves_history}
+  - {id: review_overhedge, check_id: ec_current_overhedge}
+  - {id: review_hedger_speculator, check_id: d2_hedger_vs_speculator}
+  - {id: review_records_ethics, check_id: ec_records_ethics}
+
+future_topics:
+  - {id: clearinghouse_mechanics, official_outline_section: Part 1 — The Futures Contract, official_topic_label: Clearinghouse function, source_id: nfa_series3_outline}
+  - {id: delivery, official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery", official_topic_label: Delivery provisions and notices, source_id: nfa_series3_outline}
+  - {id: first_notice_day, official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery", official_topic_label: First notice day, source_id: nfa_series3_outline}
+  - {id: spot_month, official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery", official_topic_label: Trading in the spot month, source_id: nfa_series3_outline}
+  - {id: price_and_lock_limits, official_outline_section: Part 1 — Price Limits, official_topic_label: Price limits and lock limits, source_id: nfa_series3_outline}
+  - {id: normal_inverted_markets, official_outline_section: Part 1 — Structure of Futures Markets, official_topic_label: Normal and inverted markets, source_id: nfa_series3_outline}
+  - {id: carrying_charges, official_outline_section: Part 1 — Structure of Futures Markets, official_topic_label: Carrying charges and full carry, source_id: nfa_series3_outline}
+  - {id: spreads, official_outline_section: Part 1 — Spreading, official_topic_label: Spread trading and common spreads, source_id: nfa_series3_outline}
+  - {id: speculative_return_margin, official_outline_section: Part 1 — Speculating in Futures, official_topic_label: Return on margin equity, source_id: nfa_series3_outline}
+  - {id: options_terminology, official_outline_section: Part 1 — General Options Terminology, official_topic_label: "Calls, puts, writers, buyers, and assignment", source_id: nfa_series3_outline}
+  - {id: option_premiums, official_outline_section: Part 1 — Options Premiums, official_topic_label: Premium quotations, source_id: nfa_series3_outline}
+  - {id: option_value, official_outline_section: Part 1 — Options Premiums, official_topic_label: Intrinsic and time value, source_id: nfa_series3_outline}
+  - {id: option_breakevens, official_outline_section: Part 1 — Option Strategies, official_topic_label: Breakeven calculations, source_id: nfa_series3_outline}
+  - {id: option_strategies, official_outline_section: "Part 1 — Option Hedging, Speculating, Spreading", official_topic_label: Option hedge and spread strategies, source_id: nfa_series3_outline}
+  - {id: technical_analysis, official_outline_section: Part 1 — Technical Price Analysis, official_topic_label: "Charts, trends, support, gaps, volume, and open interest", source_id: nfa_series3_outline}
+  - {id: fundamental_analysis, official_outline_section: Part 1 — Fundamental Price Analysis, official_topic_label: "Supply, demand, policy, and instability", source_id: nfa_series3_outline}
+  - {id: registration_categories, official_outline_section: Part 2 — Regulations; General, official_topic_label: CFTC registrations and NFA membership, source_id: nfa_series3_outline}
+  - {id: customer_accounts, official_outline_section: Part 2 — Regulations; General, official_topic_label: Futures account opening requirements, source_id: nfa_series3_outline}
+  - {id: cpo_cta_rules, official_outline_section: Part 2 — CPO/CTA, official_topic_label: CPO and CTA regulations and disclosures, source_id: nfa_series3_outline}
+  - {id: promotional_material, official_outline_section: Part 2 — FCM/IB and CPO/CTA Regulations, official_topic_label: Promotional material, source_id: nfa_series3_outline}
+  - {id: position_reporting_limits, official_outline_section: Part 2 — Regulations; General, official_topic_label: Position reporting and speculative limits, source_id: nfa_series3_outline}
+  - {id: arbitration_discipline, official_outline_section: Part 2 — Regulations, official_topic_label: Arbitration and disciplinary procedures, source_id: nfa_series3_outline}
+  - {id: broader_us_regulations, official_outline_section: Part 2 — Regulations, official_topic_label: Remaining U.S. regulatory requirements, source_id: nfa_series3_outline}

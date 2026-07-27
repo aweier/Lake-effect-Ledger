@@ -7,6 +7,7 @@ import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
 
+from lake_effect_ledger.learning.models import CampaignTrack
 from lake_effect_ledger.state import SAVE_SCHEMA_VERSION, GameState
 
 DATABASE_SCHEMA_VERSION = 1
@@ -83,11 +84,18 @@ class SaveRepository:
                     state.player.name,
                     state.current_date.isoformat(),
                     int(
-                        state.completed
-                        and (state.hedge_book is None or state.hedge_book.completed)
-                        and (state.treasury is None or state.treasury.completed)
-                        and (state.eleventh_contract is None or state.eleventh_contract.completed)
-                        and (state.no_surprises is None or state.no_surprises.completed)
+                        state.core_campaign_completed
+                        if state.campaign_track == CampaignTrack.SERIES_3_CORE
+                        else (
+                            state.completed
+                            and (state.hedge_book is None or state.hedge_book.completed)
+                            and (state.treasury is None or state.treasury.completed)
+                            and (
+                                state.eleventh_contract is None or state.eleventh_contract.completed
+                            )
+                            and (state.no_surprises is None or state.no_surprises.completed)
+                            and (state.diligence_room is None or state.diligence_room.completed)
+                        )
                     ),
                     state.model_dump_json(),
                 ),
@@ -198,6 +206,84 @@ def migrate_state_payload(payload: dict[str, object]) -> dict[str, object]:
         migrated.setdefault("no_surprises", None)
         migrated["save_schema_version"] = 6
         version = 6
+
+    if version == 6:
+        migrated.setdefault("diligence_room", None)
+        migrated["save_schema_version"] = 7
+        version = 7
+
+    if version == 7:
+        migrated["campaign_track"] = "extended_story"
+        migrated["core_chapter_debrief_ids"] = []
+        migrated["core_debrief_completed"] = True
+        migrated["core_campaign_completed"] = True
+        learning = migrated.get("learning")
+        if not isinstance(learning, dict):
+            raise ValueError("Milestone 7 save has invalid learning data")
+        migrated_learning = dict(learning)
+        checks = migrated_learning.get("checks", {})
+        if not isinstance(checks, dict):
+            raise ValueError("Milestone 7 save has invalid check progress")
+        migrated_checks: dict[str, object] = {}
+        for check_id, raw_progress in checks.items():
+            if not isinstance(raw_progress, dict):
+                raise ValueError(f"Milestone 7 check {check_id} has invalid progress")
+            progress = dict(raw_progress)
+            # v7 stored only the latest answer, so first-attempt history is unknown.
+            progress["first_answer"] = None
+            progress["first_attempt_correct"] = None
+            progress["final_correct"] = bool(progress.get("completed", False))
+            progress["independently_demonstrated"] = False
+            progress["review_recommended"] = bool(progress.get("incorrect_attempts", 0) >= 2)
+            migrated_checks[str(check_id)] = progress
+        migrated_learning["checks"] = migrated_checks
+        objectives = migrated_learning.get("objectives", {})
+        if not isinstance(objectives, dict):
+            raise ValueError("Milestone 7 save has invalid objective progress")
+        migrated_objectives: dict[str, object] = {}
+        for objective_id, raw_progress in objectives.items():
+            if not isinstance(raw_progress, dict):
+                raise ValueError(f"Milestone 7 objective {objective_id} has invalid progress")
+            progress = dict(raw_progress)
+            if progress.get("status") == "demonstrated":
+                progress["status"] = "completed_history_unknown"
+            progress.setdefault("check_ids", [])
+            progress.setdefault("chapter_ids", [])
+            progress.setdefault("independent_demonstrations", 0)
+            progress.setdefault("retry_demonstrations", 0)
+            progress.setdefault("assisted_completions", 0)
+            migrated_objectives[str(objective_id)] = progress
+        migrated_learning["objectives"] = migrated_objectives
+        migrated_learning["core_review"] = {}
+        migrated["learning"] = migrated_learning
+        migrated["save_schema_version"] = 8
+        version = 8
+
+    if version == 8:
+        introduced: list[str] = []
+        prologue = migrated.get("prologue")
+        if isinstance(prologue, dict):
+            current_day = int(prologue.get("current_day_index", 0))
+            if prologue.get("started") or prologue.get("completed"):
+                introduced.extend(["evelyn_marsh", "marisol_vega"])
+            if current_day >= 2 or prologue.get("completed"):
+                introduced.extend(["darren_cho", "june_halvorsen"])
+        if migrated.get("completed"):
+            introduced.append("vince_bellandi")
+        if migrated.get("hedge_book") is not None:
+            introduced.extend(["cal_rourke", "evelyn_marsh", "marisol_vega"])
+        eleventh = migrated.get("eleventh_contract")
+        if isinstance(eleventh, dict):
+            introduced.extend(["cal_rourke", "evelyn_marsh", "marisol_vega"])
+            if int(eleventh.get("current_day", 1)) >= 3 or eleventh.get("completed"):
+                introduced.append("dom_bellini")
+        if migrated.get("no_surprises") is not None:
+            introduced.append("noah_shah")
+        if migrated.get("diligence_room") is not None:
+            introduced.extend(["sofia_marin", "ingrid_holtz", "mara_voss"])
+        migrated["introduced_character_ids"] = list(dict.fromkeys(introduced))
+        migrated["save_schema_version"] = 9
+        version = 9
 
     if version != SAVE_SCHEMA_VERSION:
         raise ValueError(f"no migration path to save schema {SAVE_SCHEMA_VERSION}")

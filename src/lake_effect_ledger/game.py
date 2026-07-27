@@ -7,6 +7,7 @@ from uuid import NAMESPACE_URL, uuid5
 
 from lake_effect_ledger.accounting.models import JournalEntry, JournalLine, Ledger
 from lake_effect_ledger.learning.models import (
+    CampaignTrack,
     GameMode,
     LearningProfile,
     LearningStatus,
@@ -34,6 +35,7 @@ def create_new_game(
     seed: int,
     content: ContentBundle,
     game_mode: GameMode = GameMode.STANDARD,
+    campaign_track: CampaignTrack | None = None,
     show_math: ShowMathMode | None = None,
     skip_prologue: bool = False,
 ) -> GameState:
@@ -55,10 +57,18 @@ def create_new_game(
             raise ValueError(f"background adjustment exceeds bounds for {resource_name.value}")
         setattr(resources, resource_name.value, updated)
 
+    selected_track = campaign_track or (
+        CampaignTrack.SERIES_3_CORE
+        if game_mode == GameMode.GUIDED
+        else CampaignTrack.EXTENDED_STORY
+    )
     game_id = str(
         uuid5(
             NAMESPACE_URL,
-            (f"lake-effect-ledger:{seed}:{name.strip()}:{background.value}:{game_mode.value}"),
+            (
+                f"lake-effect-ledger:{seed}:{name.strip()}:{background.value}:"
+                f"{game_mode.value}:{selected_track.value}"
+            ),
         )
     )
     ledger = Ledger()
@@ -77,7 +87,7 @@ def create_new_game(
         ],
     )
     ledger.post(opening_entry, content.valid_accounts)
-    guided = game_mode == GameMode.GUIDED and not skip_prologue
+    starts_rotation = not skip_prologue
     mode_definition = content.game_mode(game_mode)
     starting_objective = {
         Background.ACCOUNTING: "double_entry",
@@ -92,25 +102,22 @@ def create_new_game(
         game_id=game_id,
         seed=seed,
         current_date=(
-            content.prologue.prologue.start_date if guided else market_scenario.game_date
+            content.prologue.prologue.start_date if starts_rotation else market_scenario.game_date
         ),
         player=Player(
             name=name.strip(),
             background=background,
             skills=background_definition.skills,
-            role=(
-                content.prologue.prologue.role_title
-                if game_mode == GameMode.GUIDED
-                else "Northstar Analyst"
-            ),
+            role=(content.prologue.prologue.role_title if starts_rotation else "Northstar Analyst"),
         ),
         game_mode=game_mode,
+        campaign_track=selected_track,
         show_math=show_math or mode_definition.default_show_math,
         prologue=PrologueState(
-            started=guided,
-            completed=not guided,
-            skipped=game_mode == GameMode.GUIDED and skip_prologue,
-            transitioned_to_episode_1=not guided,
+            started=starts_rotation,
+            completed=not starts_rotation,
+            skipped=skip_prologue,
+            transitioned_to_episode_1=not starts_rotation,
         ),
         learning=learning,
         resources=resources,
@@ -149,6 +156,7 @@ def create_new_game(
             "seed": seed,
             "background": background.value,
             "game_mode": game_mode.value,
+            "campaign_track": selected_track.value,
             "prologue_skipped": skip_prologue,
             "market_scenario": market_scenario.id,
         },

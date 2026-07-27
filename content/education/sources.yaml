@@ -29,7 +29,7 @@ sources:
     organization: National Futures Association
     title: Series 3 — National Commodities Futures Examination Study Outline
     url: https://www.nfa.futures.org/registration-membership/study-outlines/index.html
-    note: Topic map for futures terminology, hedging, calculations, margin, and controls.
+    note: Reviewed July 26, 2026; authoritative topic map for the local Series 3 curriculum classifications and explicit future-coverage list.
   - id: cme_order_types
     organization: CME Group
     title: Futures Order Types
@@ -58,7 +58,7 @@ sources:
   - id: iia_global_standards
     organization: The Institute of Internal Auditors
     title: 2024 Global Internal Audit Standards
-    url: https://www.theiia.org/en/standards/2024-standards/global-internal-audit-standards/
+    url: https://www.theiia.org/globalassets/site/standards/globalinternalauditstandards_2024january9.pdf
     note: >-
       Primary professional source for evidence-based internal-audit
       engagement work, professional skepticism, communication, and monitoring
@@ -79,3 +79,28 @@ sources:
       Primary NFA rulebook entry point for member supervision requirements.
       The game does not imply that every rule directly governs every
       Northstar employee.
+  - id: fasb_concepts_useful_information
+    organization: Financial Accounting Standards Board
+    title: Concepts Statement No. 8, Chapter 3 — Qualitative Characteristics
+    url: https://storage.fasb.org/Concepts%20Statement%208%20Chapter%203%20As%20Amended.pdf
+    note: >-
+      Primary conceptual source for faithful representation, comparability,
+      verifiability, and disclosure of assumptions supporting forward-looking
+      information. It does not turn Northstar's fictional diligence schedules
+      into GAAP financial statements.
+  - id: sec_sab_99_materiality
+    organization: U.S. Securities and Exchange Commission
+    title: Staff Accounting Bulletin No. 99 — Materiality
+    url: https://www.sec.gov/interps/account/sab99.htm
+    note: >-
+      Primary SEC staff guidance illustrating why quantitative thresholds alone
+      are insufficient and surrounding qualitative circumstances matter.
+      Northstar is fictional and private; the chapter uses the concept
+      educationally and reaches no SEC, legal, or accounting-materiality conclusion.
+  - id: fasb_debt_overview
+    organization: Financial Accounting Standards Board
+    title: FASB Accounting Standards Updates — Debt and Interest
+    url: https://www.fasb.org/standards/accounting-standard-updates
+    note: >-
+      Primary standards entry point for debt and interest concepts. Northstar's
+      available-liquidity covenant and headroom formula remain fictional contract terms.

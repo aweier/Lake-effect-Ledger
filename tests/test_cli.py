@@ -1,9 +1,29 @@
 import pytest
 from typer.testing import CliRunner
 
+import lake_effect_ledger.cli as cli
 from lake_effect_ledger.cli import app
 
 runner = CliRunner()
+
+
+def test_windows_output_is_reconfigured_to_utf8(monkeypatch) -> None:
+    class FakeStream:
+        encoding = "cp1252"
+
+        def reconfigure(self, *, encoding):
+            self.encoding = encoding
+
+    stdout = FakeStream()
+    stderr = FakeStream()
+    monkeypatch.setattr(cli.sys, "platform", "win32")
+    monkeypatch.setattr(cli.sys, "stdout", stdout)
+    monkeypatch.setattr(cli.sys, "stderr", stderr)
+
+    cli._configure_windows_utf8_output()
+
+    assert stdout.encoding == "utf-8"
+    assert stderr.encoding == "utf-8"
 
 
 def test_scripted_cli_completes_playable_day(tmp_path) -> None:

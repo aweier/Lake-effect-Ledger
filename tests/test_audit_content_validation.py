@@ -25,6 +25,7 @@ def _rebundle(content, **changes):
         "hedge_narrative": content.hedge_narrative,
         "treasury_scenarios": content.treasury_scenarios,
         "game_modes": content.game_modes,
+        "curriculum": content.curriculum,
         "sources": content.sources,
         "glossary": content.glossary,
         "prologue": content.prologue,
@@ -34,6 +35,8 @@ def _rebundle(content, **changes):
         "eleventh_narrative": content.eleventh_narrative,
         "audit_scenario": content.audit_scenario,
         "audit_learning": content.audit_learning,
+        "diligence_scenario": content.diligence_scenario,
+        "diligence_learning": content.diligence_learning,
     }
     values.update(changes)
     return ContentBundle(**values)
