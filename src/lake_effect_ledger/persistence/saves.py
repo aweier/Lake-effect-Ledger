@@ -269,7 +269,7 @@ def migrate_state_payload(payload: dict[str, object]) -> dict[str, object]:
             if current_day >= 2 or prologue.get("completed"):
                 introduced.extend(["darren_cho", "june_halvorsen"])
         if migrated.get("completed"):
-            introduced.append("vince_bellandi")
+            introduced.append("vince_rourke")
         if migrated.get("hedge_book") is not None:
             introduced.extend(["cal_rourke", "evelyn_marsh", "marisol_vega"])
         eleventh = migrated.get("eleventh_contract")
@@ -284,6 +284,16 @@ def migrate_state_payload(payload: dict[str, object]) -> dict[str, object]:
         migrated["introduced_character_ids"] = list(dict.fromkeys(introduced))
         migrated["save_schema_version"] = 9
         version = 9
+
+    if version == 9:
+        introduced = migrated.get("introduced_character_ids", [])
+        if not isinstance(introduced, list):
+            raise ValueError("Milestone 9 save has invalid introduced-character data")
+        migrated["introduced_character_ids"] = list(
+            dict.fromkeys(
+                "vince_rourke" if item == "vince_bellandi" else item for item in introduced
+            )
+        )
 
     if version != SAVE_SCHEMA_VERSION:
         raise ValueError(f"no migration path to save schema {SAVE_SCHEMA_VERSION}")

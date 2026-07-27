@@ -26,7 +26,7 @@ stakeholders:
       - Recurrence and remediation
   - stakeholder_id: sofia_marin
     name: Sofia Marin
-    role: Vice President, Commercial Diligence
+    role: VP, Commercial Diligence
     kind: buyer
     concerns:
       - Commodity exposure and hedge discipline
@@ -34,7 +34,7 @@ stakeholders:
       - Whether the business can scale
   - stakeholder_id: ingrid_holtz
     name: Ingrid Holtz
-    role: Independent director and audit-committee representative
+    role: Independent Director
     kind: board
     concerns:
       - Oversight and escalation
@@ -42,7 +42,7 @@ stakeholders:
       - What management knew and when
   - stakeholder_id: mara_voss
     name: Mara Voss
-    role: Great Lakes Commercial Bank relationship manager
+    role: Commercial Banking Relationship Manager
     kind: lender
     concerns:
       - Cash, debt, and undrawn availability
@@ -58,7 +58,7 @@ stakeholders:
       - Avoiding unsupported representations
   - stakeholder_id: noah_shah
     name: Noah Shah
-    role: Internal audit manager
+    role: Internal Audit Manager
     kind: internal_audit
     concerns:
       - Accurate use of the final audit report
@@ -134,7 +134,8 @@ scenes:
     text: >-
       Sofia's list is organized by question, not by department. "A summary is
       useful if it points to the records underneath it. A summary that replaces
-      them is a different product." Evelyn asks what the first buyer package will contain.
+      them is a different product." An old Cleveland industrial postcard marks
+      her place. Evelyn asks what the first buyer package will contain.
     choices:
       - id: dr_send_complete_package
         text: Provide the complete source-linked package, including Noah's full report.
@@ -271,7 +272,9 @@ scenes:
     text: >-
       Sofia asks for sensitivities, not a prediction. "Show me what breaks the
       cash plan. Do not give fictional weather a confidence interval because
-      the table looks lonely."
+      the table looks lonely." Her father scheduled maintenance through two
+      Cleveland plant closures; she learned early that a company can matter to
+      a neighborhood and still fail under a weak plan.
     choices:
       - id: dr_include_full_sensitivities
         text: Include all three cases with assumptions, cash movement, and headroom.
@@ -361,7 +364,9 @@ scenes:
     title: Cash Is Not Headroom
     text: >-
       Mara asks whether Northstar approached its fictional available-liquidity
-      covenant and why a hedge that reduced price exposure needed cash that afternoon.
+      covenant and why a hedge that reduced price exposure needed cash that
+      afternoon. Her family's Toledo parts distributor survived several credit
+      cycles, so she hears “temporary” as a timing claim, not reassurance.
     choices:
       - id: dr_answer_lender_completely
         text: Reconcile operating cash, margin, revolver availability, obligations, and covenant headroom.
@@ -422,6 +427,8 @@ scenes:
       Ingrid reads the buyer and lender summaries side by side. She asks what the
       team will do if a date, quantity, margin call, or remediation label does not
       agree. Silence would preserve both deliveries, but not their credibility.
+      She learned the cost of parallel versions while chairing a neighborhood
+      library foundation whose volunteers built two honest budgets from one grant.
     choices:
       - id: dr_issue_correction
         text: Issue a versioned correction to every affected stakeholder.
@@ -451,10 +458,12 @@ scenes:
     title: The Committee Room
     text: >-
       Evelyn may let the junior analyst present the schedules if the prior work
-      has been reliable. Vince asks whether an operationally closed exception
-      needs another meeting; Ingrid asks who tested the closure. Noah owns his
-      conclusion. Management owns its response. The player owns the sentences
-      attached to their name.
+      has been reliable. Vince Bellandi, Dom's nephew and EVP of Operations,
+      asks whether an operationally closed exception needs another meeting;
+      Ingrid asks who tested the closure. The acquisition would place outside
+      authority above the family company Vince expected to inherit intact.
+      Noah owns his conclusion. Management owns its response. The player owns
+      the sentences attached to their name.
     choices:
       - id: dr_support_noah_chronology
         text: Support Noah's chronology and explain the source-linked schedules.
@@ -485,7 +494,9 @@ scenes:
       Sofia says favorable presentation is not the problem. "The problem is
       making me discover which adjective changed between audiences." The final
       action can repair a version, escalate a representation, or leave the room
-      to reconcile Northstar by itself.
+      to reconcile Northstar by itself. Ingrid has already missed her library
+      foundation meeting; Mara still plans to take the late train to Toledo for
+      a family birthday. Neither treats the delay as a reason to hurry the answer.
     choices:
       - id: dr_final_correct_disclosure
         text: Correct any remaining inconsistent disclosure and preserve every prior delivery.

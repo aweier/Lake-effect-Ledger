@@ -1899,6 +1899,7 @@ def _play_no_surprises(
         render_internal_audit_report(
             console,
             build_internal_audit_report(state, content),
+            content,
         )
         return True
     console.print(
@@ -2035,6 +2036,7 @@ def _play_no_surprises(
             render_internal_audit_report(
                 console,
                 build_internal_audit_report(state, content),
+                content,
             )
         else:
             raise ValueError(f"unsupported audit stage: {stage}")

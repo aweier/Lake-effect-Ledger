@@ -9,7 +9,9 @@ scenes:
       weather a position. The approved forecast supports 100,000 MMBtu. Marisol
       has another 10,000 on a scheduling worksheet, but no final nomination,
       signed amendment, or approved forecast revision. “Possible is a real
-      category,” she says. “It just isn't the same category as ours.”
+      category,” she says. “It just isn't the same category as ours.” One of
+      her phones shows a family dinner moving again around two relatives'
+      shift changes; she silences it without losing her place.
     conditional_paragraphs:
       - text: >-
           Marisol taps the old rotation memo. “Last time, you kept my
@@ -100,6 +102,14 @@ scenes:
       Evelyn wants one risk named plainly. “The note can contain four risks.
       It cannot pretend all four deserve the headline. Pick the one you expect
       someone to claim they never saw.”
+    conditional_paragraphs:
+      - text: >-
+          The repaired clock above her door clicks over. Evelyn stayed in
+          Milwaukee partly to help an aging aunt and still takes a Saturday
+          shift at a neighborhood tax clinic. “People bring you the paper they
+          have,” she says. “You do not get to invent the paper you wanted.”
+        conditions:
+          - {kind: decision_made, target: write_accurate_hedge_memo, value: true}
     choices:
       - id: ec_emphasize_volume_uncertainty
         text: Lead with uncertainty in the extra physical volume.
@@ -347,7 +357,8 @@ scenes:
       exception form remains unsigned beside your keyboard.
     conditional_paragraphs:
       - text: >-
-          Cal lowers his voice. “You called me before turning it into a parade.
+          A score update from his nephew's hockey game lights Cal's phone; he
+          turns it face down. “You called me before turning this into a parade.
           I remember professional courtesy.”
         conditions:
           - {kind: decision_made, target: ec_call_cal_privately, value: true}
@@ -465,15 +476,19 @@ scenes:
 
   - id: ec_fish_fry
     chapter: The Eleventh Contract
-    speaker: Dom Bellini
+    speaker: Dominic “Dom” Bellandi
     title: Friday Fish Fry — The Perch Has Documentation
     text: >-
       By six, the terminal glow has been replaced by amber lights, wet coats,
-      and a platter of perch large enough to require committee approval. Dom
-      watches Cal explain a bad hockey trade using three dinner rolls. “At
-      least the fish arrived in the quantity ordered,” Dom says. “Ruth counted.”
-      His parents ran a South Side tavern where vendor tabs and family favors
-      occupied different notebooks, even when the same name appeared in both.
+      and a platter of perch large enough to require committee approval.
+      Dominic “Dom” Bellandi, Northstar's founder and chairman, takes the booth
+      where he can see the door and whether anyone needs another plate. His
+      nephew Vince lets him host. Dom watches Cal explain a bad hockey trade
+      using three dinner rolls. “At least the fish arrived in the quantity
+      ordered,” Dom says. His parents ran a South Side tavern where vendor tabs
+      and family favors occupied different notebooks, even when the same name
+      appeared in both. He later built Northstar from two gathering lines,
+      patient negotiations, and arrangements the paperwork often followed.
     conditional_paragraphs:
       - text: >-
           Cal slides a chair out with his foot. “You handled an adult problem.
@@ -486,13 +501,16 @@ scenes:
         conditions:
           - {kind: chapter_flag, target: formal_escalation, value: true}
       - text: >-
-          Marisol breaks a dinner roll in half. “Operational facts have a gift.
-          They change ten minutes after accounting needs them.”
+          Marisol breaks a dinner roll in half while her family group chat
+          reschedules Sunday lunch around another overnight shift.
+          “Operational facts have a gift. They change ten minutes after
+          accounting needs them.”
         conditions:
           - {kind: decision_made, target: ec_validate_with_marisol, value: true}
       - text: >-
-          Dom mentions the FCM confirmation number from memory. Nobody at the
-          table recalls telling him.
+          Dom mentions the FCM confirmation number from memory. Vince brought
+          him the chairman's exception packet before dinner; nobody expected
+          Dom to remember the number after one reading.
         conditions:
           - {kind: trajectory_min, target: company_loyal, value: 3}
       - text: >-

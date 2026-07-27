@@ -8,6 +8,7 @@ from rich.table import Table
 
 from lake_effect_ledger.audit.models import AuditSceneDefinition
 from lake_effect_ledger.audit.report import InternalAuditWalkthroughReport
+from lake_effect_ledger.narrative.models import ContentBundle
 from lake_effect_ledger.state import GameState
 
 
@@ -189,6 +190,7 @@ def render_preliminary_findings(console: Console, state: GameState) -> None:
 def render_internal_audit_report(
     console: Console,
     report: InternalAuditWalkthroughReport,
+    content: ContentBundle,
 ) -> None:
     console.print(
         Panel(
@@ -220,10 +222,11 @@ def render_internal_audit_report(
     console.print(findings)
     if report.remediation_plans:
         remediation = report.remediation_plans[0]
+        owner_name = content.character(remediation.owner.person_id).name
         console.print(
             Panel(
                 f"{remediation.proposed_action}\n\n"
-                f"Owner: {remediation.owner.role} ({remediation.owner.person_id})\n"
+                f"Owner: {remediation.owner.role} ({owner_name})\n"
                 f"Target: {remediation.target_date.isoformat()}\n"
                 f"Interim: {remediation.interim_control}\n"
                 f"Residual risk: {remediation.residual_risk}",

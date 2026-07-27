@@ -124,9 +124,9 @@ request_specs:
     related_transaction: eleventh_contract_live_week
 control_owners:
   - {owner_id: owner_controller, person_id: evelyn_marsh, role: Controller}
-  - {owner_id: owner_commercial, person_id: cal_rourke, role: Commercial director}
-  - {owner_id: owner_scheduling, person_id: marisol_vega, role: Gas scheduling manager}
-  - {owner_id: owner_analyst, person_id: player, role: Junior commodity risk analyst}
+  - {owner_id: owner_commercial, person_id: cal_rourke, role: Commercial Director and Hedging Supervisor}
+  - {owner_id: owner_scheduling, person_id: marisol_vega, role: Gas Scheduling Manager}
+  - {owner_id: owner_analyst, person_id: player, role: Junior Commodity Risk Analyst}
 control_objectives:
   - objective_id: ctl_physical_support
     title: Physical volume is supported before hedge quantity approval
@@ -242,7 +242,8 @@ scenes:
     text: >-
       Noah's request is a table, not an accusation. "If a record does not
       exist, say that. Missing is a test result. Hidden is a second issue."
-      The junior analyst must decide how to assemble the first response.
+      A scuffed Detroit basketball-league sticker is the only decoration on
+      his laptop. The junior analyst must decide how to assemble the first response.
     choices:
       - id: ns_send_complete_chain
         text: Provide the complete linked record chain, including available exception records.
@@ -590,7 +591,9 @@ scenes:
       The room is professional and tired. A note arrives: a board committee,
       lender diligence team, or potential buyer may request the final report.
       Noah does not dramatize it. "That is why the first version should be the
-      version we can defend."
+      version we can defend." He admits he still drives to Detroit one Saturday
+      a month for a basketball game with friends who have known him since
+      before every conversation sounded like testimony.
     choices:
       - id: ns_elevate_disagreement
         text: Recommend that any unresolved evidence disagreement be elevated through internal governance.

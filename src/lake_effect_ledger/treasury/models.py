@@ -60,6 +60,8 @@ class CharacterDefinition(BaseModel):
     origin: str = Field(min_length=1)
     public_detail: str = Field(min_length=1, max_length=180)
     interaction_reason: str = Field(min_length=1, max_length=180)
+    legacy_id_note: str | None = Field(default=None, min_length=1)
+    family_relationships: dict[str, str] = Field(default_factory=dict)
 
 
 class ObligationDefinition(BaseModel):

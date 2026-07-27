@@ -73,10 +73,15 @@ exam-versus-context classification. It also lists material not yet covered. This
 is a focused foundation, not a complete Series 3 course or mock exam.
 
 Important characters now receive a concise, saved NEW CONTACT card at first
-meeting. Houston market analyst T.J. Morrow and Gdańsk-born risk-systems analyst
-Kasia Zielińska appear in First Rotation and recur later without changing any
-financial outcome. Author-only motivations and reveal guidance live in
-[`CHARACTER_BIBLE.md`](CHARACTER_BIBLE.md), which is never shown during gameplay.
+meeting. Northstar founder and chairman Dominic “Dom” Bellandi is Vince
+Bellandi's uncle; legacy internal IDs remain only for save compatibility and
+never define displayed names or family relationships. Houston market analyst
+T.J. Morrow and Gdańsk-born risk-systems analyst Kasia Zielińska appear in First
+Rotation and recur later without changing any financial outcome. Fresh
+accounting, finance, and data-analytics backgrounds each receive 17 skill points,
+$2,600 personal cash, and no moral or control-risk adjustment. Author-only
+motivations and reveal guidance live in [`CHARACTER_BIBLE.md`](CHARACTER_BIBLE.md),
+which is never shown during gameplay.
 
 ## Current playable systems
 

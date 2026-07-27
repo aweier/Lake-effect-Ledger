@@ -51,7 +51,7 @@ prologue:
     - id: rotation_day_2_basis
       day_number: 2
       title: Day 2 — The Basis
-      subtitle: Marisol shows you what the benchmark cannot remove.
+      subtitle: T.J. and Kasia separate benchmark geography from supported quantity.
       concept_panels:
         - id: d2_regional_basis
           title: Chicago is not Henry Hub
@@ -98,7 +98,8 @@ prologue:
             Why it matters: a sound hedge can need cash before the physical sale.
             Formula here: if balance is below maintenance, call = initial requirement
             - balance. Example: with $120,000 initial, $95,000 maintenance, and an
-            $80,000 balance, the call is $120,000 - $80,000 = $40,000.
+            $80,000 balance, the call is $120,000 - $80,000 = $40,000. Darren
+            marks the deadline with the same bookmark he uses on the long train home.
           learning_objective_ids: [daily_settlement_margin, economic_cash_accounting]
           glossary_ids: [initial_margin, maintenance_margin, variation_margin]
         - id: d3_liquidity_controls
@@ -109,7 +110,8 @@ prologue:
             is due. Why it matters: expected physical value cannot fund today's FCM
             call. Worked example: moving $40,000 from operating cash to FCM margin
             relocates an asset; it is not a second loss. Record exposure, quantity,
-            direction, purpose, remaining risk, and approval before the result.
+            direction, purpose, remaining risk, and approval before the result. June
+            keeps a photo of the family canoe she is restoring beside her cash calendar.
           learning_objective_ids: [liquidity_not_profit, hedge_documentation]
           glossary_ids: [liquidity, hedge_documentation]
       check_ids:

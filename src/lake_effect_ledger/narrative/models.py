@@ -250,13 +250,106 @@ class CharacterFile(BaseModel):
     people: list[CharacterDefinition] = Field(default_factory=list)
 
     @model_validator(mode="after")
-    def validate_people(self) -> CharacterFile:
+    def validate_characters_and_backgrounds(self) -> CharacterFile:
         ids = [item.id for item in self.people]
         if len(ids) != len(set(ids)):
             raise ValueError("duplicate character ID")
         names = [item.name.casefold() for item in self.people]
         if len(names) != len(set(names)):
             raise ValueError("duplicate character name")
+        people_by_id = {item.id: item for item in self.people}
+        for character in self.people:
+            unknown_relations = set(character.family_relationships) - set(ids)
+            if unknown_relations:
+                raise ValueError(
+                    f"character {character.id} has unknown family relationships: "
+                    f"{unknown_relations}"
+                )
+            if character.id != "player" and any(
+                marker in character.origin.casefold()
+                for marker in (
+                    "northstar",
+                    "desk",
+                    "department",
+                    "analyst",
+                    "manager",
+                    "director",
+                    "representative",
+                    "controller",
+                )
+            ):
+                raise ValueError(f"character {character.id} origin must contain geography only")
+
+        expected_identities = {
+            "player": ("Player", "Junior Commodity Risk Analyst"),
+            "evelyn_marsh": ("Evelyn Marsh", "Controller"),
+            "cal_rourke": (
+                "Cal Rourke",
+                "Commercial Director and Hedging Supervisor",
+            ),
+            "marisol_vega": ("Marisol Vega", "Gas Scheduling Manager"),
+            "tj_morrow": ("Travis “T.J.” Morrow", "Gulf Coast Market Analyst"),
+            "kasia_zielinska": (
+                "Katarzyna “Kasia” Zielińska",
+                "Risk Systems Analyst",
+            ),
+            "darren_cho": ("Darren Cho", "FCM Margin Representative"),
+            "june_halvorsen": ("June Halvorsen", "Treasury Director"),
+            "vince_rourke": ("Vince Bellandi", "EVP, Operations"),
+            "dom_bellini": (
+                "Dominic “Dom” Bellandi",
+                "Founder and Chairman",
+            ),
+            "noah_shah": ("Noah Shah", "Internal Audit Manager"),
+            "sofia_marin": ("Sofia Marin", "VP, Commercial Diligence"),
+            "ingrid_holtz": ("Ingrid Holtz", "Independent Director"),
+            "mara_voss": (
+                "Mara Voss",
+                "Commercial Banking Relationship Manager",
+            ),
+        }
+        if set(people_by_id) != set(expected_identities):
+            raise ValueError("character registry does not match the canonical recurring cast")
+        for character_id, (expected_name, expected_role) in expected_identities.items():
+            character = people_by_id[character_id]
+            if (character.name, character.role) != (expected_name, expected_role):
+                raise ValueError(
+                    f"character {character_id} must display as {expected_name}, {expected_role}"
+                )
+
+        dom = people_by_id["dom_bellini"]
+        vince = people_by_id["vince_rourke"]
+        cal = people_by_id["cal_rourke"]
+        if dom.family_relationships != {"vince_rourke": "nephew"}:
+            raise ValueError("Dom must identify Vince as his nephew")
+        if vince.family_relationships != {"dom_bellini": "uncle"}:
+            raise ValueError("Vince must identify Dom as his uncle")
+        if {"dom_bellini", "vince_rourke"} & set(cal.family_relationships):
+            raise ValueError("Cal Rourke is not related to the Bellandi family")
+        if not dom.legacy_id_note or "Display surname is Bellandi" not in dom.legacy_id_note:
+            raise ValueError("Dom's legacy internal ID must be documented")
+        if not vince.legacy_id_note or "not related to Cal Rourke" not in vince.legacy_id_note:
+            raise ValueError("Vince's legacy internal ID must be documented")
+
+        background_ids = [item.id for item in self.backgrounds]
+        if len(background_ids) != len(set(background_ids)):
+            raise ValueError("duplicate background ID")
+        if set(background_ids) != set(Background):
+            raise ValueError("character creation must define every background exactly once")
+        for background in self.backgrounds:
+            skill_total = (
+                background.skills.accounting
+                + background.skills.markets
+                + background.skills.analytics
+            )
+            if skill_total != 17:
+                raise ValueError(f"background {background.id.value} must total 17 skill points")
+            if background.resource_adjustments:
+                raise ValueError(
+                    f"background {background.id.value} cannot modify moral or risk resources"
+                )
+        if len({item.personal_cash for item in self.backgrounds}) != 1:
+            raise ValueError("all backgrounds must begin with the same personal cash")
         return self
 
 
@@ -746,6 +839,11 @@ class ContentBundle:
         }
         if unknown_speakers:
             raise ValueError(f"narrative references unknown character speakers: {unknown_speakers}")
+        legacy_speakers = {"dom_bellini", "vince_rourke"} & set(character_speakers)
+        if legacy_speakers:
+            raise ValueError(
+                f"legacy character IDs cannot be used as player-facing speakers: {legacy_speakers}"
+            )
         for character in self.characters.people:
             displayed = " ".join(
                 (
@@ -758,6 +856,122 @@ class ContentBundle:
             )
             if "\ufffd" in displayed:
                 raise ValueError(f"character {character.id} contains a replacement character")
+        character_by_id = {item.id: item for item in self.characters.people}
+        for owner in self.audit_scenario.control_owners:
+            character = character_by_id[owner.person_id]
+            if owner.role != character.role:
+                raise ValueError(
+                    f"audit owner {owner.person_id} role disagrees with character registry"
+                )
+        for stakeholder in self.diligence_scenario.stakeholders:
+            character = character_by_id.get(stakeholder.stakeholder_id)
+            if character is None:
+                continue
+            if (stakeholder.name, stakeholder.role) != (character.name, character.role):
+                raise ValueError(
+                    f"diligence stakeholder {stakeholder.stakeholder_id} identity "
+                    "disagrees with character registry"
+                )
+
+        player_facing_character_fragments = [
+            *[
+                " ".join(
+                    (
+                        item.name,
+                        item.role,
+                        item.origin,
+                        item.public_detail,
+                        item.interaction_reason,
+                    )
+                )
+                for item in self.characters.people
+            ],
+            *[
+                " ".join(
+                    (
+                        item.speaker,
+                        item.title,
+                        item.text,
+                        *(paragraph.text for paragraph in item.conditional_paragraphs),
+                        *(choice.text for choice in item.choices),
+                    )
+                )
+                for item in [
+                    *self.scenes.scenes,
+                    self.hedge_narrative.documentation_scene,
+                    *self.first_rotation.scenes,
+                    *self.eleventh_narrative.scenes,
+                ]
+            ],
+            *[
+                " ".join((panel.speaker, panel.title, panel.text))
+                for day in self.prologue.prologue.days
+                for panel in day.concept_panels
+            ],
+            *[
+                " ".join((item.speaker, item.title, item.text))
+                for item in self.hedge_narrative.briefings
+            ],
+            *[
+                " ".join(
+                    (
+                        item.speaker,
+                        item.title,
+                        item.text,
+                        *(choice.text for choice in item.choices),
+                    )
+                )
+                for item in self.audit_scenario.scenes
+            ],
+            *[
+                " ".join(
+                    (
+                        item.speaker,
+                        item.title,
+                        item.text,
+                        *(choice.text for choice in item.choices),
+                    )
+                )
+                for item in self.diligence_scenario.scenes
+            ],
+            *[
+                " ".join(
+                    (
+                        item.crisis_text,
+                        item.no_position_crisis_text,
+                        *(
+                            " ".join((option.label, option.narrative))
+                            for option in item.notification_options
+                        ),
+                    )
+                )
+                for item in self.treasury_scenarios.scenarios
+            ],
+        ]
+        player_facing_character_text = "\n".join(player_facing_character_fragments)
+        for legacy_label in (
+            "Dom Bellini",
+            "Vince Rourke",
+            "dom_bellini",
+            "vince_rourke",
+        ):
+            if legacy_label in player_facing_character_text:
+                raise ValueError(
+                    f"player-facing character content contains legacy label {legacy_label}"
+                )
+        dom_fragments = [
+            item
+            for item in player_facing_character_fragments
+            if "Dom" in item or "Bellandi" in item
+        ]
+        for external_description in (
+            "commercial counterparty",
+            "external supplier",
+            "his supply relationship",
+            "Dom wants his supply payment",
+        ):
+            if any(external_description.casefold() in item.casefold() for item in dom_fragments):
+                raise ValueError("Dom cannot be described as an external Northstar counterparty")
         if self.curriculum.outline.source_id not in valid_sources:
             raise ValueError("curriculum outline references an unknown source")
         curriculum_by_id = {item.id: item for item in self.curriculum.objectives}

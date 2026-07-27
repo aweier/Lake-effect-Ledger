@@ -2,15 +2,17 @@ schema_version: 1
 scenes:
   - id: december_difference
     chapter: episode_01
-    speaker: vince_bellandi
+    speaker: Vince Bellandi
     title: The December Difference
     text: >-
-      Vince Bellandi closes the conference-room door with his heel and sets a
-      marked-up meter report beside your keyboard. “Two thousand five hundred
-      dekatherms isn't a crisis. It's weather with paperwork. Book it to line
-      loss and Evelyn gets a clean close.” He learned in the family's Kenosha
-      yard that delays become somebody's carrying cost; he rarely specifies
-      whose. Outside, lake-effect snow erases the parking lot one row at a
+      Vince Bellandi, Dom's nephew and Northstar's EVP of Operations, closes
+      the conference-room door with his heel and sets a marked-up meter report
+      beside your keyboard. “Two thousand five hundred dekatherms isn't a
+      crisis. It's weather with paperwork. Book it to line loss and Evelyn gets
+      a clean close.” He learned in the family's Kenosha yard that delays
+      become somebody's carrying cost; he rarely specifies whose. He still
+      checks on his mother and a half-restored yard tow truck there every
+      Sunday. Outside, lake-effect snow erases the parking lot one row at a
       time. The settlement statement and the meter report still disagree.
     discrepancy:
       metered_mmbtu: 112400

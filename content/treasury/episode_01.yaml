@@ -5,19 +5,25 @@ scenarios:
     crisis_title: The Two O'Clock Call
     crisis_text: >-
       Darren Cho at Lakefront FCM wants collected funds by 2:00 p.m. Evelyn
-      wants a decision record. June Halvorsen wants the protected-payment
-      forecast before she touches the revolver. Marisol notes that the Chicago
-      physical gain is still a forecast, not collected cash. Cal says the
-      hedge is making money, which is true in the way that a frozen hydrant is
-      full of water. Dom wants his supply payment; Vince wants no lender call
-      that mentions his name. The clock remains professionally indifferent.
+      wants a decision record. Darren has already moved his father's afternoon
+      appointment to cover another client's call; he will not move Northstar's
+      deadline. June Halvorsen wants the protected-payment forecast before she
+      touches the revolver. Her sister has texted about ice damage to the old
+      family canoe they are restoring; June finishes the cash schedule before
+      answering. Marisol notes that the Chicago physical gain is still a
+      forecast, not collected cash. Cal says the hedge is making money, which
+      is true in the way that a frozen hydrant is full of water. Prairie Bend
+      Gas expects its scheduled payment. Dom wants his family company to meet
+      the obligation; Vince wants no lender call that mentions his name. The
+      clock remains professionally indifferent.
     no_position_crisis_text: >-
       Darren Cho has no margin call because Northstar holds no futures. June
       Halvorsen still has $750,000 of protected payments queued against the
       same operating account. Marisol notes that an unhedged forecast is not
-      collected cash either. Dom wants his supply payment, Vince wants the
-      bank left asleep, and Evelyn wants the obligations forecast documented.
-      The absence of an FCM problem has not created extra money.
+      collected cash either. Prairie Bend Gas expects its scheduled payment.
+      Dom wants his family company to meet the obligation, Vince wants the bank
+      left asleep, and Evelyn wants the obligations forecast documented. The
+      absence of an FCM problem has not created extra money.
     margin_deadline: 2028-01-19T14:00:00-06:00
     minimum_operating_reserve: 3500000
     facility:

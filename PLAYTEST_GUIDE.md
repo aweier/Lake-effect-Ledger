@@ -12,7 +12,7 @@ From the repository root:
 .\.venv\Scripts\lake-ledger.exe --game-mode guided `
   --campaign-track series3_core `
   --show-math on_request `
-  --save-db .\saves\series3_core_playtest.db
+  --save-db .\saves\series3_core_session1.db
 ```
 
 Choose **New Game**, enter a name, and select any background. Guided Career
@@ -53,7 +53,7 @@ Rerun:
 
 ```powershell
 .\.venv\Scripts\lake-ledger.exe --load-autosave `
-  --save-db .\saves\series3_core_playtest.db
+  --save-db .\saves\series3_core_session1.db
 ```
 
 The saved game should reopen at the next unfinished activity. Do not add a
@@ -88,14 +88,18 @@ After each session, note:
 
 - Which introduction was memorable?
 - Which introduction contained too much information?
-- Which characters sounded alike?
+- Did Dom feel like Northstar's founder and family patriarch?
+- Was Vince's relationship to Dom clear?
+- Did you ever confuse Vince with Cal?
+- Did characters seem to have lives outside Northstar?
+- Which personal reveal felt most natural?
+- Which reveal felt forced?
+- Did anyone still sound like a department instead of a person?
+- Did backstory interrupt the Series 3 teaching?
+- Which character would you most want to see again?
 - Did T.J., the Houston character, feel authentic or exaggerated?
 - Did Kasia, the Polish character, feel like a full person?
 - Did regional details feel natural?
-- Which backstory made you want to learn more?
-- Did character material interrupt the Series 3 teaching?
-- Which character would you willingly work for?
-- Which character would you trust least?
 
 For each chapter, note:
 

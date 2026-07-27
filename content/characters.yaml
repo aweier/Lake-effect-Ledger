@@ -2,122 +2,124 @@ schema_version: 1
 backgrounds:
   - id: accounting
     label: Accounting
-    description: Strong close mechanics and formal journal-entry training; less market fluency.
+    description: Strong close mechanics and formal journal-entry training; less prior exposure to commodity markets.
     skills:
       accounting: 8
       markets: 4
       analytics: 5
-    personal_cash: 2400
-    resource_adjustments:
-      reputation: 3
-      integrity: 2
+    personal_cash: 2600
+    resource_adjustments: {}
 
   - id: finance
     label: Finance
-    description: Strong market intuition and more starting cash; weaker control instincts.
+    description: Strong market terminology and price intuition; less formal accounting and reconciliation training.
     skills:
       accounting: 5
       markets: 8
       analytics: 4
-    personal_cash: 3200
-    resource_adjustments:
-      family_loyalty: 2
-      audit_risk: 1
+    personal_cash: 2600
+    resource_adjustments: {}
 
   - id: data_analytics
     label: Data analytics
-    description: Strong reconciliation and anomaly detection; less formal accounting training.
+    description: Strong reconciliation, data lineage, and anomaly detection; less formal accounting and trading education.
     skills:
       accounting: 4
       markets: 5
-      analytics: 9
+      analytics: 8
     personal_cash: 2600
-    resource_adjustments:
-      reputation: 1
-      audit_risk: -2
+    resource_adjustments: {}
 
 people:
   - id: player
     name: Player
-    role: Northstar analyst
-    origin: Chosen by the player
-    public_detail: The newest analyst assigned to Northstar's commodity-risk rotation.
+    role: Junior Commodity Risk Analyst
+    origin: Player-selected
+    public_detail: The newest junior analyst assigned to Northstar's commodity-risk rotation.
     interaction_reason: This record is replaced by the player's chosen name and background.
   - id: evelyn_marsh
     name: Evelyn Marsh
     role: Controller
     origin: Milwaukee, Wisconsin
-    public_detail: Carries a mechanical pencil and asks which record existed before anyone knew the result.
+    public_detail: Repairs mechanical clocks on winter weekends and asks which record existed before anyone knew the result.
     interaction_reason: She owns the close and supervises the records the player is being trained to prepare.
   - id: cal_rourke
     name: Cal Rourke
-    role: Commercial director
+    role: Commercial Director and Hedging Supervisor
     origin: Appleton → Milwaukee
-    public_detail: Learned industrial gas demand around Fox Valley paper mills and dislikes qualifiers in forecasts.
-    interaction_reason: His desk turns weather, pipeline information, and sales expectations into hedge recommendations.
+    public_detail: Learned industrial gas demand around Fox Valley paper mills and still treats a hockey shift like a negotiation.
+    interaction_reason: He owns commercial forecasts and supervised hedge recommendations, but not accounting or treasury conclusions.
   - id: marisol_vega
     name: Marisol Vega
-    role: Gas scheduling manager
+    role: Gas Scheduling Manager
     origin: Racine → Milwaukee
-    public_detail: Runs three phones, one transportation map, and no patience for gas that exists only in a spreadsheet.
+    public_detail: Runs three phones, one transportation map, and the family calendar that survives everyone else's shift changes.
     interaction_reason: Her scheduling records determine whether the player's commercial assumptions have physical support.
   - id: tj_morrow
     name: Travis “T.J.” Morrow
-    role: Gulf Coast market analyst
-    origin: Houston, Texas → Northstar commercial desk
-    public_detail: Treats hurricane preparation and gas nominations as work completed before the weather arrives.
+    role: Gulf Coast Market Analyst
+    origin: Pasadena → Houston, Texas
+    public_detail: Keeps storm supplies for three households and treats gas nominations as work completed before weather arrives.
     interaction_reason: He joins the rotation call to separate Henry Hub exposure from Chicago regional basis.
   - id: kasia_zielinska
     name: Katarzyna “Kasia” Zielińska
-    role: Risk systems analyst
+    role: Risk Systems Analyst
     origin: Gdańsk, Poland → Chicago → Milwaukee
-    public_detail: Maintains the position system Cal insists he understands perfectly.
+    public_detail: Rows on Saturday mornings and maintains the position system Cal insists he understands perfectly.
     interaction_reason: She checks whether contract quantities, physical support, and system records agree.
   - id: darren_cho
     name: Darren Cho
-    role: Lakefront FCM margin representative
+    role: FCM Margin Representative
     origin: Morton Grove, Illinois → Chicago
-    public_detail: Delivers urgent margin numbers in the same even tone he uses for commuter-rail delays.
-    interaction_reason: He is the player's external contact for settlement balances and same-day margin calls.
+    public_detail: Carries a paperback for commuter delays and delivers urgent margin numbers in the same even tone.
+    interaction_reason: He is the player's external Lakefront FCM contact for settlement balances and same-day margin calls.
   - id: june_halvorsen
     name: June Halvorsen
-    role: Northstar treasury director
+    role: Treasury Director
     origin: Marquette, Michigan → Milwaukee
-    public_detail: Measures bad days by when the cash is due, not by how dramatic the forecast sounds.
+    public_detail: Restores an old family canoe and measures bad days by when cash is due, not by forecast drama.
     interaction_reason: She decides how Northstar protects operating obligations when hedge cash moves early.
   - id: vince_rourke
     name: Vince Bellandi
-    role: Northstar executive
+    role: EVP, Operations
     origin: Kenosha → Milwaukee
-    public_detail: Can make a disputed number sound like a family favor before the conference-room door closes.
-    interaction_reason: He wants the player to resolve the December discrepancy without delaying the close.
+    public_detail: Checks on his mother and a half-restored yard tow truck every Sunday, then carries both worries into Monday.
+    interaction_reason: Dom's nephew wants the player to resolve the December discrepancy without delaying operations or the close.
+    legacy_id_note: >-
+      Legacy internal ID retained for save compatibility. Vince is a Bellandi,
+      Dom’s nephew, and is not related to Cal Rourke.
+    family_relationships:
+      dom_bellini: uncle
   - id: dom_bellini
-    name: Dom Bellini
-    role: Commercial counterparty
+    name: Dominic “Dom” Bellandi
+    role: Founder and Chairman
     origin: Milwaukee's South Side
-    public_detail: Remembers confirmation numbers, supper reservations, and who was omitted from both.
-    interaction_reason: His supply relationship with Northstar reaches the player's records and Friday fish fry.
+    public_detail: Hosts Friday fish fry, watches who needs a refill, and remembers personal details long after introductions.
+    interaction_reason: Northstar's founder, chairman, and Vince's uncle is deciding how much discretion and trust the player deserves.
+    legacy_id_note: Legacy internal ID retained for save compatibility. Display surname is Bellandi.
+    family_relationships:
+      vince_rourke: nephew
   - id: noah_shah
     name: Noah Shah
-    role: Internal audit manager
+    role: Internal Audit Manager
     origin: Detroit → Milwaukee
-    public_detail: Began in automotive-supplier controls and distrusts timelines reconstructed from memory.
+    public_detail: Keeps a standing Detroit basketball date and distrusts business timelines reconstructed from memory.
     interaction_reason: He asks the player to walk one transaction from authorization through correction.
   - id: sofia_marin
     name: Sofia Marin
-    role: Great Lakes Infrastructure Partners VP of Commercial Diligence
+    role: VP, Commercial Diligence
     origin: Cleveland → Chicago
-    public_detail: Reads a data-room index as closely as other people read a term sheet.
-    interaction_reason: She tests whether Northstar's commercial story survives contact with its source records.
+    public_detail: Collects old Great Lakes industrial postcards and reads an upload index as closely as a term sheet.
+    interaction_reason: She represents Great Lakes Infrastructure Partners and tests whether Northstar can survive ownership change.
   - id: ingrid_holtz
     name: Ingrid Holtz
-    role: Independent director and audit-committee representative
+    role: Independent Director
     origin: Green Bay → Milwaukee
-    public_detail: Speaks sparingly and takes careful notes whenever management says an issue is already closed.
-    interaction_reason: She needs a board-level account of the transaction, controls, and remediation status.
+    public_detail: Chairs a neighborhood library foundation and takes careful notes whenever management says an issue is closed.
+    interaction_reason: She represents independent board oversight of the transaction, controls, and remediation status.
   - id: mara_voss
     name: Mara Voss
-    role: Great Lakes Commercial Bank relationship manager
+    role: Commercial Banking Relationship Manager
     origin: Toledo → Chicago
-    public_detail: Knows which covenant questions become expensive when answered late.
-    interaction_reason: She reviews the liquidity bridge and revolver implications for Northstar's lender.
+    public_detail: Follows Toledo baseball and knows which covenant questions become expensive when answered late.
+    interaction_reason: She represents Great Lakes Commercial Bank and reviews Northstar's liquidity bridge and revolver.

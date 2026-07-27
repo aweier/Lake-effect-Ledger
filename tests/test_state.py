@@ -2,7 +2,7 @@ from lake_effect_ledger.game import create_new_game
 from lake_effect_ledger.state import Background
 
 
-def test_game_state_initializes_with_meaningful_background_differences(content) -> None:
+def test_game_state_initializes_with_skill_only_background_differences(content) -> None:
     accounting = create_new_game(
         name="Morgan",
         background=Background.ACCOUNTING,
@@ -18,7 +18,8 @@ def test_game_state_initializes_with_meaningful_background_differences(content) 
 
     assert accounting.player.skills.accounting > analytics.player.skills.accounting
     assert analytics.player.skills.analytics > accounting.player.skills.analytics
-    assert analytics.resources.audit_risk < accounting.resources.audit_risk
+    assert analytics.resources == accounting.resources
+    assert analytics.personal_cash == accounting.personal_cash
     assert accounting.ledger.entries[0].total_debits == accounting.ledger.entries[0].total_credits
 
 

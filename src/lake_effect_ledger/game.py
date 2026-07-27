@@ -108,7 +108,11 @@ def create_new_game(
             name=name.strip(),
             background=background,
             skills=background_definition.skills,
-            role=(content.prologue.prologue.role_title if starts_rotation else "Northstar Analyst"),
+            role=(
+                content.prologue.prologue.role_title
+                if starts_rotation
+                else content.character("player").role
+            ),
         ),
         game_mode=game_mode,
         campaign_track=selected_track,
