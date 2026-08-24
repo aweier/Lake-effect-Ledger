@@ -34,6 +34,25 @@ def render_day(console: Console, day: TutorialDayDefinition) -> None:
         )
 
 
+def render_background_orientation(
+    console: Console,
+    state: GameState,
+    content: ContentBundle,
+) -> None:
+    background = content.background(state.player.background)
+    selection = content.characters.background_selection
+    console.print(
+        Panel(
+            f"{selection.first_rotation_context}\n\n"
+            f"{background.first_rotation_acknowledgment}\n\n"
+            f"[bold]How early concepts will be framed:[/bold] "
+            f"{background.teaching_frame}",
+            title=f"Evelyn Marsh · {background.label} perspective",
+            border_style="bright_blue",
+        )
+    )
+
+
 def render_check(console: Console, check: KnowledgeCheckDefinition) -> None:
     lines = [check.prompt]
     if check.options:
@@ -76,6 +95,18 @@ def render_notebook(console: Console, state: GameState, content: ContentBundle) 
             "Progress records first-attempt evidence, assistance, and review needs.",
             title="Learning progress",
             border_style="cyan",
+        )
+    )
+    background = content.background(state.player.background)
+    console.print(
+        Panel(
+            f"[bold]{background.label}[/bold]\n"
+            f"{background.description}\n\n"
+            f"[bold]Starting strength:[/bold] {background.starting_strength}\n"
+            f"[bold]Learning edge:[/bold] {background.learning_edge}\n\n"
+            f"{content.characters.background_selection.notebook_note}",
+            title="Your Starting Perspective",
+            border_style="blue",
         )
     )
     terms_by_section: dict[NotebookSection, list] = {

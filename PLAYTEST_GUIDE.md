@@ -15,9 +15,18 @@ From the repository root:
   --save-db .\saves\series3_core_session1.db
 ```
 
-Choose **New Game**, enter a name, and select any background. Guided Career
-controls the amount of teaching and retry support. Series 3 Core controls the
-chapter scope. Keep `--debug` off so future prices and hidden state stay hidden.
+Choose **New Game**, enter a name, and select a background based on the
+educational or early-career perspective the character brings to Northstar:
+Accounting, Finance, or Data Analytics. All three enter the same Junior
+Commodity Risk Analyst rotation, receive the same cash and resources, complete
+the same Core chapters, and face the same questions, decisions, and financial
+outcomes. The choice changes only early framing, Evelyn's acknowledgment, and a
+read-only notebook note. If you are undecided, choose the perspective that sounds
+most personally familiar or interesting.
+
+Guided Career controls the amount of teaching and retry support. Series 3 Core
+controls the chapter scope. Keep `--debug` off so future prices and hidden state
+stay hidden.
 
 Expected order:
 
@@ -57,7 +66,7 @@ Rerun:
 ```
 
 The saved game should reopen at the next unfinished activity. Do not add a
-different `--campaign-track` when loading; the track is part of save schema v8.
+different `--campaign-track` when loading; the track is part of save schema v9.
 
 During The Hedge Book, use **Save and return to menu** after a settlement. During
 Learning Review, the same action saves the current review question. At the two
@@ -86,6 +95,8 @@ Play as a genuine beginner:
 
 After each session, note:
 
+- Did your selected background help you understand your character’s starting
+  knowledge without making another background seem incorrect or disadvantaged?
 - Which introduction was memorable?
 - Which introduction contained too much information?
 - Did Dom feel like Northstar's founder and family patriarch?

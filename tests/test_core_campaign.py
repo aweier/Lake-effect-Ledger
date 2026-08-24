@@ -602,7 +602,7 @@ def test_fully_interactive_menu_path_reaches_core_boundary(
             answer = "guided"
         elif message == "Choose a campaign track:":
             answer = "series3_core"
-        elif message == "Choose your background:":
+        elif message == "What training did you bring to Northstar?":
             answer = "finance"
         elif message == "What record do you create?":
             answer = values[0]
@@ -669,5 +669,5 @@ def test_fully_interactive_menu_path_reaches_core_boundary(
         "Northstar morning book:",
         "Choose how to begin:",
         "Choose a campaign track:",
-        "Choose your background:",
+        "What training did you bring to Northstar?",
     } <= seen_messages

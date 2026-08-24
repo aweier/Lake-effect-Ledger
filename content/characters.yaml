@@ -1,8 +1,46 @@
 schema_version: 1
+background_selection:
+  introduction: >-
+    Accounting, Finance, and Data Analytics are prior educational or early-career
+    perspectives. All three enter the same Junior Commodity Risk Analyst rotation
+    and complete the same work.
+  question: What training did you bring to Northstar?
+  equivalence_note: >-
+    There is no best background. Your choice changes the perspective and support
+    used to introduce concepts—not the correct answers or available story paths.
+  first_rotation_context: >-
+    “Commodity work never stays on one desk,” Evelyn says. “It crosses accounting,
+    markets, operations, treasury, and data systems. This rotation teaches every
+    junior analyst to follow the same transaction across all five.”
+  notebook_note: >-
+    Your starting background changes early framing only. Familiarity is not
+    demonstrated mastery; your answers establish learning progress.
 backgrounds:
   - id: accounting
     label: Accounting
-    description: Strong close mechanics and formal journal-entry training; less prior exposure to commodity markets.
+    description: >-
+      You know how business activity reaches the ledger. Now you need to learn
+      what happens before the entry is posted.
+    prior_experience: >-
+      Coursework, internships, or junior work with journal entries,
+      reconciliations, month-end close, and financial statements.
+    starting_strength: >-
+      You understand how an operating event becomes an accounting record and
+      eventually affects financial reporting.
+    learning_edge: >-
+      Futures terminology, basis behavior, hedge construction, and daily margin
+      cash movement may initially feel unfamiliar.
+    hiring_reason: >-
+      Northstar needs someone who can connect trades and physical gas activity to
+      reliable books and records.
+    first_rotation_acknowledgment: >-
+      The ledger structure is familiar: source documents, entries,
+      reconciliations, and reporting. Evelyn notices where you slow down. “You can
+      follow what reaches the books. Futures language and the cash timing behind
+      it are what we’ll build next.”
+    teaching_frame: >-
+      As futures and basis appear, work from ledger to market: identify the
+      exposure and physical event that the eventual entry must represent.
     skills:
       accounting: 8
       markets: 4
@@ -12,7 +50,29 @@ backgrounds:
 
   - id: finance
     label: Finance
-    description: Strong market terminology and price intuition; less formal accounting and reconciliation training.
+    description: >-
+      You can see the exposure and the financial consequence. Now you need to
+      prove how the number entered the system.
+    prior_experience: >-
+      Coursework or junior work with markets, valuation, corporate finance, cash
+      forecasting, or investment analysis.
+    starting_strength: >-
+      You think comfortably about price exposure, hedge economics, P&L,
+      liquidity, and financial tradeoffs.
+    learning_edge: >-
+      Documentation, journal-entry mechanics, evidence standards, and operational
+      controls may initially feel procedural or restrictive.
+    hiring_reason: >-
+      Northstar needs someone who can understand why the company hedges and
+      explain the economic effect of a market move.
+    first_rotation_acknowledgment: >-
+      You understand why a seller might hedge and what a price move could do.
+      Evelyn stops you when economic intent starts to sound sufficient. “The
+      objective matters, but the record, evidence, and controls are part of the
+      work too.”
+    teaching_frame: >-
+      As records and reconciliations appear, work from exposure to evidence:
+      connect each economic claim to its entry, support, and control.
     skills:
       accounting: 5
       markets: 8
@@ -22,7 +82,28 @@ backgrounds:
 
   - id: data_analytics
     label: Data analytics
-    description: Strong reconciliation, data lineage, and anomaly detection; less formal accounting and trading education.
+    description: >-
+      You notice when the numbers disagree. Now you need to learn what each
+      number represents and what should happen next.
+    prior_experience: >-
+      Coursework or junior work with spreadsheets, SQL, reporting systems,
+      reconciliations, anomaly detection, or data visualization.
+    starting_strength: >-
+      You notice mismatched quantities, broken links, unusual changes, and
+      differences between systems.
+    learning_edge: >-
+      Formal accounting treatment, futures-market conventions, and the commercial
+      meaning behind the data may initially require explanation.
+    hiring_reason: >-
+      Northstar needs someone who can reconcile physical gas, futures positions,
+      confirmations, settlements, and accounting records across systems.
+    first_rotation_acknowledgment: >-
+      You spot the mismatch before anyone finishes explaining the report. Evelyn
+      asks what the discrepancy means. “Seeing it is the start. We’ll connect it
+      to the contract, commercial exposure, and accounting record.”
+    teaching_frame: >-
+      As contracts and accounting appear, work from system to business: trace
+      each number to the event, obligation, and record it is meant to represent.
     skills:
       accounting: 4
       markets: 5

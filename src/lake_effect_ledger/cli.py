@@ -65,6 +65,7 @@ from lake_effect_ledger.learning.models import (
     ShowMathMode,
 )
 from lake_effect_ledger.learning.presentation import (
+    render_background_orientation,
     render_check,
     render_check_math,
     render_core_chapter_debrief,
@@ -78,6 +79,7 @@ from lake_effect_ledger.narrative.engine import NarrativeEngine
 from lake_effect_ledger.narrative.models import ContentBundle
 from lake_effect_ledger.persistence.saves import SaveRepository
 from lake_effect_ledger.presentation import (
+    render_background_selection,
     render_character_introduction,
     render_dashboard,
     render_debug,
@@ -516,12 +518,13 @@ def _introduce_speaker(
 
 
 def _select_background(content: ContentBundle) -> Background:
+    render_background_selection(console, content.characters)
     value = _ask(
         questionary.select(
-            "Choose your background:",
+            content.characters.background_selection.question,
             choices=[
                 Choice(
-                    title=f"{item.label} — {item.description}",
+                    title=item.label,
                     value=item.id.value,
                 )
                 for item in content.characters.backgrounds
@@ -747,6 +750,8 @@ def _play_prologue(
             content,
             *PROLOGUE_CHARACTER_IDS[day.id],
         )
+        if day.day_number == 1:
+            render_background_orientation(console, state, content)
         render_day(console, day)
         run_checks = state.game_mode == GameMode.GUIDED or strategy != "auto"
         if interactive and state.game_mode == GameMode.STANDARD and strategy == "auto":

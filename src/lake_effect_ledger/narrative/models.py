@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from datetime import date
 from decimal import Decimal
 from pathlib import Path
@@ -239,13 +240,28 @@ class BackgroundDefinition(BaseModel):
     id: Background
     label: str
     description: str
+    prior_experience: str = Field(min_length=1)
+    starting_strength: str = Field(min_length=1)
+    learning_edge: str = Field(min_length=1)
+    hiring_reason: str = Field(min_length=1)
+    first_rotation_acknowledgment: str = Field(min_length=1)
+    teaching_frame: str = Field(min_length=1)
     skills: SkillProfile
     personal_cash: Decimal = Field(ge=0)
     resource_adjustments: dict[ResourceName, int]
 
 
+class BackgroundSelectionDefinition(BaseModel):
+    introduction: str = Field(min_length=1)
+    question: str = Field(min_length=1)
+    equivalence_note: str = Field(min_length=1)
+    first_rotation_context: str = Field(min_length=1)
+    notebook_note: str = Field(min_length=1)
+
+
 class CharacterFile(BaseModel):
     schema_version: Literal[1]
+    background_selection: BackgroundSelectionDefinition
     backgrounds: list[BackgroundDefinition]
     people: list[CharacterDefinition] = Field(default_factory=list)
 
@@ -336,20 +352,79 @@ class CharacterFile(BaseModel):
             raise ValueError("duplicate background ID")
         if set(background_ids) != set(Background):
             raise ValueError("character creation must define every background exactly once")
+        expected_skills = {
+            Background.ACCOUNTING: (8, 4, 5),
+            Background.FINANCE: (5, 8, 4),
+            Background.DATA_ANALYTICS: (4, 5, 8),
+        }
+        public_background_fields: list[str] = []
         for background in self.backgrounds:
-            skill_total = (
-                background.skills.accounting
-                + background.skills.markets
-                + background.skills.analytics
+            actual_skills = (
+                background.skills.accounting,
+                background.skills.markets,
+                background.skills.analytics,
             )
-            if skill_total != 17:
+            if sum(actual_skills) != 17:
                 raise ValueError(f"background {background.id.value} must total 17 skill points")
+            if actual_skills != expected_skills[background.id]:
+                raise ValueError(
+                    f"background {background.id.value} must retain its canonical skill values"
+                )
+            if background.personal_cash != Decimal("2600"):
+                raise ValueError(f"background {background.id.value} must begin with $2,600")
             if background.resource_adjustments:
                 raise ValueError(
                     f"background {background.id.value} cannot modify moral or risk resources"
                 )
-        if len({item.personal_cash for item in self.backgrounds}) != 1:
-            raise ValueError("all backgrounds must begin with the same personal cash")
+            public_background_fields.extend(
+                (
+                    background.description,
+                    background.prior_experience,
+                    background.starting_strength,
+                    background.learning_edge,
+                    background.hiring_reason,
+                    background.first_rotation_acknowledgment,
+                    background.teaching_frame,
+                )
+            )
+        if len({item.description for item in self.backgrounds}) != len(self.backgrounds):
+            raise ValueError("background selection descriptions must be distinct")
+        if len({item.first_rotation_acknowledgment for item in self.backgrounds}) != len(
+            self.backgrounds
+        ):
+            raise ValueError("background First Rotation acknowledgments must be distinct")
+        forbidden_framing = (
+            "easy",
+            "hard",
+            "recommended",
+            "optimal",
+            "ethical",
+            "risky",
+            "series 3",
+            "exam",
+            "suitable",
+            "suitability",
+        )
+        lowered_background_copy = "\n".join(public_background_fields).casefold()
+        for term in forbidden_framing:
+            if re.search(rf"\b{re.escape(term)}\b", lowered_background_copy):
+                raise ValueError(
+                    f"background selection copy cannot use comparative framing: {term}"
+                )
+        selection_copy = (
+            f"{self.background_selection.introduction}\n"
+            f"{self.background_selection.equivalence_note}"
+        ).casefold()
+        required_selection_messages = (
+            "same junior commodity risk analyst rotation",
+            "no best background",
+            "correct answers",
+            "story paths",
+        )
+        if any(message not in selection_copy for message in required_selection_messages):
+            raise ValueError(
+                "background selection must explain the shared role and equivalent campaign"
+            )
         return self
 
 

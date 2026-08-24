@@ -11,7 +11,7 @@ from rich.table import Table
 from rich.text import Text
 
 from lake_effect_ledger.education.report import LearningReport
-from lake_effect_ledger.narrative.models import SceneDefinition
+from lake_effect_ledger.narrative.models import CharacterFile, SceneDefinition
 from lake_effect_ledger.state import GameState
 from lake_effect_ledger.treasury.models import CharacterDefinition
 
@@ -42,6 +42,32 @@ def render_character_introduction(
         f"[dim]{character.interaction_reason}[/dim]"
     )
     console.print(Panel(body, title="NEW CONTACT", border_style="bright_blue"))
+
+
+def render_background_selection(
+    console: Console,
+    characters: CharacterFile,
+) -> None:
+    selection = characters.background_selection
+    console.print(
+        Panel(
+            f"{selection.introduction}\n\n{selection.equivalence_note}",
+            title="Your path into Northstar",
+            border_style="cyan",
+        )
+    )
+    for background in characters.backgrounds:
+        skills = background.skills
+        body = (
+            f"[italic]{background.description}[/italic]\n\n"
+            f"[bold]Prior experience:[/bold] {background.prior_experience}\n"
+            f"[bold]Strongest starting area:[/bold] {background.starting_strength}\n"
+            f"[bold]Learning edge:[/bold] {background.learning_edge}\n"
+            f"[bold]Why Northstar hired you:[/bold] {background.hiring_reason}\n"
+            f"[bold]Skills:[/bold] Accounting {skills.accounting} · "
+            f"Markets {skills.markets} · Analytics {skills.analytics}"
+        )
+        console.print(Panel(body, title=background.label, border_style="blue"))
 
 
 def render_dashboard(console: Console, state: GameState) -> None:

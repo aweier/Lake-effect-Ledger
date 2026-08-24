@@ -78,8 +78,9 @@ Bellandi's uncle; legacy internal IDs remain only for save compatibility and
 never define displayed names or family relationships. Houston market analyst
 T.J. Morrow and Gdańsk-born risk-systems analyst Kasia Zielińska appear in First
 Rotation and recur later without changing any financial outcome. Fresh
-accounting, finance, and data-analytics backgrounds each receive 17 skill points,
-$2,600 personal cash, and no moral or control-risk adjustment. Author-only
+accounting, finance, and data-analytics backgrounds each receive their own
+starting perspective, 17 skill points, $2,600 personal cash, and no moral or
+control-risk adjustment. Author-only
 motivations and reveal guidance live in [`CHARACTER_BIBLE.md`](CHARACTER_BIBLE.md),
 which is never shown during gameplay.
 
@@ -439,6 +440,29 @@ requires the learning checks while Standard Story skips them by default. Every
 completed tutorial check, settlement, treasury decision, live-book scene, and
 Core Review response autosaves to `saves/lake_ledger.db`. Use **Load Game** to
 resume.
+
+### Choosing your prior training
+
+The background question asks what the character knew before joining Northstar.
+Accounting, Finance, and Data Analytics all lead into the same Junior Commodity
+Risk Analyst rotation:
+
+- **Accounting — 8 Accounting / 4 Markets / 5 Analytics.** You know how
+  business activity reaches the ledger; the rotation builds the futures, basis,
+  hedge, and margin-cash context that comes before the entry.
+- **Finance — 5 Accounting / 8 Markets / 4 Analytics.** You recognize price
+  exposure and financial consequences; the rotation connects those economics to
+  records, evidence, journal entries, and controls.
+- **Data Analytics — 4 Accounting / 5 Markets / 8 Analytics.** You notice when
+  systems and quantities disagree; the rotation connects each number to its
+  contract, commercial meaning, and accounting treatment.
+
+The choice changes early explanations, Evelyn's First Rotation acknowledgment,
+and the read-only **Your Starting Perspective** notebook note. It does not change
+the job, Core curriculum, questions or correct answers, available story paths,
+starting cash or resources, decisions, calculations, or financial outcomes.
+There is no mechanically superior background. If you are undecided, choose the
+perspective that sounds most personally familiar or interesting.
 
 Launch the recommended Core Campaign with a dedicated playtest save:
 
