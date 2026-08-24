@@ -441,6 +441,9 @@ completed tutorial check, settlement, treasury decision, live-book scene, and
 Core Review response autosaves to `saves/lake_ledger.db`. Use **Load Game** to
 resume.
 
+In interactive play, Lake Effect Ledger pauses after teaching feedback. Press
+Enter when you are ready for the next screen.
+
 ### Choosing your prior training
 
 The background question asks what the character knew before joining Northstar.

@@ -495,6 +495,35 @@ def _ask(prompt: object) -> object:
     return result
 
 
+def _stream_is_tty(stream: object) -> bool:
+    isatty = getattr(stream, "isatty", None)
+    if not callable(isatty):
+        return False
+    try:
+        return bool(isatty())
+    except OSError:
+        return False
+
+
+def _continuation_is_available() -> bool:
+    """Return whether waiting and clearing are safe for this terminal."""
+    return _stream_is_tty(sys.stdin) and console.is_terminal
+
+
+def _continue_after_feedback(*, interactive: bool) -> bool:
+    """Hold completed feedback on screen, then clear before the next unit."""
+    if not interactive or not _continuation_is_available():
+        return False
+    console.print("[dim]Press Enter to continue...[/dim]", end="")
+    try:
+        if sys.stdin.readline() == "":
+            raise typer.Exit()
+    except KeyboardInterrupt as error:
+        raise typer.Exit() from error
+    console.clear()
+    return True
+
+
 def _introduce_characters(
     state: GameState,
     content: ContentBundle,
@@ -639,15 +668,18 @@ def _interactive_check(
         )
         if action == "math":
             render_check_math(console, check, content)
+            _continue_after_feedback(interactive=True)
             continue
         if action == "repeat":
             console.clear()
             continue
         if action == "hint":
             console.print(Panel(engine.hint(state, check_id), title="Hint"))
+            _continue_after_feedback(interactive=True)
             continue
         if action == "notebook":
             render_notebook(console, state, content)
+            _continue_after_feedback(interactive=True)
             continue
         if action == "unsure":
             result = engine.walkthrough(state, check_id)
@@ -686,6 +718,7 @@ def _interactive_check(
                 title="Not yet",
             )
         )
+        _continue_after_feedback(interactive=True)
 
 
 def _play_prologue(
@@ -795,6 +828,7 @@ def _play_prologue(
             state.prologue.current_check_index += 1
             if save_enabled:
                 repository.save(state)
+            _continue_after_feedback(interactive=interactive)
         if day.story_scene_id and state.prologue.story_choice_id is None:
             scene = content.scene(day.story_scene_id)
             render_scene(console, scene)
@@ -816,6 +850,7 @@ def _play_prologue(
         console.print(Panel(day.end_note, title=f"{day.title} complete", border_style="green"))
         if save_enabled:
             repository.save(state)
+        _continue_after_feedback(interactive=interactive)
     if state.prologue.current_day_index == len(days):
         engine.complete_prologue(state)
         transition = content.scene(content.prologue.prologue.episode_1_transition_scene_id)
@@ -1324,6 +1359,7 @@ def _run_chapter_checks(
             learning.submit(state, check_id, learning.expected_answer(check_id))
         if check_id not in state.eleventh_contract.learning_check_ids:
             state.eleventh_contract.learning_check_ids.append(check_id)
+        _continue_after_feedback(interactive=interactive)
 
 
 def _choose_chapter_choice_interactively(
@@ -1655,12 +1691,15 @@ def _play_core_review(
                 continue
             if action == "math":
                 render_check_math(console, check, content)
+                _continue_after_feedback(interactive=True)
                 continue
             if action == "hint":
                 console.print(Panel(review_engine.hint(state), title="Hint"))
+                _continue_after_feedback(interactive=True)
                 continue
             if action == "notebook":
                 render_notebook(console, state, content)
+                _continue_after_feedback(interactive=True)
                 continue
             if action == "walkthrough":
                 result = review_engine.walkthrough(state)
@@ -1673,6 +1712,7 @@ def _play_core_review(
                 )
                 if save_enabled:
                     repository.save(state)
+                _continue_after_feedback(interactive=True)
                 continue
             if check.check_type == KnowledgeCheckType.NUMERIC:
                 answer = str(_ask(questionary.text("Your numeric answer:")))
@@ -1722,6 +1762,7 @@ def _play_core_review(
                 review_engine.submit(state, expected)
         if save_enabled:
             repository.save(state)
+        _continue_after_feedback(interactive=interactive)
 
     if review.style == ReviewStyle.CHECKPOINT:
         explanation_lines = []
@@ -1735,6 +1776,7 @@ def _play_core_review(
                 border_style="blue",
             )
         )
+        _continue_after_feedback(interactive=interactive)
     render_core_review_diagnostic(console, review_engine.diagnostic(state))
     if not state.core_debrief_completed:
         render_core_debrief(console, build_core_debrief(state, content))
@@ -1800,6 +1842,7 @@ def _run_audit_checks(
             learning.submit(state, check_id, learning.expected_answer(check_id))
         if check_id not in audit.learning_check_ids:
             audit.learning_check_ids.append(check_id)
+        _continue_after_feedback(interactive=interactive)
 
 
 def _choose_audit_choice_interactively(
@@ -2102,6 +2145,7 @@ def _run_diligence_checks(
             learning.submit(state, check_id, learning.expected_answer(check_id))
         if check_id not in diligence.learning_check_ids:
             diligence.learning_check_ids.append(check_id)
+        _continue_after_feedback(interactive=interactive)
 
 
 def _choose_diligence_choice_interactively(
