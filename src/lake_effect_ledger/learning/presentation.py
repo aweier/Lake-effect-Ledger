@@ -10,6 +10,7 @@ from lake_effect_ledger.learning.calculations import calculate_answer
 from lake_effect_ledger.learning.core import CoreDebrief, CoreReviewDiagnostic
 from lake_effect_ledger.learning.models import (
     CalculationKind,
+    CheckOption,
     KnowledgeCheckDefinition,
     NotebookSection,
     TutorialDayDefinition,
@@ -53,11 +54,16 @@ def render_background_orientation(
     )
 
 
-def render_check(console: Console, check: KnowledgeCheckDefinition) -> None:
+def render_check(
+    console: Console,
+    check: KnowledgeCheckDefinition,
+    *,
+    options: list[CheckOption] | None = None,
+) -> None:
     lines = [check.prompt]
-    if check.options:
-        lines.extend(f"  {item.id}: {item.text}" for item in check.options)
-    lines.append("  unsure: I'm not sure—walk me through it.")
+    displayed_options = check.options if options is None else options
+    if displayed_options:
+        lines.extend(f"  {item.id}: {item.text}" for item in displayed_options)
     console.print(Panel("\n".join(lines), title=f"Knowledge check · {check.id}"))
 
 

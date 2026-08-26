@@ -176,7 +176,9 @@ checks:
     retry_policy: until_correct
   - id: d1_futures_pnl
     check_type: numeric
-    prompt: One short NG contract moves from $5.800 to $5.820/MMBtu. What is daily futures P&L in dollars?
+    prompt: >-
+      You hold one short Henry Hub natural gas (NG) futures contract. Settlement
+      rises from $5.800 to $5.820/MMBtu. What is the daily futures P&L in dollars?
     learning_objective_ids: [short_futures_hedge, daily_settlement_margin]
     source_id: cme_ng_contract
     calculation:

@@ -51,6 +51,7 @@ from lake_effect_ledger.diligence.report import build_diligence_room_report
 from lake_effect_ledger.education.hedge_report import build_hedge_book_report
 from lake_effect_ledger.education.report import build_learning_report
 from lake_effect_ledger.game import create_new_game
+from lake_effect_ledger.learning.choice_order import ordered_check_options
 from lake_effect_ledger.learning.core import (
     CoreReviewEngine,
     build_core_debrief,
@@ -79,6 +80,7 @@ from lake_effect_ledger.narrative.engine import NarrativeEngine
 from lake_effect_ledger.narrative.models import ContentBundle
 from lake_effect_ledger.persistence.saves import SaveRepository
 from lake_effect_ledger.presentation import (
+    NORTHSTAR_HEADQUARTERS,
     render_background_selection,
     render_character_introduction,
     render_dashboard,
@@ -648,8 +650,9 @@ def _interactive_check(
     check_id: str,
 ) -> None:
     check = content.knowledge_check(check_id)
+    option_order = ordered_check_options(check, game_seed=state.seed)
     while not state.learning.checks.get(check_id) or not state.learning.checks[check_id].completed:
-        render_check(console, check)
+        render_check(console, check, options=option_order)
         if state.show_math == ShowMathMode.ALWAYS:
             render_check_math(console, check, content)
         command_choices = [Choice("Answer", value="answer")]
@@ -698,7 +701,7 @@ def _interactive_check(
                 _ask(
                     questionary.select(
                         "Your answer:",
-                        choices=[Choice(title=item.text, value=item.id) for item in check.options],
+                        choices=[Choice(title=item.text, value=item.id) for item in option_order],
                     )
                 )
             )
@@ -764,6 +767,7 @@ def _play_prologue(
         console.print(
             Panel(
                 f"Role: {state.player.role}\n"
+                f"Location: {NORTHSTAR_HEADQUARTERS}\n"
                 f"Three training days · about {prologue.estimated_minutes} minutes\n"
                 "Your exercises affect learning progress only. Authored story choices "
                 "remain durable.",
@@ -831,6 +835,10 @@ def _play_prologue(
             _continue_after_feedback(interactive=interactive)
         if day.story_scene_id and state.prologue.story_choice_id is None:
             scene = content.scene(day.story_scene_id)
+            if scene.setup is not None:
+                _introduce_characters(state, content, *scene.setup.character_ids)
+                _introduce_speaker(state, content, scene.setup.speaker)
+            _introduce_speaker(state, content, scene.speaker)
             render_scene(console, scene)
             selected = story_choice_id or (
                 _choose_prologue_story_interactively(content)
@@ -1657,7 +1665,8 @@ def _play_core_review(
     while not review.completed:
         reference = review_engine.current_reference(state)
         check = content.knowledge_check(reference.check_id)
-        render_check(console, check)
+        option_order = ordered_check_options(check, game_seed=state.seed)
+        render_check(console, check, options=option_order)
         if interactive:
             choices = [
                 Choice("Answer", value="answer"),
@@ -1721,7 +1730,7 @@ def _play_core_review(
                     _ask(
                         questionary.select(
                             "Your answer:",
-                            choices=[Choice(item.text, value=item.id) for item in check.options],
+                            choices=[Choice(item.text, value=item.id) for item in option_order],
                         )
                     )
                 )

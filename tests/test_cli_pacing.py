@@ -8,6 +8,7 @@ from typer.testing import CliRunner
 import lake_effect_ledger.cli as cli
 from lake_effect_ledger.cli import app
 from lake_effect_ledger.game import create_new_game
+from lake_effect_ledger.learning.choice_order import ordered_check_options
 from lake_effect_ledger.learning.engine import LearningEngine
 from lake_effect_ledger.learning.models import (
     CampaignTrack,
@@ -54,6 +55,56 @@ def _state(content, *, game_mode=GameMode.GUIDED):
 
 def _values(choices):
     return [item.value if isinstance(item, Choice) else item for item in choices]
+
+
+def test_numeric_question_uses_beginner_language_without_internal_unsure_label(
+    content,
+) -> None:
+    output = StringIO()
+    test_console = Console(file=output, force_terminal=False, color_system=None, width=100)
+
+    cli.render_check(test_console, content.knowledge_check("d1_futures_pnl"))
+
+    rendered = output.getvalue()
+    assert "Henry Hub natural gas (NG) futures contract" in rendered
+    assert "Settlement" in rendered
+    assert "unsure:" not in rendered
+    assert "I'm not sure" not in rendered
+
+
+def test_question_panel_and_selector_share_the_shuffled_order(
+    content,
+    monkeypatch,
+) -> None:
+    state = _state(content)
+    check = content.knowledge_check("d1_long_hedge_direction")
+    expected_order = [item.id for item in ordered_check_options(check, game_seed=state.seed)]
+    selected_order = []
+    output = StringIO()
+    test_console = Console(file=output, force_terminal=False, color_system=None, width=100)
+
+    def fake_select(message, choices, **_kwargs):
+        if message == "How do you want to proceed?":
+            return _FakePrompt("answer")
+        selected_order.extend(_values(choices))
+        return _FakePrompt(check.correct_option_id)
+
+    monkeypatch.setattr(cli, "console", test_console)
+    monkeypatch.setattr(cli.questionary, "select", fake_select)
+
+    cli._interactive_check(
+        state,
+        content=content,
+        engine=LearningEngine(content),
+        check_id=check.id,
+    )
+
+    rendered = output.getvalue()
+    assert expected_order == selected_order
+    assert expected_order.index(check.correct_option_id) == 2
+    assert [rendered.index(f"{option_id}:") for option_id in expected_order] == sorted(
+        rendered.index(f"{option_id}:") for option_id in expected_order
+    )
 
 
 def test_correct_feedback_waits_then_clears_before_next_question(

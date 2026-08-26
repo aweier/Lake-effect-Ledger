@@ -129,6 +129,8 @@ def test_public_cards_do_not_render_character_bible_secrets(
     )
 
     output = console.export_text()
+    assert "Background route: Pasadena → Houston, Texas" in output
+    assert "Background route: Gdańsk, Poland → Chicago → Milwaukee" in output
     assert "left a Houston promotion path" not in output
     assert "permanent cleanup staff" not in output
     assert "Story secrets" not in output
@@ -172,7 +174,8 @@ def test_conditional_reveals_require_their_actual_prior_choices(content) -> None
     assert kasia_text in narrative.resolved_scene_text(state, "ec_verification")
 
 
-def test_houston_and_polish_contacts_appear_early_in_core(tmp_path) -> None:
+def test_day_two_bridges_the_basis_lesson_into_the_first_decision(tmp_path) -> None:
+    database = tmp_path / "early-contacts.db"
     result = runner.invoke(
         app,
         [
@@ -184,7 +187,7 @@ def test_houston_and_polish_contacts_appear_early_in_core(tmp_path) -> None:
             "--prologue-days",
             "2",
             "--save-db",
-            str(tmp_path / "early-contacts.db"),
+            str(database),
         ],
     )
     assert result.exit_code == 0, result.output
@@ -192,9 +195,18 @@ def test_houston_and_polish_contacts_appear_early_in_core(tmp_path) -> None:
     assert "Houston, Texas" in result.output
     assert "Katarzyna “Kasia” Zielińska" in result.output
     assert "Gdańsk, Poland" in result.output
-    state = SaveRepository(tmp_path / "early-contacts.db").load()
+    assert "Marisol Vega, Northstar’s Gas Scheduling Manager" in result.output
+    assert "Commercial Director and Hedging Supervisor" in result.output
+    assert (
+        result.output.index("Day 2 — The Basis")
+        < result.output.index("From the Board to the Packet")
+        < result.output.index("The Line Cal Wants Gone")
+    )
+    state = SaveRepository(database).load()
     assert state.introduced_character_ids.count("tj_morrow") == 1
     assert state.introduced_character_ids.count("kasia_zielinska") == 1
+    assert state.introduced_character_ids.count("marisol_vega") == 1
+    assert state.introduced_character_ids.count("cal_rourke") == 1
 
 
 def test_character_ids_are_ascii_safe_and_unicode_renders_cleanly(
@@ -385,6 +397,8 @@ def test_player_facing_character_content_never_uses_legacy_names_or_ids(content)
                 *(item.text for item in scene.conditional_paragraphs),
             ]
         )
+        if scene.setup is not None:
+            public_fragments.extend([scene.setup.speaker, scene.setup.title, scene.setup.text])
     public_fragments.extend(item.text for item in content.hedge_narrative.briefings)
     public_fragments.extend(
         [

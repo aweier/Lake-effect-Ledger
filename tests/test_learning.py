@@ -354,3 +354,11 @@ def test_unknown_story_communication_recipient_is_rejected(content) -> None:
     communication.recipient_ids = ["unknown_person"]
     with pytest.raises(ValueError, match="references people"):
         rebundle(content, first_rotation=bad_rotation)
+
+
+def test_unknown_scene_setup_character_is_rejected(content) -> None:
+    bad_rotation = content.first_rotation.model_copy(deep=True)
+    bad_rotation.scenes[0].setup.character_ids = ["unknown_person"]
+
+    with pytest.raises(ValueError, match="setup references unknown people"):
+        rebundle(content, first_rotation=bad_rotation)

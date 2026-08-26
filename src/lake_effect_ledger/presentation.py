@@ -15,6 +15,8 @@ from lake_effect_ledger.narrative.models import CharacterFile, SceneDefinition
 from lake_effect_ledger.state import GameState
 from lake_effect_ledger.treasury.models import CharacterDefinition
 
+NORTHSTAR_HEADQUARTERS = "Northstar headquarters · Milwaukee, Wisconsin"
+
 
 def _money(value: Decimal) -> str:
     return f"${value:,.2f}"
@@ -22,12 +24,22 @@ def _money(value: Decimal) -> str:
 
 def render_title(console: Console) -> None:
     title = Text("LAKE EFFECT LEDGER", style="bold cyan", justify="center")
+    location = Text(
+        NORTHSTAR_HEADQUARTERS.upper(),
+        style="bold white",
+        justify="center",
+    )
     subtitle = Text(
         "Every number has a story. Which one will you sign?",
         style="italic white",
         justify="center",
     )
-    console.print(Panel(Text.assemble(title, "\n", subtitle), border_style="blue"))
+    console.print(
+        Panel(
+            Text.assemble(title, "\n", location, "\n", subtitle),
+            border_style="blue",
+        )
+    )
 
 
 def render_character_introduction(
@@ -37,7 +49,7 @@ def render_character_introduction(
     body = (
         f"[bold]{character.name}[/bold]\n"
         f"{character.role}\n"
-        f"[cyan]{character.origin}[/cyan]\n\n"
+        f"[bold]Background route:[/bold] [cyan]{character.origin}[/cyan]\n\n"
         f"{character.public_detail}\n"
         f"[dim]{character.interaction_reason}[/dim]"
     )
@@ -75,7 +87,7 @@ def render_dashboard(console: Console, state: GameState) -> None:
     heading.add_column(justify="left")
     heading.add_column(justify="right")
     heading.add_row(
-        f"[bold]{state.current_date:%B %d, %Y}[/bold] · Milwaukee, Wisconsin",
+        f"[bold]{state.current_date:%B %d, %Y}[/bold] · {NORTHSTAR_HEADQUARTERS}",
         f"Seed [cyan]{state.seed}[/cyan]",
     )
     heading.add_row(
@@ -118,6 +130,15 @@ def render_dashboard(console: Console, state: GameState) -> None:
 
 
 def render_scene(console: Console, scene: SceneDefinition) -> None:
+    if scene.setup is not None:
+        console.print(
+            Panel(
+                scene.setup.text,
+                title=scene.setup.title,
+                subtitle=scene.setup.speaker,
+                border_style="cyan",
+            )
+        )
     console.print(Panel(scene.text, title=scene.title, subtitle=scene.speaker.replace("_", " ")))
     if scene.discrepancy is None:
         return

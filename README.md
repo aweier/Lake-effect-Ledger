@@ -3,6 +3,11 @@
 `Lake Effect Ledger` is a fictional Python CLI narrative-management game about
 natural-gas accounting, hedging, liquidity, evidence, and loyalty.
 
+The playable story is centered at Northstar Midstream & Trading's headquarters
+in Milwaukee, Wisconsin. Chicago is the regional physical-gas pricing location,
+while Henry Hub in Louisiana is the futures benchmark; neither is Northstar's
+headquarters.
+
 The repository contains seven connected playable chapters organized into two
 campaign tracks. **Series 3 Core** is the recommended beginner path:
 

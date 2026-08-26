@@ -570,6 +570,7 @@ class _FakePrompt:
 
 
 def test_fully_interactive_menu_path_reaches_core_boundary(
+    content,
     monkeypatch,
     tmp_path,
 ) -> None:
@@ -591,6 +592,16 @@ def test_fully_interactive_menu_path_reaches_core_boundary(
             "50000",
         ]
     )
+    correct_by_option_set = {
+        frozenset(option.id for option in check.options): check.correct_option_id
+        for check in [
+            *content.prologue.checks,
+            *content.eleventh_learning.checks,
+            *content.audit_learning.checks,
+            *content.diligence_learning.checks,
+        ]
+        if check.options
+    }
 
     def fake_select(message, choices, **_kwargs):
         nonlocal repeated_question
@@ -613,7 +624,7 @@ def test_fully_interactive_menu_path_reaches_core_boundary(
             else:
                 answer = "answer"
         elif message == "Your answer:":
-            answer = values[0]
+            answer = correct_by_option_set[frozenset(values)]
         elif message == "Choose a hedge level:":
             answer = "hedge_100"
         elif message == "How will Northstar handle the call and obligations?":

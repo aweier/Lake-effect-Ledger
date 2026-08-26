@@ -4,12 +4,32 @@ scenes:
     chapter: First Rotation
     speaker: Marisol Vega
     title: The Line Cal Wants Gone
+    setup:
+      title: From the Board to the Packet
+      speaker: Evelyn Marsh
+      character_ids: [marisol_vega, cal_rourke]
+      text: >-
+        T.J. signs off from Houston, and Kasia closes the hedge-ratio worksheet.
+        Evelyn leaves one figure on the board: 100,000 MMBtu. “You can calculate
+        a hedge ratio from that number,” she says. “Before anyone relies on it,
+        you also need to know what the number is—and what it is not.”
+
+        Marisol Vega, Northstar’s Gas Scheduling Manager, brings over the
+        supervised authorization draft. The forecast is usable, she explains,
+        but scheduling has not finished qualifying every physical volume. That
+        is why the draft says “subject to scheduling qualification.” Cal Rourke,
+        the Commercial Director and Hedging Supervisor, wants a cleaner packet
+        before it goes upstairs.
+
+        Evelyn turns the draft toward you. “Your first decision is not the hedge
+        quantity. It is whether the record still says what Northstar actually
+        knows.”
     text: >-
-      Marisol sends the hedge authorization draft back to you. It accurately says
-      the volume forecast is still “subject to scheduling qualification.” Cal asks
-      whether that line can disappear before the approval packet goes upstairs.
-      The trade quantity and every market input remain unchanged. What changes is
-      the record you help create.
+      The authorization draft accurately says the volume forecast is still
+      “subject to scheduling qualification.” Cal asks whether that line can
+      disappear before the approval packet goes upstairs. The trade quantity and
+      every market input remain unchanged. What changes is the record you help
+      create.
     choices:
       - id: preserve_scheduling_qualification
         text: Preserve the qualification and explain why the estimate remains conditional.

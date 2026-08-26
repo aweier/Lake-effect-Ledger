@@ -220,12 +220,20 @@ class DiscrepancyDefinition(BaseModel):
         return self
 
 
+class SceneSetupDefinition(BaseModel):
+    title: str = Field(min_length=1)
+    speaker: str = Field(min_length=1)
+    text: str = Field(min_length=1)
+    character_ids: list[Annotated[str, Field(pattern=r"^[a-z0-9_]+$")]] = Field(min_length=1)
+
+
 class SceneDefinition(BaseModel):
     id: str = Field(pattern=r"^[a-z0-9_]+$")
     chapter: str
     speaker: str
     title: str
     text: str
+    setup: SceneSetupDefinition | None = None
     discrepancy: DiscrepancyDefinition | None = None
     conditional_paragraphs: list[ConditionalParagraph] = Field(default_factory=list)
     choices: list[ChoiceDefinition] = Field(min_length=1)
@@ -899,13 +907,25 @@ class ContentBundle:
         valid_sources = set(source_ids)
         valid_glossary = set(glossary_ids)
         valid_checks = set(check_ids)
+        narrative_scenes = [
+            *self.scenes.scenes,
+            *self.first_rotation.scenes,
+            *self.eleventh_narrative.scenes,
+        ]
+        for scene in narrative_scenes:
+            if scene.setup is None:
+                continue
+            unknown_people = set(scene.setup.character_ids) - valid_people
+            if unknown_people:
+                raise ValueError(
+                    f"scene {scene.id} setup references unknown people: {unknown_people}"
+                )
         character_speakers = [
             *[panel.speaker for day in self.prologue.prologue.days for panel in day.concept_panels],
             *[item.speaker for item in self.hedge_narrative.briefings],
             self.hedge_narrative.documentation_scene.speaker,
-            *[item.speaker for item in self.scenes.scenes],
-            *[item.speaker for item in self.first_rotation.scenes],
-            *[item.speaker for item in self.eleventh_narrative.scenes],
+            *[item.speaker for item in narrative_scenes],
+            *[item.setup.speaker for item in narrative_scenes if item.setup is not None],
             *[item.speaker for item in self.audit_scenario.scenes],
             *[item.speaker for item in self.diligence_scenario.scenes],
         ]

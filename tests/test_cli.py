@@ -47,6 +47,7 @@ def test_scripted_cli_completes_playable_day(tmp_path) -> None:
 
     assert result.exit_code == 0, result.output
     assert "LAKE EFFECT LEDGER" in result.output
+    assert "NORTHSTAR HEADQUARTERS · MILWAUKEE, WISCONSIN" in result.output
     assert "December Difference" in result.output
     assert "End-of-day learning report" in result.output
     assert "state transitions" in result.output
