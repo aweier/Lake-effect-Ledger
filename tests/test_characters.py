@@ -1,6 +1,7 @@
 import re
 from copy import deepcopy
 from decimal import Decimal
+from pathlib import Path
 
 import pytest
 from rich.console import Console
@@ -81,7 +82,7 @@ def test_introduction_state_survives_save_and_load(
     monkeypatch.setattr(cli, "console", second_console)
     cli._introduce_characters(restored, content, "kasia_zielinska")
 
-    assert restored.save_schema_version == 9
+    assert restored.save_schema_version == 11
     assert restored.introduced_character_ids == ["kasia_zielinska"]
     assert "NEW CONTACT" not in second_console.export_text()
 
@@ -100,7 +101,7 @@ def test_v8_migration_infers_existing_contacts_without_inventing_new_ones(
 
     restored = GameState.model_validate(migrate_state_payload(payload))
 
-    assert restored.save_schema_version == 9
+    assert restored.save_schema_version == 11
     assert {
         "evelyn_marsh",
         "marisol_vega",
@@ -266,7 +267,7 @@ def test_character_bible_and_runtime_registry_have_one_to_one_recurring_cast(
     content,
     content_root,
 ) -> None:
-    bible = (content_root.parent / "CHARACTER_BIBLE.md").read_text(encoding="utf-8")
+    bible = (Path(__file__).resolve().parents[1] / "CHARACTER_BIBLE.md").read_text(encoding="utf-8")
     bible_ids = re.findall(r"^- Stable ID: `([a-z0-9_]+)`$", bible, flags=re.MULTILINE)
     runtime_ids = {item.id for item in content.characters.people if item.id != "player"}
 
@@ -349,7 +350,7 @@ def test_background_validation_rejects_moral_adjustments_and_unequal_skills(cont
         CharacterFile.model_validate(payload)
 
 
-def test_existing_v9_save_keeps_resources_and_normalizes_seen_vince_alias(
+def test_native_v11_save_keeps_resources_and_existing_character_ids(
     content,
     tmp_path,
 ) -> None:
@@ -364,12 +365,12 @@ def test_existing_v9_save_keeps_resources_and_normalizes_seen_vince_alias(
 
     restored = repository.load()
 
-    assert restored.save_schema_version == 9
+    assert restored.save_schema_version == 11
     assert restored.personal_cash == Decimal("987.65")
     assert restored.resources.integrity == 37
     assert restored.resources.family_loyalty == 81
     assert restored.resources.audit_risk == 44
-    assert restored.introduced_character_ids == ["vince_rourke", "evelyn_marsh"]
+    assert restored.introduced_character_ids == ["vince_bellandi", "evelyn_marsh"]
 
 
 def test_player_facing_character_content_never_uses_legacy_names_or_ids(content) -> None:

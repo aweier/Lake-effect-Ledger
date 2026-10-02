@@ -6,9 +6,13 @@ import json
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from lake_effect_ledger.learning.models import CampaignTrack
 from lake_effect_ledger.state import SAVE_SCHEMA_VERSION, GameState
+
+if TYPE_CHECKING:
+    from lake_effect_ledger.narrative.models import ContentBundle
 
 DATABASE_SCHEMA_VERSION = 1
 OLDEST_SUPPORTED_SAVE_SCHEMA_VERSION = 1
@@ -84,8 +88,15 @@ class SaveRepository:
                     state.player.name,
                     state.current_date.isoformat(),
                     int(
-                        state.core_campaign_completed
-                        if state.campaign_track == CampaignTrack.SERIES_3_CORE
+                        (
+                            state.core_campaign_completed
+                            if state.campaign_track == CampaignTrack.SERIES_3_CORE
+                            else (
+                                state.applied_foundations.status.value == "completed"
+                                and state.notice_window.status.value == "completed"
+                            )
+                        )
+                        if state.campaign_track != CampaignTrack.EXTENDED_STORY
                         else (
                             state.completed
                             and (state.hedge_book is None or state.hedge_book.completed)
@@ -94,6 +105,7 @@ class SaveRepository:
                                 state.eleventh_contract is None or state.eleventh_contract.completed
                             )
                             and (state.no_surprises is None or state.no_surprises.completed)
+                            and state.notice_window.status.value != "in_progress"
                             and (state.diligence_room is None or state.diligence_room.completed)
                         )
                     ),
@@ -101,7 +113,12 @@ class SaveRepository:
                 ),
             )
 
-    def load(self, slot: str = "autosave") -> GameState:
+    def load(
+        self,
+        slot: str = "autosave",
+        *,
+        content: ContentBundle | None = None,
+    ) -> GameState:
         self.initialize()
         with self._connect() as connection:
             row = connection.execute(
@@ -119,7 +136,49 @@ class SaveRepository:
             )
         payload = json.loads(row["state_json"])
         migrated = migrate_state_payload(payload)
-        return GameState.model_validate(migrated)
+        state = GameState.model_validate(migrated)
+        if (
+            stored_version < 10
+            and state.core_campaign_completed
+            and content is not None
+            and not any(
+                item.season_id == "series3_core" for item in state.learning.assessment_snapshots
+            )
+        ):
+            from lake_effect_ledger.learning.models import SnapshotProvenance
+            from lake_effect_ledger.learning.snapshots import finalize_core_snapshot
+
+            finalize_core_snapshot(
+                state,
+                content,
+                provenance=(
+                    SnapshotProvenance.RECONSTRUCTED_FROM_V9
+                    if stored_version == 9
+                    else SnapshotProvenance.LEGACY_ATTEMPT_HISTORY_UNKNOWN
+                ),
+            )
+        core_snapshot = any(
+            item.season_id == "series3_core" for item in state.learning.assessment_snapshots
+        )
+        applied_snapshot = any(
+            item.season_id == "applied_foundations" for item in state.learning.assessment_snapshots
+        )
+        notice_snapshot = any(
+            item.season_id == "notice_window" for item in state.learning.assessment_snapshots
+        )
+        if stored_version >= 10 and state.core_campaign_completed != core_snapshot:
+            raise ValueError("semantically invalid save: Core completion and snapshot disagree")
+        if state.applied_foundations.snapshot_finalized != applied_snapshot:
+            raise ValueError("semantically invalid save: Applied snapshot state disagrees")
+        if state.applied_foundations.status.value == "completed" and not applied_snapshot:
+            raise ValueError("semantically invalid save: completed Applied review lacks a snapshot")
+        if state.notice_window.snapshot_finalized != notice_snapshot:
+            raise ValueError("semantically invalid save: Notice Window snapshot state disagrees")
+        if state.notice_window.status.value == "completed" and not notice_snapshot:
+            raise ValueError(
+                "semantically invalid save: completed Notice Window review lacks a snapshot"
+            )
+        return state
 
     def list_saves(self) -> list[SaveSummary]:
         self.initialize()
@@ -289,11 +348,61 @@ def migrate_state_payload(payload: dict[str, object]) -> dict[str, object]:
         introduced = migrated.get("introduced_character_ids", [])
         if not isinstance(introduced, list):
             raise ValueError("Milestone 9 save has invalid introduced-character data")
-        migrated["introduced_character_ids"] = list(
-            dict.fromkeys(
-                "vince_rourke" if item == "vince_bellandi" else item for item in introduced
-            )
+        learning = migrated.get("learning")
+        if not isinstance(learning, dict):
+            raise ValueError("Milestone 9 save has invalid learning data")
+        migrated_learning = dict(learning)
+        migrated_learning.setdefault("assessment_snapshots", [])
+        migrated["learning"] = migrated_learning
+        already_in_later_story = (
+            migrated.get("no_surprises") is not None or migrated.get("diligence_room") is not None
         )
+        migrated["applied_foundations"] = (
+            {
+                "status": "legacy_skipped",
+                "legacy_skip_reason": (
+                    "Legacy Extended Story save had already entered No Surprises "
+                    "or The Diligence Room."
+                ),
+            }
+            if already_in_later_story
+            else {}
+        )
+        migrated["save_schema_version"] = 10
+        version = 10
+
+    if version == 10:
+        learning = migrated.get("learning")
+        if not isinstance(learning, dict):
+            raise ValueError("Milestone 10 save has invalid learning data")
+        migrated_learning = dict(learning)
+        migrated_learning.setdefault("assessment_snapshots", [])
+        migrated["learning"] = migrated_learning
+        migrated.setdefault("applied_foundations", {})
+        already_in_diligence = migrated.get("diligence_room") is not None
+        migrated["notice_window"] = (
+            {
+                "status": "legacy_skipped",
+                "legacy_skip_reason": (
+                    "Legacy save had already entered The Diligence Room before "
+                    "The Notice Window existed."
+                ),
+            }
+            if already_in_diligence
+            else {}
+        )
+        migrated["save_schema_version"] = 11
+        version = 11
+
+    if version == 11:
+        learning = migrated.get("learning")
+        if not isinstance(learning, dict):
+            raise ValueError("Milestone 11 save has invalid learning data")
+        migrated_learning = dict(learning)
+        migrated_learning.setdefault("assessment_snapshots", [])
+        migrated["learning"] = migrated_learning
+        migrated.setdefault("applied_foundations", {})
+        migrated.setdefault("notice_window", {})
 
     if version != SAVE_SCHEMA_VERSION:
         raise ValueError(f"no migration path to save schema {SAVE_SCHEMA_VERSION}")

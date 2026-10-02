@@ -12,6 +12,7 @@ import yaml
 from pydantic import BaseModel, Field, TypeAdapter, model_validator
 
 from lake_effect_ledger.accounting.models import AccountDefinition, JournalLine
+from lake_effect_ledger.applied_foundations.models import AppliedFoundationsBlueprint
 from lake_effect_ledger.audit.models import AuditLearningFile, AuditScenario
 from lake_effect_ledger.commodity.models import (
     DocumentationQuality,
@@ -39,6 +40,7 @@ from lake_effect_ledger.learning.models import (
     SourceReferenceFile,
     TrajectoryTag,
 )
+from lake_effect_ledger.notice_window.models import NoticeWindowBlueprint
 from lake_effect_ledger.state import Background, ResourceName, SkillProfile
 from lake_effect_ledger.trading.models import (
     ChapterLearningFile,
@@ -632,6 +634,8 @@ class ContentBundle:
         audit_learning: AuditLearningFile,
         diligence_scenario: DiligenceScenario,
         diligence_learning: DiligenceLearningFile,
+        applied_foundations: AppliedFoundationsBlueprint,
+        notice_window: NoticeWindowBlueprint,
     ) -> None:
         self.characters = characters
         self.scenes = scenes
@@ -658,6 +662,8 @@ class ContentBundle:
         self.audit_learning = audit_learning
         self.diligence_scenario = diligence_scenario
         self.diligence_learning = diligence_learning
+        self.applied_foundations = applied_foundations
+        self.notice_window = notice_window
         self._validate_references()
 
     @classmethod
@@ -726,6 +732,12 @@ class ContentBundle:
             diligence_learning=DiligenceLearningFile.model_validate(
                 _read_yaml(root / "education" / "diligence_room.yaml")
             ),
+            applied_foundations=AppliedFoundationsBlueprint.model_validate(
+                _read_yaml(root / "applied_foundations" / "blueprint.yaml")
+            ),
+            notice_window=NoticeWindowBlueprint.model_validate(
+                _read_yaml(root / "notice_window" / "blueprint.yaml")
+            ),
         )
 
     @staticmethod
@@ -756,12 +768,15 @@ class ContentBundle:
         source_ids = [item.id for item in self.sources.sources]
         glossary_ids = [item.id for item in self.glossary.terms]
         prologue_check_ids = [item.id for item in self.prologue.checks]
-        check_ids = [
+        core_check_ids = [
             *prologue_check_ids,
             *[item.id for item in self.eleventh_learning.checks],
             *[item.id for item in self.audit_learning.checks],
             *[item.id for item in self.diligence_learning.checks],
         ]
+        applied_check_ids = [item.id for item in self.applied_foundations.all_questions]
+        notice_check_ids = [item.id for item in self.notice_window.all_questions]
+        check_ids = [*core_check_ids, *applied_check_ids, *notice_check_ids]
         curriculum_objective_ids = [item.id for item in self.curriculum.objectives]
 
         for values, label in (
@@ -858,6 +873,32 @@ class ContentBundle:
             if unknown_people:
                 raise ValueError(
                     f"diligence choice {choice.id} references unknown people: {unknown_people}"
+                )
+        applied_choices = [
+            choice for decision in self.applied_foundations.decisions for choice in decision.choices
+        ]
+        self._unique([choice.id for choice in applied_choices], "Applied choice")
+        for choice in applied_choices:
+            unknown_people = set(choice.relationship_deltas) - set(person_ids)
+            if unknown_people:
+                raise ValueError(
+                    f"Applied choice {choice.id} references unknown people: {unknown_people}"
+                )
+        notice_choices = [
+            choice for decision in self.notice_window.decisions for choice in decision.choices
+        ]
+        self._unique([choice.id for choice in notice_choices], "Notice Window choice")
+        for choice in notice_choices:
+            unknown_people = set(choice.relationship_deltas) - set(person_ids)
+            if unknown_people:
+                raise ValueError(
+                    f"Notice Window choice {choice.id} references unknown people: {unknown_people}"
+                )
+        for day in self.notice_window.days:
+            unknown_people = set(day.lead_characters) - set(person_ids)
+            if unknown_people:
+                raise ValueError(
+                    f"Notice Window day {day.id} references unknown people: {unknown_people}"
                 )
         communication_effects = [
             effect
@@ -1100,7 +1141,7 @@ class ContentBundle:
                     f"curriculum objective {objective.id} calculation mapping "
                     "does not match the shared engine checks"
                 )
-        for check_id in valid_checks:
+        for check_id in core_check_ids:
             check = self.knowledge_check(check_id)
             for objective_id in check.learning_objective_ids:
                 if check_id not in curriculum_by_id[objective_id].check_ids:
@@ -1176,6 +1217,8 @@ class ContentBundle:
             *self.eleventh_learning.checks,
             *self.audit_learning.checks,
             *self.diligence_learning.checks,
+            *[item.as_knowledge_check() for item in self.applied_foundations.all_questions],
+            *[item.as_knowledge_check() for item in self.notice_window.all_questions],
         ]:
             missing_lessons = set(check.learning_objective_ids) - valid_lessons
             if missing_lessons or check.source_id not in valid_sources:
@@ -1188,6 +1231,26 @@ class ContentBundle:
                     raise ValueError(
                         f"knowledge check {check.id} references unknown contract {contract_id}"
                     )
+        if set(self.applied_foundations.season.coverage_upgrades) - set(curriculum_objective_ids):
+            raise ValueError("Applied coverage upgrades reference unknown objectives")
+        if self.applied_foundations.scenario.contract_id not in contract_ids:
+            raise ValueError("Applied Foundations references an unknown commodity contract")
+        required_record_owners = {
+            item.owner
+            for item in self.applied_foundations.record_chain
+            if item.owner != "lakefront_fcm"
+        }
+        if required_record_owners - valid_people:
+            raise ValueError("Applied Foundations record chain has unknown owners")
+        if set(self.notice_window.season.coverage_additions) - set(curriculum_objective_ids):
+            raise ValueError("Notice Window coverage additions reference unknown objectives")
+        if self.notice_window.scenario.contract_id not in contract_ids:
+            raise ValueError("The Notice Window references an unknown commodity contract")
+        notice_record_owners = {
+            item.owner for item in self.notice_window.record_chain if item.owner != "lakefront_fcm"
+        }
+        if notice_record_owners - valid_people:
+            raise ValueError("The Notice Window record chain has unknown owners")
         prologue_day_ids: list[str] = []
         for day in self.prologue.prologue.days:
             missing_checks = set(day.check_ids) - valid_checks
@@ -1414,6 +1477,8 @@ class ContentBundle:
                 *self.eleventh_learning.checks,
                 *self.audit_learning.checks,
                 *self.diligence_learning.checks,
+                *[item.as_knowledge_check() for item in self.applied_foundations.all_questions],
+                *[item.as_knowledge_check() for item in self.notice_window.all_questions],
             ]
             if item.id == check_id
         )

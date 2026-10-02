@@ -747,7 +747,7 @@ def test_v6_save_migrates_to_v8_with_empty_diligence(
 
     restored = repository.load()
 
-    assert restored.save_schema_version == 9
+    assert restored.save_schema_version == 11
     assert restored.no_surprises == state.no_surprises
     assert restored.diligence_room is None
 

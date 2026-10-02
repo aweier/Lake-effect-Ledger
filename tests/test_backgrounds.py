@@ -237,7 +237,7 @@ def test_existing_v9_save_loads_without_background_metadata_in_state(
 
     restored = repository.load()
 
-    assert restored.save_schema_version == 9
+    assert restored.save_schema_version == 11
     assert restored.player == state.player
     assert restored.resources == state.resources
     assert restored.personal_cash == state.personal_cash

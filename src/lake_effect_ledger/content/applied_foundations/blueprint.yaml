@@ -1,0 +1,725 @@
+schema_version: 1
+season:
+  id: applied_foundations
+  title: Applied Foundations
+  chapter_id: supply_gap
+  chapter_title: The Supply Gap
+  start_date: 2028-01-29
+  end_date: 2028-01-31
+  estimated_minutes: 65
+  role: Junior Commodity Risk Analyst
+  purpose: >-
+    Contrast the Core short hedge with an anticipatory long hedge and separate
+    economic effectiveness from interim futures cash requirements.
+  supplement_limit: >-
+    Applied Foundations deepens a narrow set of implemented Part 1 and recordkeeping
+    concepts. It is not complete Series 3 preparation and does not add options,
+    delivery, spreads, SPAN, or broad regulatory coverage.
+  coverage_upgrades:
+    - long_futures_hedge
+    - liquidity_not_profit
+    - order_types
+    - trade_lifecycle
+    - trade_reconciliation
+    - authorization_vs_outcome
+    - records_and_ethical_conduct
+  supporting_objectives:
+    - physical_financial_exposure
+    - hedge_ratio
+    - basis_risk
+    - daily_settlement_margin
+
+scenario:
+  id: supply_gap_case
+  fictional: true
+  regional_hub: Chicago Citygate
+  contract_id: cme_henry_hub_ng
+  contract_month: 2028-03
+  physical_requirement_mmbtu: 80000
+  initially_confirmed_mmbtu: 65000
+  initially_provisional_mmbtu: 15000
+  contract_size_mmbtu: 10000
+  futures_side: long
+  authorized_contracts: 8
+  initial_henry_hub_price: 5.400
+  initial_chicago_basis: -0.200
+  final_henry_hub_price: 4.950
+  final_chicago_basis: -0.300
+  initial_margin_per_contract: 15000
+  maintenance_margin_per_contract: 11000
+  physical_purchase_completed: false
+  assumptions:
+    - All Northstar facilities, events, prices, and margin requirements are fictional.
+    - The standard NG contract size comes from NYMEX Rulebook Chapter 220.
+    - The authored order examples assume either one full fill or no fill.
+    - No order-book depth, slippage model, partial fill, delivery, or live market is modeled.
+    - The physical purchase has not occurred; its price movement is a purchase-cost variance.
+
+order_tape:
+  current_price: 5.390
+  subsequent_prices: [5.400, 5.420, 5.390]
+  examples:
+    - id: market_buy
+      order_type: market
+      side: buy
+      contracts: 8
+      result: filled
+      fill_price: 5.400
+      explanation: The authored market example receives the next available full fill, not a guaranteed price.
+    - id: limit_buy
+      order_type: limit
+      side: buy
+      contracts: 8
+      limit_price: 5.380
+      result: unfilled
+      explanation: No authored price reaches the buyer's maximum of $5.380.
+    - id: stop_buy
+      order_type: stop
+      side: buy
+      contracts: 8
+      stop_price: 5.410
+      result: filled
+      trigger_price: 5.420
+      fill_price: 5.420
+      explanation: The stop becomes executable after its trigger and receives the authored simplified fill.
+  actual_order:
+    authorized_by: cal_rourke
+    transmitting_user: cal_rourke
+    prepared_by: player
+    order_type: market
+    side: buy
+    contracts: 8
+    fill_price: 5.400
+
+record_chain:
+  - {id: physical_support, owner: marisol_vega, status: confirmed, quantity_mmbtu: 80000}
+  - {id: analyst_recommendation, owner: player, status: prepared}
+  - {id: hedge_authorization, owner: cal_rourke, status: authorized}
+  - {id: order_transmission, owner: cal_rourke, status: transmitted_under_supervision}
+  - {id: execution, owner: lakefront_fcm, status: filled}
+  - {id: original_confirmation, owner: lakefront_fcm, status: preserved}
+  - {id: reconciliation, owner: kasia_zielinska, prepared_with: player, status: reconciled}
+  - {id: control_review, owner: evelyn_marsh, status: reviewed}
+
+days:
+  - id: replacement_gas
+    day_number: 1
+    date: 2028-01-29
+    title: Replacement Gas
+    lead_characters: [marisol_vega, cal_rourke]
+    teaching_points:
+      - A future buyer is economically short the commodity and exposed to rising prices.
+      - An anticipatory long futures hedge offsets benchmark price increases.
+      - A provisional estimate cannot silently become confirmed exposure.
+    decision_ids: [af_volume_status, af_direction_explanation, af_recommendation_packet]
+    check_ids: [af_buyer_direction, af_confirmation_before_recommendation, af_eight_contracts]
+    boundary:
+      autosave: true
+      allow_return_to_menu: true
+      message: Day 1 is saved after Marisol confirms the complete 80,000 MMBtu requirement.
+
+  - id: buy_ticket
+    day_number: 2
+    date: 2028-01-30
+    title: The Buy Ticket
+    lead_characters: [cal_rourke, kasia_zielinska]
+    teaching_points:
+      - Market orders prioritize execution rather than a guaranteed price.
+      - A buy limit is a maximum acceptable price and may remain unfilled.
+      - A buy stop sits above the current market and becomes executable after triggering.
+    decision_ids: [af_order_comparison, af_supervised_transmission, af_confirmation_exception]
+    check_ids: [af_market_priority, af_buy_limit, af_buy_stop]
+    boundary:
+      autosave: true
+      allow_return_to_menu: true
+      message: Day 2 is saved after the original confirmation and reconciliation are preserved.
+
+  - id: cash_before_gas
+    day_number: 3
+    date: 2028-01-31
+    title: Cash Before Gas
+    lead_characters: [june_halvorsen, marisol_vega]
+    teaching_points:
+      - A cheaper planned physical purchase does not provide cash before it occurs.
+      - Variation settlement changes margin equity before the physical transaction settles.
+      - Funding a margin call is a cash transfer to restore margin, not a second futures loss.
+    decision_ids: [af_cash_notice, af_economic_bridge, af_final_record]
+    check_ids: [af_physical_variance, af_long_futures_loss, af_cash_vs_economics]
+    boundary:
+      autosave: true
+      allow_return_to_menu: true
+      retention_message: >-
+        The Supply Gap is saved. Taking a break before the review gives a better test of retention;
+        you may return now or continue immediately.
+
+decisions:
+  - id: af_volume_status
+    day: 1
+    title: Two Statuses, One Forecast
+    prompt: How do you present 65,000 MMBtu confirmed and 15,000 MMBtu still provisional?
+    choices:
+      - id: af_volume_split_tracker
+        text: Keep confirmed and provisional columns and ask Marisol for the final scheduling record.
+        relationship_deltas: {marisol_vega: 2}
+        tendency_tags: {detail_oriented: 2, precision: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 1
+      - id: af_volume_labeled_scenario
+        text: Prepare a separate 80,000 MMBtu scenario labeled pending confirmation.
+        relationship_deltas: {cal_rourke: 1, marisol_vega: 1}
+        tendency_tags: {commercial_judgment: 2, precision: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_volume_working_total
+        text: Circulate one working total, with the source-status distinction in the attached note.
+        relationship_deltas: {cal_rourke: 1}
+        tendency_tags: {stakeholder_aware: 1, ambitious: 1}
+        evidence_delta: 0
+        documentation_delta: 1
+        communication_delta: 2
+
+  - id: af_direction_explanation
+    day: 1
+    title: Why Long?
+    prompt: How do you explain the hedge direction to Cal and Marisol?
+    choices:
+      - id: af_direction_exposure_first
+        text: Start with the future purchase exposure, then connect rising prices to long futures gains.
+        relationship_deltas: {marisol_vega: 1, cal_rourke: 1}
+        tendency_tags: {precision: 2, commercial_judgment: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: af_direction_basis_first
+        text: Decompose Chicago price into Henry Hub plus basis before showing the long benchmark hedge.
+        relationship_deltas: {cal_rourke: 1}
+        tendency_tags: {detail_oriented: 2, precision: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_direction_table_first
+        text: Send a short exposure-and-position table and offer a live walkthrough.
+        relationship_deltas: {marisol_vega: 1}
+        tendency_tags: {stakeholder_aware: 2, candor: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+
+  - id: af_recommendation_packet
+    day: 1
+    title: Eight, Once Supported
+    prompt: Marisol has now confirmed all 80,000 MMBtu. How do you route the recommendation?
+    choices:
+      - id: af_packet_linked_chain
+        text: Send Cal a linked packet from Marisol's support through the eight-long calculation.
+        relationship_deltas: {marisol_vega: 1, cal_rourke: 2}
+        tendency_tags: {control_minded: 2, detail_oriented: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_packet_ticket_index
+        text: Send the concise ticket with an evidence index and the complete schedule attached.
+        relationship_deltas: {cal_rourke: 2}
+        tendency_tags: {commercial_judgment: 2, precision: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+      - id: af_packet_review_copy
+        text: Stage the recommendation for Cal and copy Evelyn on the record-control review.
+        relationship_deltas: {cal_rourke: 1, evelyn_marsh: 2}
+        tendency_tags: {control_minded: 2, cooperative: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 1
+
+  - id: af_order_comparison
+    day: 2
+    title: Three Orders, Three Tradeoffs
+    prompt: How do you lead the authored order comparison?
+    choices:
+      - id: af_order_execution_first
+        text: Lead with execution priority, then show the market order's uncertain fill price.
+        relationship_deltas: {cal_rourke: 2}
+        tendency_tags: {commercial_judgment: 2, precision: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: af_order_price_first
+        text: Lead with the buy limit's price ceiling and its risk of no execution.
+        relationship_deltas: {cal_rourke: 1, kasia_zielinska: 1}
+        tendency_tags: {risk_seeking: -1, detail_oriented: 2}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_order_trigger_first
+        text: Lead with the buy stop trigger, then distinguish trigger price from fill price.
+        relationship_deltas: {kasia_zielinska: 2}
+        tendency_tags: {precision: 2, stakeholder_aware: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+
+  - id: af_supervised_transmission
+    day: 2
+    title: Ready Is Not Transmitted
+    prompt: The ticket is ready. How do you preserve the player and supervisor roles?
+    choices:
+      - id: af_transmission_screen_share
+        text: Cal transmits during a screen-share while you record the authorization and timestamp.
+        relationship_deltas: {cal_rourke: 2, kasia_zielinska: 1}
+        tendency_tags: {control_minded: 2, cooperative: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_transmission_queued
+        text: Leave the exact ticket queued as analyst-prepared and notify Cal that only he can transmit it.
+        relationship_deltas: {cal_rourke: 1}
+        tendency_tags: {candor: 2, precision: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 2
+      - id: af_transmission_control_note
+        text: Record Evelyn's control note, then watch Cal transmit under his own credentials.
+        relationship_deltas: {evelyn_marsh: 2, cal_rourke: 1}
+        tendency_tags: {control_minded: 2, challenges_management: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+
+  - id: af_confirmation_exception
+    day: 2
+    title: The Missing Link
+    prompt: The confirmation matches the economics but omits Northstar's recommendation ID. What record do you create?
+    choices:
+      - id: af_confirmation_link_note
+        text: Preserve the original and add a reconciliation note linking it to the recommendation.
+        relationship_deltas: {kasia_zielinska: 2, evelyn_marsh: 1}
+        tendency_tags: {detail_oriented: 2, precision: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_confirmation_corrected_copy
+        text: Request a corrected confirmation while retaining both the original and corrected versions.
+        relationship_deltas: {kasia_zielinska: 1, evelyn_marsh: 2}
+        tendency_tags: {control_minded: 2, candor: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_confirmation_exception_log
+        text: Log the missing reference as an exception and route the complete evidence set for review.
+        relationship_deltas: {evelyn_marsh: 1, cal_rourke: 1}
+        tendency_tags: {stakeholder_aware: 2, cooperative: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 2
+
+  - id: af_cash_notice
+    day: 3
+    title: The Number Before the Notice
+    prompt: Darren gives an expected margin call before the formal notice. How do you alert June?
+    choices:
+      - id: af_cash_labeled_estimate
+        text: Send June the $36,000 estimate, source, deadline, and a clear pending-formal-notice label.
+        relationship_deltas: {june_halvorsen: 2, darren_cho: 1}
+        tendency_tags: {precision: 2, stakeholder_aware: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+      - id: af_cash_range_assumptions
+        text: Give June the estimate with the margin assumptions and the balance bridge.
+        relationship_deltas: {june_halvorsen: 2}
+        tendency_tags: {detail_oriented: 2, commercial_judgment: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_cash_draft_ready
+        text: Prepare the funding memo immediately and send it when Darren's formal notice arrives.
+        relationship_deltas: {june_halvorsen: 1, darren_cho: 1}
+        tendency_tags: {control_minded: 1, self_protective: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 0
+
+  - id: af_economic_bridge
+    day: 3
+    title: Favorable and Cash-Negative
+    prompt: How do you explain the physical benefit, futures loss, and funding need?
+    choices:
+      - id: af_bridge_gross_to_net
+        text: Show $44,000 favorable physical variance, $36,000 futures loss, then $8,000 favorable combined economics.
+        relationship_deltas: {cal_rourke: 1, june_halvorsen: 1}
+        tendency_tags: {precision: 2, candor: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 2
+      - id: af_bridge_cash_timeline
+        text: Lead with the $36,000 cash deadline, then show why the cheaper future purchase has not produced cash.
+        relationship_deltas: {june_halvorsen: 2}
+        tendency_tags: {stakeholder_aware: 2, commercial_judgment: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: af_bridge_audience_split
+        text: Give Cal the economic bridge, June the cash timeline, and both the same reconciliation.
+        relationship_deltas: {cal_rourke: 1, june_halvorsen: 2}
+        tendency_tags: {cooperative: 2, stakeholder_aware: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+
+  - id: af_final_record
+    day: 3
+    title: A Record That Survives the Outcome
+    prompt: How do you close the case file without allowing hindsight to rewrite authority?
+    choices:
+      - id: af_record_source_chain
+        text: Preserve the linked source chain, original confirmation, reconciliation, and funding record.
+        relationship_deltas: {evelyn_marsh: 2, marisol_vega: 1}
+        tendency_tags: {principled: 2, detail_oriented: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_record_timeline
+        text: Add a timestamped timeline that identifies the confirmation exception and its resolution.
+        relationship_deltas: {evelyn_marsh: 2, kasia_zielinska: 1}
+        tendency_tags: {control_minded: 2, precision: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: af_record_summary_appendix
+        text: Close with a concise management summary and an indexed evidence appendix.
+        relationship_deltas: {cal_rourke: 1, evelyn_marsh: 1}
+        tendency_tags: {commercial_judgment: 1, stakeholder_aware: 2}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+
+checks:
+  - id: af_buyer_direction
+    day: 1
+    check_type: multiple_choice
+    category: conceptual
+    prompt: Northstar must buy gas later and is exposed to rising prices. Which futures position addresses the benchmark exposure?
+    objectives: [long_futures_hedge, physical_financial_exposure]
+    source_id: nfa_series3_outline
+    options:
+      - {id: long_futures, text: Buy (long) futures.}
+      - {id: short_futures, text: Sell (short) futures.}
+      - {id: no_position, text: Hold no futures because the purchase is physical.}
+    correct_option_id: long_futures
+    explanation: A future buyer is economically short the commodity and uses long futures against rising benchmark prices.
+
+  - id: af_confirmation_before_recommendation
+    day: 1
+    check_type: multiple_choice
+    category: conceptual
+    prompt: When may the final eight-contract recommendation describe the complete 80,000 MMBtu as supported exposure?
+    objectives: [trade_lifecycle, authorization_vs_outcome, records_and_ethical_conduct]
+    source_id: nfa_trade_records
+    options:
+      - {id: after_marisol_support, text: "After Marisol's authored record confirms all 80,000 MMBtu."}
+      - {id: after_cal_expectation, text: As soon as Cal says the provisional quantity is commercially likely.}
+      - {id: after_market_move, text: After prices move enough to make the hedge appear useful.}
+    correct_option_id: after_marisol_support
+    explanation: Final quantity support comes from the physical record, not management expectation or hindsight.
+
+  - id: af_eight_contracts
+    day: 1
+    check_type: numeric
+    category: calculation
+    prompt: How many standard 10,000 MMBtu NG contracts correspond to 80,000 MMBtu?
+    objectives: [long_futures_hedge, hedge_ratio]
+    source_id: cme_ng_contract
+    calculation: {kind: contract_count, physical_quantity_mmbtu: 80000, contract_id: cme_henry_hub_ng}
+    expected_answer: 8
+    answer_unit: contracts
+    explanation: Divide the confirmed physical requirement by the standard contract size.
+
+  - id: af_market_priority
+    day: 2
+    check_type: multiple_choice
+    category: conceptual
+    prompt: What does the authored market-buy example prioritize?
+    objectives: [order_types]
+    source_id: cme_order_types
+    options:
+      - {id: execution_priority, text: Execution priority without a guaranteed price.}
+      - {id: exact_price, text: A guaranteed fill at the displayed current price.}
+      - {id: price_ceiling, text: A maximum purchase price that cannot be exceeded.}
+    correct_option_id: execution_priority
+    explanation: A market order seeks prompt execution; the resulting price is not guaranteed.
+
+  - id: af_buy_limit
+    day: 2
+    check_type: multiple_choice
+    category: conceptual
+    prompt: Why does the $5.380 buy limit remain unfilled on the authored tape?
+    objectives: [order_types]
+    source_id: cme_order_types
+    options:
+      - {id: never_at_or_below, text: No available authored price reaches $5.380 or lower.}
+      - {id: limit_above_market, text: A buy limit must be above the current market.}
+      - {id: limit_guarantees_fill, text: It cannot remain unfilled because limits guarantee execution.}
+    correct_option_id: never_at_or_below
+    explanation: The buyer will not pay more than the limit, so execution can be missed.
+
+  - id: af_buy_stop
+    day: 2
+    check_type: multiple_choice
+    category: conceptual
+    prompt: What happens to the authored $5.410 buy stop when the tape reaches $5.420?
+    objectives: [order_types, trade_lifecycle]
+    source_id: cme_order_types
+    options:
+      - {id: triggered_executable, text: It triggers and becomes executable; $5.410 was not a guaranteed fill price.}
+      - {id: fills_at_stop, text: It must fill at exactly $5.410.}
+      - {id: remains_dormant, text: A buy stop triggers only below the current market.}
+    correct_option_id: triggered_executable
+    explanation: A buy stop is generally above the market and becomes executable after its trigger.
+
+  - id: af_physical_variance
+    day: 3
+    check_type: numeric
+    category: calculation
+    prompt: Chicago falls from $5.20 to $4.65. What is the favorable purchase-cost variance on 80,000 MMBtu?
+    objectives: [basis_risk, liquidity_not_profit]
+    source_id: nfa_series3_outline
+    calculation: {kind: buyer_physical_variance, initial_regional_price: 5.20, final_regional_price: 4.65, physical_quantity_mmbtu: 80000}
+    expected_answer: 44000
+    answer_unit: dollars favorable
+    explanation: The planned purchase is $0.55 per MMBtu cheaper, but it has not yet occurred.
+
+  - id: af_long_futures_loss
+    day: 3
+    check_type: numeric
+    category: calculation
+    prompt: Eight long NG contracts move from $5.40 to $4.95. What is the futures result in dollars?
+    objectives: [long_futures_hedge, daily_settlement_margin]
+    source_id: cme_ng_contract
+    calculation: {kind: futures_pnl, side: long, previous_price: 5.40, current_price: 4.95, contracts: 8, contract_id: cme_henry_hub_ng}
+    expected_answer: -36000
+    answer_unit: dollars
+    explanation: "Long futures lose when the benchmark falls: negative $0.45 times 80,000 MMBtu."
+
+  - id: af_cash_vs_economics
+    day: 3
+    check_type: multiple_choice
+    category: conceptual
+    prompt: Which statement correctly reconciles the Day 3 economics and cash timing?
+    objectives: [liquidity_not_profit, authorization_vs_outcome]
+    source_id: cftc_economic_purpose
+    options:
+      - {id: separate_cash_and_economics, text: "Combined economics are $8,000 favorable, while $36,000 cash is still required now to restore margin."}
+      - {id: no_call_when_favorable, text: A favorable combined result eliminates the margin call.}
+      - {id: seventy_two_loss, text: "The futures loss and margin funding create a $72,000 economic loss."}
+    correct_option_id: separate_cash_and_economics
+    explanation: Margin funding restores an asset balance; it does not duplicate the futures loss.
+
+review:
+  style_defaults: {guided: learning, standard: checkpoint}
+  required_count: 10
+  remediation_count: 4
+  required:
+    - id: afr_buyer_direction_50k
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: long_hedge
+      prompt: A manufacturer will buy 50,000 MMBtu in two months. Which benchmark hedge direction protects against rising prices?
+      objectives: [long_futures_hedge, physical_financial_exposure]
+      source_id: nfa_series3_outline
+      options:
+        - {id: buy_futures, text: Buy futures.}
+        - {id: sell_futures, text: Sell futures.}
+        - {id: wait_for_cash, text: Wait until the physical invoice is paid.}
+      correct_option_id: buy_futures
+    - id: afr_twelve_contracts
+      check_type: numeric
+      category: calculation
+      remediation_category: long_hedge
+      prompt: How many standard NG contracts correspond to 120,000 MMBtu?
+      objectives: [long_futures_hedge, hedge_ratio]
+      source_id: cme_ng_contract
+      calculation: {kind: contract_count, physical_quantity_mmbtu: 120000, contract_id: cme_henry_hub_ng}
+      expected_answer: 12
+      answer_unit: contracts
+    - id: afr_regional_price
+      check_type: numeric
+      category: calculation
+      remediation_category: economics_liquidity
+      prompt: Henry Hub is $6.10 and basis is -$0.25. What is the regional cash price?
+      objectives: [basis_risk]
+      source_id: nfa_series3_outline
+      calculation: {kind: regional_price, henry_hub_price: 6.10, regional_basis: -0.25}
+      expected_answer: 5.85
+      answer_unit: dollars per MMBtu
+    - id: afr_long_loss
+      check_type: numeric
+      category: calculation
+      remediation_category: economics_liquidity
+      prompt: Six long NG contracts move from $4.72 to $4.60. What is the futures result?
+      objectives: [long_futures_hedge, daily_settlement_margin]
+      source_id: cme_ng_contract
+      calculation: {kind: futures_pnl, side: long, previous_price: 4.72, current_price: 4.60, contracts: 6, contract_id: cme_henry_hub_ng}
+      expected_answer: -7200
+      answer_unit: dollars
+    - id: afr_combined_economics
+      check_type: numeric
+      category: calculation
+      remediation_category: economics_liquidity
+      prompt: A 50,000 MMBtu buyer gains $12,500 on the planned physical cost and loses $15,000 on long futures. What is the combined result?
+      objectives: [basis_risk, liquidity_not_profit]
+      source_id: nfa_series3_outline
+      calculation: {kind: combined_economic_result, physical_variance: 12500, futures_result: -15000}
+      expected_answer: -2500
+      answer_unit: dollars
+    - id: afr_margin_call
+      check_type: numeric
+      category: calculation
+      remediation_category: economics_liquidity
+      prompt: Initial margin is $60,000, maintenance is $44,000, and an $18,000 loss leaves $42,000. What margin call restores initial margin?
+      objectives: [daily_settlement_margin, liquidity_not_profit]
+      source_id: cftc_economic_purpose
+      calculation: {kind: margin_call, initial_requirement: 60000, maintenance_requirement: 44000, margin_balance: 42000}
+      expected_answer: 18000
+      answer_unit: dollars
+    - id: afr_market_limit
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: order_types
+      prompt: On a new tape that never trades at or below a buyer's limit, what happens to the buy limit?
+      objectives: [order_types]
+      source_id: cme_order_types
+      options:
+        - {id: remains_unfilled, text: It may remain unfilled.}
+        - {id: becomes_market, text: It automatically becomes a market order.}
+        - {id: fills_above_limit, text: It fills above the maximum price.}
+      correct_option_id: remains_unfilled
+    - id: afr_buy_stop
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: order_types
+      prompt: A buy stop is entered above the current market. What is true after its trigger trades?
+      objectives: [order_types]
+      source_id: cme_order_types
+      options:
+        - {id: executable_not_guaranteed, text: "It becomes executable, but its fill price is not guaranteed at the trigger."}
+        - {id: guaranteed_trigger, text: It must fill at the trigger price.}
+        - {id: cannot_buy, text: Stops above the market can only be sell orders.}
+      correct_option_id: executable_not_guaranteed
+    - id: afr_lifecycle
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: records_authority
+      prompt: Which sequence preserves the supervised trade lifecycle?
+      objectives: [trade_lifecycle, trade_reconciliation]
+      source_id: nfa_trade_records
+      options:
+        - {id: correct_chain, text: "Support, recommendation, authorization, transmission, execution, confirmation, reconciliation."}
+        - {id: execution_first, text: "Execution, support, authorization, then confirmation."}
+        - {id: confirmation_authorizes, text: "Recommendation, execution, confirmation, then retroactive authorization."}
+      correct_option_id: correct_chain
+    - id: afr_authority_records
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: records_authority
+      prompt: An unauthorized order is profitable and its confirmation omits an internal reference. What is the correct response?
+      objectives: [authorization_vs_outcome, records_and_ethical_conduct, trade_reconciliation]
+      source_id: nfa_trade_records
+      options:
+        - {id: preserve_and_correct, text: "Preserve the original records, document both exceptions, and reconcile through authorized review."}
+        - {id: profit_authorizes, text: Treat the profit as evidence that authorization was unnecessary.}
+        - {id: replace_confirmation, text: Replace the original confirmation with a clean internal version.}
+      correct_option_id: preserve_and_correct
+
+  remediation:
+    - id: afr_remediate_long_90k
+      check_type: numeric
+      category: calculation
+      remediation_category: long_hedge
+      prompt: A buyer has 90,000 MMBtu of confirmed exposure. How many standard contracts belong in a full long hedge?
+      objectives: [long_futures_hedge, hedge_ratio]
+      source_id: cme_ng_contract
+      calculation: {kind: contract_count, physical_quantity_mmbtu: 90000, contract_id: cme_henry_hub_ng}
+      expected_answer: 9
+      answer_unit: contracts
+    - id: afr_remediate_basis_economics
+      check_type: numeric
+      category: calculation
+      remediation_category: economics_liquidity
+      prompt: A 90,000 MMBtu buyer has $40,500 favorable physical variance and a $31,500 futures loss. What is the combined result?
+      objectives: [basis_risk, liquidity_not_profit, long_futures_hedge]
+      source_id: nfa_series3_outline
+      calculation: {kind: combined_economic_result, physical_variance: 40500, futures_result: -31500}
+      expected_answer: 9000
+      answer_unit: dollars favorable
+    - id: afr_remediate_order_tape
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: order_types
+      prompt: A new buy limit is below every price on an authored tape, while a buy stop above market is triggered. Which result is accurate?
+      objectives: [order_types]
+      source_id: cme_order_types
+      options:
+        - {id: limit_unfilled_stop_executable, text: The limit may remain unfilled and the stop becomes executable.}
+        - {id: both_guaranteed, text: Both must fill at their entered prices.}
+        - {id: stop_untriggered, text: A buy stop above market cannot trigger.}
+      correct_option_id: limit_unfilled_stop_executable
+    - id: afr_remediate_record_chain
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: records_authority
+      prompt: A confirmation matches price and quantity but lacks the authorization reference. What should reconciliation preserve?
+      objectives: [trade_lifecycle, trade_reconciliation, authorization_vs_outcome, records_and_ethical_conduct]
+      source_id: nfa_trade_records
+      options:
+        - {id: original_plus_exception, text: The original confirmation plus a linked exception and authorized correction record.}
+        - {id: corrected_only, text: Only a rewritten confirmation with the missing reference added.}
+        - {id: result_only, text: Only the profitable or unprofitable outcome.}
+      correct_option_id: original_plus_exception
+
+formulas:
+  - {id: contract_count, expression: physical_requirement_mmbtu / contract_size_mmbtu, expected: 8}
+  - {id: initial_chicago_price, expression: initial_henry_hub_price + initial_chicago_basis, expected: 5.20}
+  - {id: final_chicago_price, expression: final_henry_hub_price + final_chicago_basis, expected: 4.65}
+  - {id: physical_purchase_cost_variance, expression: (initial_chicago_price - final_chicago_price) * physical_requirement_mmbtu, expected: 44000}
+  - {id: long_futures_result, expression: (final_henry_hub_price - initial_henry_hub_price) * physical_requirement_mmbtu, expected: -36000}
+  - {id: buyer_basis_effect, expression: (initial_chicago_basis - final_chicago_basis) * physical_requirement_mmbtu, expected: 8000}
+  - {id: combined_economic_result, expression: physical_purchase_cost_variance + long_futures_result, expected: 8000}
+  - {id: initial_margin, expression: authorized_contracts * initial_margin_per_contract, expected: 120000}
+  - {id: maintenance_margin, expression: authorized_contracts * maintenance_margin_per_contract, expected: 88000}
+  - {id: post_settlement_margin, expression: initial_margin + long_futures_result, expected: 84000}
+  - {id: margin_call, expression: initial_margin - post_settlement_margin, expected: 36000}
+
+scripted_paths:
+  evidence_first:
+    - af_volume_split_tracker
+    - af_direction_exposure_first
+    - af_packet_linked_chain
+    - af_order_execution_first
+    - af_transmission_screen_share
+    - af_confirmation_link_note
+    - af_cash_labeled_estimate
+    - af_bridge_gross_to_net
+    - af_record_source_chain
+  concise_operator:
+    - af_volume_labeled_scenario
+    - af_direction_basis_first
+    - af_packet_ticket_index
+    - af_order_price_first
+    - af_transmission_queued
+    - af_confirmation_corrected_copy
+    - af_cash_range_assumptions
+    - af_bridge_cash_timeline
+    - af_record_timeline
+  escalation_first:
+    - af_volume_working_total
+    - af_direction_table_first
+    - af_packet_review_copy
+    - af_order_trigger_first
+    - af_transmission_control_note
+    - af_confirmation_exception_log
+    - af_cash_draft_ready
+    - af_bridge_audience_split
+    - af_record_summary_appendix

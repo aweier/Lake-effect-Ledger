@@ -74,15 +74,71 @@ def hedge_ratio(
     )
 
 
+def contract_count(
+    *,
+    physical_quantity_mmbtu: Decimal,
+    contract_size_mmbtu: Decimal,
+) -> Decimal:
+    if physical_quantity_mmbtu <= 0 or contract_size_mmbtu <= 0:
+        raise ValueError("contract-count inputs must be positive")
+    count = physical_quantity_mmbtu / contract_size_mmbtu
+    if count != count.to_integral_value():
+        raise ValueError("physical quantity does not map to a whole contract count")
+    return count
+
+
+def buyer_physical_purchase_cost_variance(
+    *,
+    initial_regional_price: Decimal,
+    final_regional_price: Decimal,
+    physical_quantity_mmbtu: Decimal,
+) -> Decimal:
+    if initial_regional_price <= 0 or final_regional_price <= 0:
+        raise ValueError("regional prices must be positive")
+    if physical_quantity_mmbtu <= 0:
+        raise ValueError("physical quantity must be positive")
+    return money((initial_regional_price - final_regional_price) * physical_quantity_mmbtu)
+
+
+def combined_economic_result(
+    *,
+    physical_variance: Decimal,
+    futures_result: Decimal,
+) -> Decimal:
+    return money(physical_variance + futures_result)
+
+
+def contract_month_spread(*, nearby_price: Decimal, deferred_price: Decimal) -> Decimal:
+    """Return deferred minus nearby for a two-month futures curve."""
+
+    return price(deferred_price - nearby_price)
+
+
+def delivery_contract_value(
+    *,
+    settlement_price: Decimal,
+    contract_size_mmbtu: Decimal,
+    contracts: int,
+) -> Decimal:
+    """Return the simplified contract value used by the Chapter 220 delivery example."""
+
+    if settlement_price <= 0 or contract_size_mmbtu <= 0 or contracts < 0:
+        raise ValueError("delivery contract value inputs must be positive")
+    return money(settlement_price * contract_size_mmbtu * Decimal(contracts))
+
+
 def physical_pnl_components(
     exposure: PhysicalExposure,
     market: DailyMarketPrice,
 ) -> tuple[Decimal, Decimal, Decimal]:
+    direction_sign = Decimal("1") if exposure.direction == PhysicalDirection.LONG else Decimal("-1")
     henry_component = money(
-        (market.henry_hub_price - exposure.original_henry_hub_price) * exposure.quantity_mmbtu
+        direction_sign
+        * (market.henry_hub_price - exposure.original_henry_hub_price)
+        * exposure.quantity_mmbtu
     )
     basis_component = money(
-        (market.chicago_basis - exposure.original_basis) * exposure.quantity_mmbtu
+        direction_sign * (market.chicago_basis - exposure.original_basis) * exposure.quantity_mmbtu
     )
     physical_pnl = money(henry_component + basis_component)
     return henry_component, basis_component, physical_pnl

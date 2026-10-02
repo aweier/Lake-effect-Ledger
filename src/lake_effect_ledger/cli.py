@@ -15,6 +15,18 @@ from questionary import Choice
 from rich.console import Console
 from rich.panel import Panel
 
+from lake_effect_ledger.applied_foundations.engine import AppliedFoundationsEngine
+from lake_effect_ledger.applied_foundations.models import AppliedSeasonStatus
+from lake_effect_ledger.applied_foundations.presentation import (
+    render_applied_day,
+    render_applied_debrief,
+    render_applied_diagnostic,
+    render_decision_result,
+    render_financial_bridge,
+    render_order_tape,
+    render_season_opening,
+)
+from lake_effect_ledger.applied_foundations.review import AppliedReviewEngine
 from lake_effect_ledger.audit.engine import InternalAuditEngine
 from lake_effect_ledger.audit.models import AuditStage
 from lake_effect_ledger.audit.presentation import (
@@ -76,8 +88,22 @@ from lake_effect_ledger.learning.presentation import (
     render_day,
     render_notebook,
 )
+from lake_effect_ledger.learning.snapshots import finalize_core_snapshot
 from lake_effect_ledger.narrative.engine import NarrativeEngine
 from lake_effect_ledger.narrative.models import ContentBundle
+from lake_effect_ledger.notice_window.engine import NoticeWindowEngine
+from lake_effect_ledger.notice_window.models import NoticeWindowStatus
+from lake_effect_ledger.notice_window.presentation import (
+    render_notice_calendar,
+    render_notice_curves,
+    render_notice_day,
+    render_notice_debrief,
+    render_notice_decision_result,
+    render_notice_diagnostic,
+    render_notice_opening,
+    render_notice_resolution,
+)
+from lake_effect_ledger.notice_window.review import NoticeWindowReviewEngine
 from lake_effect_ledger.persistence.saves import SaveRepository
 from lake_effect_ledger.presentation import (
     NORTHSTAR_HEADQUARTERS,
@@ -109,8 +135,7 @@ from lake_effect_ledger.treasury.presentation import (
 )
 from lake_effect_ledger.treasury.report import build_treasury_report
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_CONTENT_ROOT = PROJECT_ROOT / "content"
+DEFAULT_CONTENT_ROOT = Path(__file__).resolve().parent / "content"
 DEFAULT_SAVE_DATABASE = Path("saves") / "lake_ledger.db"
 SCENE_ID = "december_difference"
 HEDGE_DOCUMENTATION_SCENE_ID = "hedge_documentation"
@@ -601,6 +626,26 @@ def _select_campaign_track(content: ContentBundle) -> CampaignTrack:
         )
     )
     return CampaignTrack(str(value))
+
+
+def _apply_requested_campaign_track(
+    state: GameState,
+    requested_track: CampaignTrack | None,
+) -> None:
+    """Allow explicit campaign expansion without permitting a saved game to regress."""
+    if requested_track is None or requested_track == state.campaign_track:
+        return
+    rank = {
+        CampaignTrack.SERIES_3_CORE: 0,
+        CampaignTrack.APPLIED_FOUNDATIONS: 1,
+        CampaignTrack.EXTENDED_STORY: 2,
+    }
+    if rank[requested_track] < rank[state.campaign_track]:
+        raise typer.BadParameter(
+            f"the autosave already uses the broader {state.campaign_track.value} track",
+            param_hint="--campaign-track",
+        )
+    state.campaign_track = requested_track
 
 
 def _new_interactive_game(
@@ -1797,8 +1842,669 @@ def _play_core_review(
         source_id="series3_core_debrief",
         message="Series 3 Core Campaign completed and returned to the menu boundary.",
     )
+    if not any(item.season_id == "series3_core" for item in state.learning.assessment_snapshots):
+        finalize_core_snapshot(state, content)
     if save_enabled:
         repository.save(state)
+    return True
+
+
+def _run_applied_checks(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    repository: SaveRepository,
+    day: int,
+    strategy: str,
+    interactive: bool,
+    save_enabled: bool,
+) -> None:
+    if strategy not in {"auto", "correct", "helped", "retry"}:
+        raise typer.BadParameter(
+            "chapter check strategy must be auto, correct, helped, or retry",
+            param_hint="--chapter-check-strategy",
+        )
+    should_run = state.game_mode == GameMode.GUIDED or strategy != "auto"
+    if interactive and state.game_mode == GameMode.STANDARD and strategy == "auto":
+        should_run = bool(
+            _ask(
+                questionary.confirm(
+                    "Open this day's optional Applied Foundations checks?",
+                    default=False,
+                )
+            )
+        )
+    if not should_run:
+        return
+    effective_strategy = "correct" if strategy == "auto" else strategy
+    learning = LearningEngine(content)
+    for check_id in content.applied_foundations.day(day).check_ids:
+        progress = state.learning.checks.get(check_id)
+        if progress is not None and progress.completed:
+            continue
+        if interactive:
+            _interactive_check(
+                state,
+                content=content,
+                engine=learning,
+                check_id=check_id,
+            )
+        elif effective_strategy == "helped":
+            learning.walkthrough(state, check_id)
+        else:
+            if effective_strategy == "retry":
+                check = content.knowledge_check(check_id)
+                wrong = (
+                    "999999999"
+                    if check.check_type == KnowledgeCheckType.NUMERIC
+                    else next(
+                        item.id for item in check.options if item.id != check.correct_option_id
+                    )
+                )
+                learning.submit(state, check_id, wrong)
+            learning.submit(state, check_id, learning.expected_answer(check_id))
+        if save_enabled:
+            repository.save(state)
+        _continue_after_feedback(interactive=interactive)
+
+
+def _play_applied_review(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    repository: SaveRepository,
+    style_name: str | None,
+    strategy: str,
+    remediation_strategy: str,
+    interactive: bool,
+    save_enabled: bool,
+    season_id: str = "applied_foundations",
+) -> bool:
+    is_notice = season_id == "notice_window"
+    season_label = "Notice Window" if is_notice else "Applied Foundations"
+    review_option = "--notice-review-strategy" if is_notice else "--applied-review-strategy"
+    style_option = "--notice-review-style" if is_notice else "--applied-review-style"
+    if strategy not in {"correct", "helped", "retry"}:
+        raise typer.BadParameter(
+            f"{season_label} review strategy must be correct, helped, or retry",
+            param_hint=review_option,
+        )
+    if remediation_strategy not in {"auto", "complete", "skip"}:
+        raise typer.BadParameter(
+            "remediation strategy must be auto, complete, or skip",
+            param_hint="--remediation-strategy",
+        )
+    engine = NoticeWindowReviewEngine(content) if is_notice else AppliedReviewEngine(content)
+    blueprint = content.notice_window if is_notice else content.applied_foundations
+    chapter = state.notice_window if is_notice else state.applied_foundations
+    review = chapter.review
+    if review.style is None:
+        if style_name is not None:
+            try:
+                selected_style = ReviewStyle(style_name)
+            except ValueError as error:
+                raise typer.BadParameter(
+                    f"{season_label} review style must be learning or checkpoint",
+                    param_hint=style_option,
+                ) from error
+        elif interactive:
+            selected_style = ReviewStyle(
+                str(
+                    _ask(
+                        questionary.select(
+                            f"Choose the {season_label} review style:",
+                            choices=[
+                                Choice(
+                                    "Learning Review — hints, walkthroughs, retry",
+                                    value=ReviewStyle.LEARNING.value,
+                                ),
+                                Choice(
+                                    "Checkpoint Review — one answer, explanations after",
+                                    value=ReviewStyle.CHECKPOINT.value,
+                                ),
+                            ],
+                        )
+                    )
+                )
+            )
+        else:
+            selected_style = (
+                ReviewStyle.LEARNING
+                if state.game_mode == GameMode.GUIDED
+                else ReviewStyle.CHECKPOINT
+            )
+        engine.start(state, selected_style)
+    elif style_name is not None and review.style.value != style_name:
+        raise typer.BadParameter(
+            f"the saved {season_label} review already uses {review.style.value}",
+            param_hint=style_option,
+        )
+
+    console.print(
+        Panel(
+            "Ten required questions use new values and scenarios. First attempts "
+            "remain historical even when Learning Review permits retry. Up to four "
+            "separate questions are available only for targeted remediation.",
+            title=f"{season_label} Review · {review.style.value}",
+            border_style="magenta",
+        )
+    )
+
+    def answer_current_questions() -> bool:
+        while True:
+            question = engine.current_question(state)
+            if question is None:
+                return True
+            check = question.as_knowledge_check()
+            option_order = ordered_check_options(check, game_seed=state.seed)
+            render_check(console, check, options=option_order)
+            if interactive:
+                actions = []
+                if check.check_type == KnowledgeCheckType.NUMERIC:
+                    actions.append(Choice("Answer", value="answer"))
+                else:
+                    actions.extend(
+                        Choice(item.text, value=f"answer:{item.id}") for item in option_order
+                    )
+                actions.append(Choice("Clear screen and ask again", value="repeat"))
+                if review.style == ReviewStyle.LEARNING:
+                    if state.show_math == ShowMathMode.ON_REQUEST:
+                        actions.append(Choice("Show the Math", value="math"))
+                    actions.extend(
+                        [
+                            Choice("Give me a hint", value="hint"),
+                            Choice("Open Learning Notebook", value="notebook"),
+                            Choice("Walk me through it", value="walkthrough"),
+                        ]
+                    )
+                actions.append(Choice("Save and return to menu", value="save"))
+                action = str(_ask(questionary.select("Review action:", choices=actions)))
+                if action == "save":
+                    if save_enabled:
+                        repository.save(state)
+                    console.print(
+                        Panel(
+                            f"{season_label} review progress saved. Load this game to resume.",
+                            title=f"{season_label} Review paused",
+                            border_style="yellow",
+                        )
+                    )
+                    return False
+                if action == "repeat":
+                    console.clear()
+                    continue
+                if action == "math":
+                    render_check_math(console, check, content)
+                    _continue_after_feedback(interactive=True)
+                    continue
+                if action == "hint":
+                    console.print(Panel(engine.hint(state), title="Hint"))
+                    if save_enabled:
+                        repository.save(state)
+                    _continue_after_feedback(interactive=True)
+                    continue
+                if action == "notebook":
+                    render_notebook(console, state, content)
+                    _continue_after_feedback(interactive=True)
+                    continue
+                if action == "walkthrough":
+                    result = engine.walkthrough(state)
+                    console.print(
+                        Panel(
+                            f"{result.explanation}\n\n{result.feedback}",
+                            title="Worked walkthrough · completed with help",
+                            border_style="yellow",
+                        )
+                    )
+                    if save_enabled:
+                        repository.save(state)
+                    _continue_after_feedback(interactive=True)
+                    continue
+                answer = (
+                    str(_ask(questionary.text("Your numeric answer:")))
+                    if action == "answer"
+                    else action.removeprefix("answer:")
+                )
+                result = engine.submit(state, answer)
+                if review.style == ReviewStyle.LEARNING:
+                    if result.correct:
+                        console.print(Panel(result.explanation, title="Correct"))
+                    else:
+                        console.print(
+                            Panel(
+                                f"{result.feedback}\n\nTry again; the first attempt "
+                                "remains in the assessment snapshot.",
+                                title="Not yet",
+                            )
+                        )
+                else:
+                    console.print("[dim]Answer recorded for the checkpoint.[/dim]")
+            else:
+                expected = LearningEngine(content).expected_answer(question.id)
+                if review.style == ReviewStyle.LEARNING and strategy == "helped":
+                    engine.walkthrough(state)
+                elif strategy == "retry":
+                    wrong = (
+                        "999999999"
+                        if check.check_type == KnowledgeCheckType.NUMERIC
+                        else next(
+                            item.id for item in check.options if item.id != check.correct_option_id
+                        )
+                    )
+                    engine.submit(state, wrong)
+                    if review.style == ReviewStyle.LEARNING:
+                        engine.submit(state, expected)
+                else:
+                    engine.submit(state, expected)
+            if save_enabled:
+                repository.save(state)
+            _continue_after_feedback(interactive=interactive)
+
+    if not answer_current_questions():
+        return False
+    if review.style == ReviewStyle.CHECKPOINT and review.required_completed:
+        console.print(
+            Panel(
+                "\n\n".join(
+                    f"{item.id}: {item.as_knowledge_check().explanation}"
+                    for item in blueprint.review.required
+                ),
+                title=f"{season_label} checkpoint explanations",
+                border_style="blue",
+            )
+        )
+        _continue_after_feedback(interactive=interactive)
+    diagnostic_renderer = render_notice_diagnostic if is_notice else render_applied_diagnostic
+    diagnostic_renderer(console, engine.diagnostic(state))
+    if not review.completed and not review.selected_remediation_ids:
+        if interactive:
+            take_remediation = bool(
+                _ask(
+                    questionary.confirm(
+                        "Complete the targeted remediation questions now?",
+                        default=True,
+                    )
+                )
+            )
+        else:
+            take_remediation = remediation_strategy == "complete" or (
+                remediation_strategy == "auto" and state.game_mode == GameMode.GUIDED
+            )
+        selected = engine.prepare_remediation(
+            state,
+            take_remediation=take_remediation,
+        )
+        if selected:
+            console.print(
+                Panel(
+                    f"{len(selected)} targeted question(s) will record later "
+                    "demonstration separately from the original checkpoint.",
+                    title="Targeted remediation",
+                    border_style="yellow",
+                )
+            )
+    if not answer_current_questions():
+        return False
+    if save_enabled:
+        repository.save(state)
+    engine.finalize_snapshot(state)
+    diagnostic_renderer(console, engine.diagnostic(state))
+    return True
+
+
+def _play_applied_foundations(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    repository: SaveRepository,
+    applied_path: str | None,
+    check_strategy: str,
+    maximum_days: int | None,
+    pause_before_review: bool,
+    review_style_name: str | None,
+    review_strategy: str,
+    remediation_strategy: str,
+    interactive: bool,
+    debug: bool,
+    save_enabled: bool,
+) -> bool:
+    if state.applied_foundations.status == AppliedSeasonStatus.LEGACY_SKIPPED:
+        return True
+    if state.applied_foundations.status == AppliedSeasonStatus.COMPLETED:
+        return True
+    engine = AppliedFoundationsEngine(content)
+    starting = state.applied_foundations.status == AppliedSeasonStatus.NOT_STARTED
+    chapter = engine.start(state)
+    if starting:
+        render_season_opening(console, content.applied_foundations)
+    path_name = applied_path or "evidence_first"
+    if path_name not in content.applied_foundations.scripted_paths:
+        raise typer.BadParameter(
+            "Applied path must be evidence_first, concise_operator, or escalation_first",
+            param_hint="--applied-path",
+        )
+    if maximum_days == 0:
+        if save_enabled:
+            repository.save(state)
+        return False
+    completed_this_run = 0
+    while chapter.current_day_index < 3 and (
+        maximum_days is None or completed_this_run < maximum_days
+    ):
+        day_number = chapter.current_day_index + 1
+        engine.begin_day(state, day_number)
+        day = content.applied_foundations.day(day_number)
+        if day_number == 3 and save_enabled:
+            repository.save(state)
+        _introduce_characters(state, content, *day.lead_characters)
+        render_applied_day(console, day)
+        if day_number == 3:
+            render_financial_bridge(console, state)
+        while (decision := engine.current_decision(state)) is not None:
+            console.print(Panel(decision.prompt, title=decision.title, border_style="cyan"))
+            selected = (
+                str(
+                    _ask(
+                        questionary.select(
+                            "What record do you create?",
+                            choices=[Choice(item.text, value=item.id) for item in decision.choices],
+                        )
+                    )
+                )
+                if interactive
+                else engine.scripted_choice(state, path_name)
+            )
+            choice = engine.record_decision(state, decision.id, selected)
+            render_decision_result(console, choice)
+            if save_enabled:
+                repository.save(state)
+            _continue_after_feedback(interactive=interactive)
+        _run_applied_checks(
+            state,
+            content=content,
+            repository=repository,
+            day=day_number,
+            strategy=check_strategy,
+            interactive=interactive,
+            save_enabled=save_enabled,
+        )
+        engine.complete_day(
+            state,
+            require_checks=state.game_mode == GameMode.GUIDED,
+        )
+        completed_this_run += 1
+        if day_number == 2:
+            render_order_tape(console, state, content)
+        if save_enabled:
+            repository.save(state)
+            console.print(f"[dim]Autosaved to {repository.path.resolve()}[/dim]")
+        boundary_text = day.boundary.retention_message or day.boundary.message
+        console.print(
+            Panel(
+                boundary_text,
+                title=f"Day {day_number} saved",
+                border_style="yellow" if day_number == 3 else "green",
+            )
+        )
+        if maximum_days is not None and completed_this_run >= maximum_days:
+            return False
+        if day_number < 3 and interactive:
+            action = str(
+                _ask(
+                    questionary.select(
+                        "Continue the Applied Foundations case?",
+                        choices=[
+                            Choice("Continue", value="continue"),
+                            Choice("Save and return to menu", value="save"),
+                        ],
+                    )
+                )
+            )
+            if action == "save":
+                return False
+    if chapter.current_day_index < 3:
+        return False
+    engine.complete_chapter(state)
+    if pause_before_review:
+        return False
+    if interactive:
+        action = str(
+            _ask(
+                questionary.select(
+                    "The case is saved. Review now or take a retention break?",
+                    choices=[
+                        Choice("Continue to the review", value="continue"),
+                        Choice("Save and return to menu", value="save"),
+                    ],
+                )
+            )
+        )
+        if action == "save":
+            return False
+    if not chapter.snapshot_finalized:
+        finished = _play_applied_review(
+            state,
+            content=content,
+            repository=repository,
+            style_name=review_style_name,
+            strategy=review_strategy,
+            remediation_strategy=remediation_strategy,
+            interactive=interactive,
+            save_enabled=save_enabled,
+        )
+        if not finished:
+            return False
+    render_applied_debrief(console, state, content)
+    engine.mark_completed(state)
+    if save_enabled:
+        repository.save(state)
+    if debug:
+        render_debug(console, state)
+    return True
+
+
+def _run_notice_checks(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    repository: SaveRepository,
+    day: int,
+    strategy: str,
+    interactive: bool,
+    save_enabled: bool,
+) -> None:
+    if strategy not in {"auto", "correct", "helped", "retry"}:
+        raise typer.BadParameter(
+            "notice check strategy must be auto, correct, helped, or retry",
+            param_hint="--notice-check-strategy",
+        )
+    should_run = state.game_mode == GameMode.GUIDED or strategy != "auto"
+    if interactive and state.game_mode == GameMode.STANDARD and strategy == "auto":
+        should_run = bool(
+            _ask(
+                questionary.confirm(
+                    "Open this day's optional Notice Window checks?",
+                    default=False,
+                )
+            )
+        )
+    if not should_run:
+        return
+    effective_strategy = "correct" if strategy == "auto" else strategy
+    learning = LearningEngine(content)
+    for check_id in content.notice_window.day(day).check_ids:
+        progress = state.learning.checks.get(check_id)
+        if progress is not None and progress.completed:
+            continue
+        if interactive:
+            _interactive_check(state, content=content, engine=learning, check_id=check_id)
+        elif effective_strategy == "helped":
+            learning.walkthrough(state, check_id)
+        else:
+            if effective_strategy == "retry":
+                check = content.knowledge_check(check_id)
+                wrong = (
+                    "999999999"
+                    if check.check_type == KnowledgeCheckType.NUMERIC
+                    else next(
+                        item.id for item in check.options if item.id != check.correct_option_id
+                    )
+                )
+                learning.submit(state, check_id, wrong)
+            learning.submit(state, check_id, learning.expected_answer(check_id))
+        if save_enabled:
+            repository.save(state)
+        _continue_after_feedback(interactive=interactive)
+
+
+def _play_notice_window(
+    state: GameState,
+    *,
+    content: ContentBundle,
+    repository: SaveRepository,
+    notice_path: str | None,
+    check_strategy: str,
+    maximum_days: int | None,
+    pause_before_review: bool,
+    review_style_name: str | None,
+    review_strategy: str,
+    remediation_strategy: str,
+    interactive: bool,
+    debug: bool,
+    save_enabled: bool,
+) -> bool:
+    if state.notice_window.status == NoticeWindowStatus.LEGACY_SKIPPED:
+        return True
+    if state.notice_window.status == NoticeWindowStatus.COMPLETED:
+        return True
+    engine = NoticeWindowEngine(content)
+    starting = state.notice_window.status == NoticeWindowStatus.NOT_STARTED
+    chapter = engine.start(state)
+    if starting:
+        render_notice_opening(console, content.notice_window)
+    path_name = notice_path or "evidence_first"
+    if path_name not in content.notice_window.scripted_paths:
+        raise typer.BadParameter(
+            "Notice path must be evidence_first, concise_operator, or escalation_first",
+            param_hint="--notice-path",
+        )
+    if maximum_days == 0:
+        if save_enabled:
+            repository.save(state)
+        return False
+    completed_this_run = 0
+    while chapter.current_day_index < 3 and (
+        maximum_days is None or completed_this_run < maximum_days
+    ):
+        day_number = chapter.current_day_index + 1
+        engine.begin_day(state, day_number)
+        day = content.notice_window.day(day_number)
+        if day_number == 3 and save_enabled:
+            repository.save(state)
+        _introduce_characters(state, content, *day.lead_characters)
+        render_notice_day(console, day)
+        if day_number == 1:
+            render_notice_calendar(console, content.notice_window)
+        elif day_number == 2:
+            render_notice_curves(console, state, content)
+        while (decision := engine.current_decision(state)) is not None:
+            console.print(Panel(decision.prompt, title=decision.title, border_style="cyan"))
+            selected = (
+                str(
+                    _ask(
+                        questionary.select(
+                            "What record do you create?",
+                            choices=[Choice(item.text, value=item.id) for item in decision.choices],
+                        )
+                    )
+                )
+                if interactive
+                else engine.scripted_choice(state, path_name)
+            )
+            choice = engine.record_decision(state, decision.id, selected)
+            render_notice_decision_result(console, choice)
+            if save_enabled:
+                repository.save(state)
+            _continue_after_feedback(interactive=interactive)
+        _run_notice_checks(
+            state,
+            content=content,
+            repository=repository,
+            day=day_number,
+            strategy=check_strategy,
+            interactive=interactive,
+            save_enabled=save_enabled,
+        )
+        engine.complete_day(state, require_checks=state.game_mode == GameMode.GUIDED)
+        completed_this_run += 1
+        if day_number == 3:
+            render_notice_resolution(console, state)
+        if save_enabled:
+            repository.save(state)
+            console.print(f"[dim]Autosaved to {repository.path.resolve()}[/dim]")
+        boundary_text = day.boundary.retention_message or day.boundary.message
+        console.print(
+            Panel(
+                boundary_text,
+                title=f"Notice Window Day {day_number} saved",
+                border_style="yellow" if day_number == 3 else "green",
+            )
+        )
+        if maximum_days is not None and completed_this_run >= maximum_days:
+            return False
+        if day_number < 3 and interactive:
+            action = str(
+                _ask(
+                    questionary.select(
+                        "Continue The Notice Window?",
+                        choices=[
+                            Choice("Continue", value="continue"),
+                            Choice("Save and return to menu", value="save"),
+                        ],
+                    )
+                )
+            )
+            if action == "save":
+                return False
+    if chapter.current_day_index < 3:
+        return False
+    engine.complete_chapter(state)
+    if pause_before_review:
+        return False
+    if interactive:
+        action = str(
+            _ask(
+                questionary.select(
+                    "The expiry file is saved. Review now or take a retention break?",
+                    choices=[
+                        Choice("Continue to the review", value="continue"),
+                        Choice("Save and return to menu", value="save"),
+                    ],
+                )
+            )
+        )
+        if action == "save":
+            return False
+    if not chapter.snapshot_finalized:
+        finished = _play_applied_review(
+            state,
+            content=content,
+            repository=repository,
+            style_name=review_style_name,
+            strategy=review_strategy,
+            remediation_strategy=remediation_strategy,
+            interactive=interactive,
+            save_enabled=save_enabled,
+            season_id="notice_window",
+        )
+        if not finished:
+            return False
+    render_notice_debrief(console, state, content)
+    engine.mark_completed(state)
+    if save_enabled:
+        repository.save(state)
+    if debug:
+        render_debug(console, state)
     return True
 
 
@@ -2403,7 +3109,10 @@ def _play_diligence_room(
     return True
 
 
-def _load_interactive(repository: SaveRepository) -> GameState | None:
+def _load_interactive(
+    repository: SaveRepository,
+    content: ContentBundle,
+) -> GameState | None:
     saves = repository.list_saves()
     if not saves:
         console.print("[yellow]No save games found.[/yellow]")
@@ -2425,7 +3134,7 @@ def _load_interactive(repository: SaveRepository) -> GameState | None:
             )
         )
     )
-    return repository.load(slot)
+    return repository.load(slot, content=content)
 
 
 @app.callback()
@@ -2549,7 +3258,7 @@ def main(
         str | None,
         typer.Option(
             "--campaign-track",
-            help="Campaign scope: series3_core or extended_story.",
+            help=("Campaign scope: series3_core, applied_foundations, or extended_story."),
         ),
     ] = None,
     show_math: Annotated[
@@ -2628,6 +3337,105 @@ def main(
             help="Script the Core Review as correct, helped, or retry.",
         ),
     ] = "correct",
+    applied_path: Annotated[
+        str | None,
+        typer.Option(
+            "--applied-path",
+            help=(
+                "Script The Supply Gap as evidence_first, concise_operator, or escalation_first."
+            ),
+        ),
+    ] = None,
+    applied_days: Annotated[
+        int | None,
+        typer.Option(
+            "--applied-days",
+            min=0,
+            max=3,
+            help="Complete at most this many Supply Gap days, then autosave.",
+        ),
+    ] = None,
+    pause_before_applied_review: Annotated[
+        bool,
+        typer.Option(
+            "--pause-before-applied-review",
+            help="Autosave after Supply Gap Day 3 and stop before its review.",
+        ),
+    ] = False,
+    applied_review_style: Annotated[
+        str | None,
+        typer.Option(
+            "--applied-review-style",
+            help="Applied Foundations Review: learning or checkpoint.",
+        ),
+    ] = None,
+    applied_review_strategy: Annotated[
+        str,
+        typer.Option(
+            "--applied-review-strategy",
+            help="Script the Applied review as correct, helped, or retry.",
+        ),
+    ] = "correct",
+    remediation_strategy: Annotated[
+        str,
+        typer.Option(
+            "--remediation-strategy",
+            help="Applied remediation: auto, complete, or skip.",
+        ),
+    ] = "auto",
+    notice_path: Annotated[
+        str | None,
+        typer.Option(
+            "--notice-path",
+            help=(
+                "Script The Notice Window as evidence_first, concise_operator, or escalation_first."
+            ),
+        ),
+    ] = None,
+    notice_days: Annotated[
+        int | None,
+        typer.Option(
+            "--notice-days",
+            min=0,
+            max=3,
+            help="Complete at most this many Notice Window days, then autosave.",
+        ),
+    ] = None,
+    pause_before_notice_review: Annotated[
+        bool,
+        typer.Option(
+            "--pause-before-notice-review",
+            help="Autosave after Notice Window Day 3 and stop before its review.",
+        ),
+    ] = False,
+    notice_check_strategy: Annotated[
+        str,
+        typer.Option(
+            "--notice-check-strategy",
+            help="Run Notice Window checks as auto, correct, helped, or retry.",
+        ),
+    ] = "auto",
+    notice_review_style: Annotated[
+        str | None,
+        typer.Option(
+            "--notice-review-style",
+            help="Notice Window Review: learning or checkpoint.",
+        ),
+    ] = None,
+    notice_review_strategy: Annotated[
+        str,
+        typer.Option(
+            "--notice-review-strategy",
+            help="Script the Notice Window review as correct, helped, or retry.",
+        ),
+    ] = "correct",
+    notice_remediation_strategy: Annotated[
+        str,
+        typer.Option(
+            "--notice-remediation-strategy",
+            help="Notice Window remediation: auto, complete, or skip.",
+        ),
+    ] = "auto",
     chapter_days: Annotated[
         int | None,
         typer.Option(
@@ -2745,12 +3553,12 @@ def main(
                 else (
                     CampaignTrack.EXTENDED_STORY
                     if audit_path is not None or diligence_path is not None
-                    else None
+                    else (CampaignTrack.APPLIED_FOUNDATIONS if notice_path is not None else None)
                 )
             )
         except ValueError as error:
             raise typer.BadParameter(
-                "campaign track must be series3_core or extended_story",
+                "campaign track must be series3_core, applied_foundations, or extended_story",
                 param_hint="--campaign-track",
             ) from error
         try:
@@ -2762,15 +3570,11 @@ def main(
             ) from error
         if load_autosave:
             try:
-                state = repository.load()
+                state = repository.load(content=content)
             except (KeyError, ValueError) as error:
                 console.print(f"[bold red]Could not load autosave:[/bold red] {error}")
                 raise typer.Exit(code=2) from error
-            if selected_track is not None and state.campaign_track != selected_track:
-                raise typer.BadParameter(
-                    f"the autosave uses campaign track {state.campaign_track.value}",
-                    param_hint="--campaign-track",
-                )
+            _apply_requested_campaign_track(state, selected_track)
         else:
             state = create_new_game(
                 name=player_name,
@@ -2812,9 +3616,34 @@ def main(
         explicit_campaign = campaign_track is not None
         resume_campaign = load_autosave and (
             state.learning.core_review.started
+            or not state.core_campaign_completed
+            or state.applied_foundations.status == AppliedSeasonStatus.IN_PROGRESS
+            or state.notice_window.status == NoticeWindowStatus.IN_PROGRESS
             or (
-                state.campaign_track == CampaignTrack.SERIES_3_CORE
-                and not state.core_campaign_completed
+                state.core_campaign_completed
+                and state.campaign_track
+                in {
+                    CampaignTrack.APPLIED_FOUNDATIONS,
+                    CampaignTrack.EXTENDED_STORY,
+                }
+                and state.applied_foundations.status
+                not in {
+                    AppliedSeasonStatus.COMPLETED,
+                    AppliedSeasonStatus.LEGACY_SKIPPED,
+                }
+            )
+            or (
+                state.campaign_track
+                in {
+                    CampaignTrack.APPLIED_FOUNDATIONS,
+                    CampaignTrack.EXTENDED_STORY,
+                }
+                and state.applied_foundations.status == AppliedSeasonStatus.COMPLETED
+                and state.notice_window.status
+                not in {
+                    NoticeWindowStatus.COMPLETED,
+                    NoticeWindowStatus.LEGACY_SKIPPED,
+                }
             )
         )
         extended_track_requested = (
@@ -2828,6 +3657,10 @@ def main(
         audit_requested = (
             audit_path is not None or state.no_surprises is not None or diligence_requested
         )
+        applied_requested = state.campaign_track in {
+            CampaignTrack.APPLIED_FOUNDATIONS,
+            CampaignTrack.EXTENDED_STORY,
+        } and (explicit_campaign or resume_campaign or audit_requested)
         chapter_requested = (
             eleventh_path is not None
             or state.eleventh_contract is not None
@@ -2903,10 +3736,61 @@ def main(
                     )
                 )
                 return
-        if audit_requested:
-            if state.eleventh_contract is None or not state.eleventh_contract.completed:
+        if applied_requested:
+            if not state.core_campaign_completed:
                 return
-            _play_no_surprises(
+            applied_finished = _play_applied_foundations(
+                state,
+                content=content,
+                repository=repository,
+                applied_path=applied_path,
+                check_strategy=chapter_check_strategy,
+                maximum_days=applied_days,
+                pause_before_review=pause_before_applied_review,
+                review_style_name=applied_review_style,
+                review_strategy=applied_review_strategy,
+                remediation_strategy=remediation_strategy,
+                interactive=False,
+                debug=debug,
+                save_enabled=not no_save,
+            )
+            if not applied_finished:
+                return
+            if state.campaign_track == CampaignTrack.APPLIED_FOUNDATIONS:
+                notice_finished = _play_notice_window(
+                    state,
+                    content=content,
+                    repository=repository,
+                    notice_path=notice_path,
+                    check_strategy=notice_check_strategy,
+                    maximum_days=notice_days,
+                    pause_before_review=pause_before_notice_review,
+                    review_style_name=notice_review_style,
+                    review_strategy=notice_review_strategy,
+                    remediation_strategy=notice_remediation_strategy,
+                    interactive=False,
+                    debug=debug,
+                    save_enabled=not no_save,
+                )
+                if not notice_finished:
+                    return
+                console.print(
+                    Panel(
+                        "Applied Foundations is complete through The Notice Window. "
+                        "No Surprises and The Diligence Room remain available only "
+                        "in Extended Story.",
+                        title="Applied Foundations complete",
+                        border_style="green",
+                    )
+                )
+                return
+        if audit_requested:
+            if state.applied_foundations.status not in {
+                AppliedSeasonStatus.COMPLETED,
+                AppliedSeasonStatus.LEGACY_SKIPPED,
+            }:
+                return
+            audit_finished = _play_no_surprises(
                 state,
                 content=content,
                 repository=repository,
@@ -2918,8 +3802,32 @@ def main(
                 debug=debug,
                 save_enabled=not no_save,
             )
+            if not audit_finished:
+                return
+            notice_finished = _play_notice_window(
+                state,
+                content=content,
+                repository=repository,
+                notice_path=notice_path,
+                check_strategy=notice_check_strategy,
+                maximum_days=notice_days,
+                pause_before_review=pause_before_notice_review,
+                review_style_name=notice_review_style,
+                review_strategy=notice_review_strategy,
+                remediation_strategy=notice_remediation_strategy,
+                interactive=False,
+                debug=debug,
+                save_enabled=not no_save,
+            )
+            if not notice_finished:
+                return
         if diligence_requested:
-            if state.no_surprises is None or not state.no_surprises.completed:
+            if (
+                state.no_surprises is None
+                or not state.no_surprises.completed
+                or state.notice_window.status
+                not in {NoticeWindowStatus.COMPLETED, NoticeWindowStatus.LEGACY_SKIPPED}
+            ):
                 return
             _play_diligence_room(
                 state,
@@ -2959,14 +3867,22 @@ def main(
             selected_track = CampaignTrack(campaign_track) if campaign_track is not None else None
         except ValueError as error:
             raise typer.BadParameter(
-                "campaign track must be series3_core or extended_story",
+                "campaign track must be series3_core, applied_foundations, or extended_story",
                 param_hint="--campaign-track",
             ) from error
         state = _new_interactive_game(content, selected_mode, selected_track)
     else:
-        state = _load_interactive(repository)
+        state = _load_interactive(repository, content)
     if state is None:
         return
+    if action == "load" and campaign_track is not None:
+        try:
+            _apply_requested_campaign_track(state, CampaignTrack(campaign_track))
+        except ValueError as error:
+            raise typer.BadParameter(
+                "campaign track must be series3_core, applied_foundations, or extended_story",
+                param_hint="--campaign-track",
+            ) from error
     if show_math is not None:
         try:
             state.show_math = ShowMathMode(show_math)
@@ -3080,6 +3996,50 @@ def main(
                 )
             )
             return
+        applied_finished = _play_applied_foundations(
+            state,
+            content=content,
+            repository=repository,
+            applied_path=applied_path,
+            check_strategy=chapter_check_strategy,
+            maximum_days=applied_days,
+            pause_before_review=pause_before_applied_review,
+            review_style_name=applied_review_style,
+            review_strategy=applied_review_strategy,
+            remediation_strategy=remediation_strategy,
+            interactive=True,
+            debug=debug,
+            save_enabled=not no_save,
+        )
+        if not applied_finished:
+            return
+        if state.campaign_track == CampaignTrack.APPLIED_FOUNDATIONS:
+            notice_finished = _play_notice_window(
+                state,
+                content=content,
+                repository=repository,
+                notice_path=notice_path,
+                check_strategy=notice_check_strategy,
+                maximum_days=notice_days,
+                pause_before_review=pause_before_notice_review,
+                review_style_name=notice_review_style,
+                review_strategy=notice_review_strategy,
+                remediation_strategy=notice_remediation_strategy,
+                interactive=True,
+                debug=debug,
+                save_enabled=not no_save,
+            )
+            if not notice_finished:
+                return
+            console.print(
+                Panel(
+                    "The Applied Foundations campaign stops after The Notice Window. "
+                    "No Surprises and The Diligence Room were not entered.",
+                    title="Applied Foundations complete",
+                    border_style="green",
+                )
+            )
+            return
         continue_to_audit = state.no_surprises is not None or bool(
             _ask(
                 questionary.confirm(
@@ -3102,6 +4062,37 @@ def main(
                 save_enabled=not no_save,
             )
             if not audit_finished:
+                return
+            continue_to_notice = state.notice_window.status in {
+                NoticeWindowStatus.IN_PROGRESS,
+                NoticeWindowStatus.COMPLETED,
+                NoticeWindowStatus.LEGACY_SKIPPED,
+            } or bool(
+                _ask(
+                    questionary.confirm(
+                        "Continue to The Notice Window?",
+                        default=True,
+                    )
+                )
+            )
+            if not continue_to_notice:
+                return
+            notice_finished = _play_notice_window(
+                state,
+                content=content,
+                repository=repository,
+                notice_path=notice_path,
+                check_strategy=notice_check_strategy,
+                maximum_days=notice_days,
+                pause_before_review=pause_before_notice_review,
+                review_style_name=notice_review_style,
+                review_strategy=notice_review_strategy,
+                remediation_strategy=notice_remediation_strategy,
+                interactive=True,
+                debug=debug,
+                save_enabled=not no_save,
+            )
+            if not notice_finished:
                 return
             continue_to_diligence = state.diligence_room is not None or bool(
                 _ask(

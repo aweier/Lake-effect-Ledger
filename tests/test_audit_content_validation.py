@@ -37,6 +37,8 @@ def _rebundle(content, **changes):
         "audit_learning": content.audit_learning,
         "diligence_scenario": content.diligence_scenario,
         "diligence_learning": content.diligence_learning,
+        "applied_foundations": content.applied_foundations,
+        "notice_window": content.notice_window,
     }
     values.update(changes)
     return ContentBundle(**values)

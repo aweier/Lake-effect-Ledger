@@ -11,6 +11,7 @@ from lake_effect_ledger.game import create_new_game
 from lake_effect_ledger.learning.choice_order import ordered_check_options
 from lake_effect_ledger.learning.engine import LearningEngine
 from lake_effect_ledger.learning.models import (
+    CalculationKind,
     CampaignTrack,
     GameMode,
     LearningStatus,
@@ -105,6 +106,48 @@ def test_question_panel_and_selector_share_the_shuffled_order(
     assert [rendered.index(f"{option_id}:") for option_id in expected_order] == sorted(
         rendered.index(f"{option_id}:") for option_id in expected_order
     )
+
+
+def test_math_renderer_covers_every_calculation_kind(content) -> None:
+    questions = [
+        *content.prologue.checks,
+        *content.eleventh_learning.checks,
+        *[item.as_knowledge_check() for item in content.applied_foundations.all_questions],
+        *[item.as_knowledge_check() for item in content.notice_window.all_questions],
+    ]
+    checks_by_kind = {
+        check.calculation.kind: check for check in questions if check.calculation is not None
+    }
+
+    assert set(checks_by_kind) == set(CalculationKind)
+    for kind, check in checks_by_kind.items():
+        output = StringIO()
+        test_console = Console(
+            file=output,
+            force_terminal=False,
+            color_system=None,
+            width=100,
+        )
+
+        cli.render_check_math(test_console, check, content)
+
+        rendered = output.getvalue()
+        assert "Shared-engine result:" in rendered, kind
+
+
+def test_applied_long_futures_math_uses_long_direction(content) -> None:
+    output = StringIO()
+    test_console = Console(file=output, force_terminal=False, color_system=None, width=100)
+
+    cli.render_check_math(
+        test_console,
+        content.knowledge_check("af_long_futures_loss"),
+        content,
+    )
+
+    rendered = output.getvalue()
+    assert "Long P&L = (current - previous)" in rendered
+    assert "Shared-engine result: -36000.00 dollars" in rendered
 
 
 def test_correct_feedback_waits_then_clears_before_next_question(

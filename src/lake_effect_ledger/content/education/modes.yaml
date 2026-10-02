@@ -27,17 +27,34 @@ campaign_tracks:
       - hedge_book
       - two_oclock_call
       - eleventh_contract
-  - id: extended_story
-    label: Extended Story
+  - id: applied_foundations
+    label: Applied Foundations
     recommended: false
     description: >-
-      Play the complete core path, then continue into the optional No Surprises
-      and The Diligence Room business-context chapters.
+      Complete Series 3 Core, then continue through The Supply Gap and The Notice
+      Window: contrasting long-hedge, curve, expiration, and delivery cases with
+      their own reviews and debriefs.
     chapter_ids:
       - first_rotation
       - december_difference
       - hedge_book
       - two_oclock_call
       - eleventh_contract
+      - supply_gap
+      - notice_window
+  - id: extended_story
+    label: Extended Story
+    recommended: false
+    description: >-
+      Play the complete Core and Supply Gap paths, then continue chronologically
+      through No Surprises, The Notice Window, and The Diligence Room.
+    chapter_ids:
+      - first_rotation
+      - december_difference
+      - hedge_book
+      - two_oclock_call
+      - eleventh_contract
+      - supply_gap
       - no_surprises
+      - notice_window
       - diligence_room

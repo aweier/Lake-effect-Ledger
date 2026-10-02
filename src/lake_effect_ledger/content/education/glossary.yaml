@@ -252,3 +252,57 @@ terms:
     learning_objective_ids: [stakeholder_consistent_disclosure]
     source_ids: [fasb_concepts_useful_information]
     series_3_topics: [Books and records]
+  - id: clearing_house
+    term: Clearing house
+    definition: An organization that interposes itself between clearing members as buyer to each seller and seller to each buyer for cleared futures.
+    learning_objective_ids: [clearinghouse_mechanics]
+    source_ids: [cftc_economic_purpose]
+    series_3_topics: [Clearinghouse function]
+  - id: forward_contract
+    term: Forward contract
+    definition: A private agreement for future purchase or sale whose terms and counterparty exposure are bilateral unless separately cleared.
+    learning_objective_ids: [clearinghouse_mechanics]
+    source_ids: [cftc_economic_purpose]
+    series_3_topics: [Futures versus forwards]
+  - id: normal_market
+    term: Normal market (contango)
+    definition: A curve in which a deferred contract is priced above a nearby contract; the positive spread alone does not prove a full-carry explanation.
+    learning_objective_ids: [normal_inverted_markets, carrying_charges]
+    source_ids: [cme_curve_structure]
+    series_3_topics: [Structure of futures markets]
+  - id: inverted_market
+    term: Inverted market (backwardation)
+    definition: A curve in which a nearby contract is priced above a deferred contract, producing a negative deferred-minus-nearby spread.
+    learning_objective_ids: [normal_inverted_markets]
+    source_ids: [cme_curve_structure]
+    series_3_topics: [Structure of futures markets]
+  - id: carrying_charges
+    term: Carrying charges
+    definition: Costs such as storage, financing, and insurance that can contribute to differences between nearby and deferred futures prices.
+    learning_objective_ids: [carrying_charges]
+    source_ids: [nfa_series3_outline, cme_curve_structure]
+    series_3_topics: [Carrying charges]
+  - id: notice_day
+    term: Notice day
+    definition: A contract-calendar date in the delivery process; it is distinct from the last trading day and from a firm's earlier internal action deadline.
+    learning_objective_ids: [first_notice_day, delivery]
+    source_ids: [cme_ng_contract]
+    series_3_topics: [Delivery notices]
+  - id: spot_month
+    term: Spot month
+    definition: The nearby delivery month as it approaches expiration and possible delivery obligations under the applicable contract rules.
+    learning_objective_ids: [spot_month]
+    source_ids: [nfa_series3_outline]
+    series_3_topics: [Trading in the spot month]
+  - id: exchange_for_physical
+    term: Exchange of futures for physical (EFP)
+    definition: An exchange for related position pairing a futures transaction with a corresponding bona fide physical or forward transaction; it is not merely a label for closing futures.
+    learning_objective_ids: [delivery, records_and_ethical_conduct]
+    source_ids: [cme_rule_538]
+    series_3_topics: [Exchange for physical]
+  - id: locked_limit
+    term: Locked-limit market
+    definition: A teaching description of a market at an applicable price limit where orders may remain unfilled and exposure and liquidity risk can persist.
+    learning_objective_ids: [price_and_lock_limits]
+    source_ids: [nfa_series3_outline]
+    series_3_topics: [Price and lock limits]

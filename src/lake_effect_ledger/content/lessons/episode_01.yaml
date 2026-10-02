@@ -297,3 +297,59 @@ lessons:
       Buyers, lenders, and boards may need different detail and emphasis.
       Shared facts should still reconcile to the same dated source records, and
       later corrections should preserve what each audience received earlier.
+
+  - id: clearinghouse_mechanics
+    category: series_3
+    title: Clearing and counterparty structure
+    explanation: >-
+      A futures clearing house becomes the buyer to each clearing seller and
+      the seller to each clearing buyer. A forward remains a private bilateral
+      obligation unless a separate clearing arrangement changes that structure.
+
+  - id: delivery
+    category: series_3
+    title: Physically delivered futures obligations
+    explanation: >-
+      An open physically delivered contract can enter the exchange delivery
+      process after trading terminates. Delivery quantity, timing, location,
+      notices, and final settlement follow the contract rules.
+
+  - id: first_notice_day
+    category: series_3
+    title: Notice and expiration calendar
+    explanation: >-
+      Notice-related dates and the last trading day are separate contract-calendar
+      controls. A firm should verify the current rulebook rather than infer them
+      from a contract-month label or an internal deadline.
+
+  - id: spot_month
+    category: series_3
+    title: Spot-month exposure
+    explanation: >-
+      The nearby contract becomes operationally sensitive as expiration and
+      possible delivery approach. Internal action deadlines can be earlier than
+      exchange dates without replacing the exchange calendar.
+
+  - id: price_and_lock_limits
+    category: series_3
+    title: Price limits and locked markets
+    explanation: >-
+      A price limit constrains permitted trading prices under applicable rules.
+      At a locked limit, resting orders are not guaranteed fills; exposure,
+      variation settlement, and liquidity pressure can remain.
+
+  - id: normal_inverted_markets
+    category: series_3
+    title: Normal and inverted futures curves
+    explanation: >-
+      Deferred minus nearby is positive in a normal or contango curve and
+      negative in an inverted or backwardated curve. The signed spread states
+      the shape without proving why the market has that shape.
+
+  - id: carrying_charges
+    category: series_3
+    title: Carry and curve interpretation
+    explanation: >-
+      Storage, financing, insurance, and related costs can contribute to a
+      deferred premium. Comparing the observed spread with an authored carry
+      estimate is an interpretation aid, not proof of full carry.

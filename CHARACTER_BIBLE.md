@@ -3,13 +3,14 @@
 Developer-facing reference. **This file contains story spoilers, private
 motivations, and author-only continuity notes. Never render it during gameplay.**
 
-The `Player` record in `content/characters.yaml` is a runtime placeholder, not a
+The `Player` record in `src/lake_effect_ledger/content/characters.yaml` is a runtime placeholder, not a
 recurring authored character, so it does not receive a bible entry. Its public
 role is **Junior Commodity Risk Analyst**; name and education remain
 player-selected.
 
 The NEW CONTACT card may render only `name`, `role`, `origin`,
-`public_detail`, and `interaction_reason` from `content/characters.yaml`.
+`public_detail`, and `interaction_reason` from
+`src/lake_effect_ledger/content/characters.yaml`.
 Legacy-ID notes, family links, secrets, motivations, and reveal plans are
 author-only.
 

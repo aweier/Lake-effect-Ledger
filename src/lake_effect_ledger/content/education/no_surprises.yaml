@@ -28,7 +28,7 @@ checks:
     learning_objective_ids: [contemporaneous_evidence]
     source_id: iia_global_standards
     options:
-      - {id: later_support_only, text: The volume became supported Friday, not that it was supported Monday}
+      - {id: later_support_only, text: "The volume became supported Friday, not that it was supported Monday"}
       - {id: retroactive_authority, text: Monday authorization automatically increased}
       - {id: no_exception, text: The original exception never existed}
     correct_option_id: later_support_only
@@ -45,7 +45,7 @@ checks:
     learning_objective_ids: [authorization_reconciliation_roles]
     source_id: cftc_trade_records
     options:
-      - {id: execution_match, text: The external confirmation agrees with execution, not that eleven were authorized}
+      - {id: execution_match, text: "The external confirmation agrees with execution, not that eleven were authorized"}
       - {id: authorization, text: The external confirmation authorizes all eleven}
       - {id: physical_support, text: The confirmation proves physical volume}
     correct_option_id: execution_match
@@ -79,8 +79,8 @@ checks:
     learning_objective_ids: [segregation_of_duties]
     source_id: gao_green_book_2025
     options:
-      - {id: separate_review, text: Trader transmits, controller approves, analyst reconciles, supervisor approves correction}
-      - {id: one_owner, text: One person transmits, approves, reconciles, and corrects}
+      - {id: separate_review, text: "Trader transmits, controller approves, analyst reconciles, supervisor approves correction"}
+      - {id: one_owner, text: "One person transmits, approves, reconciles, and corrects"}
       - {id: self_review, text: Trader transmits and later certifies the exception alone}
     correct_option_id: separate_review
     explanation: Independent approval and review reduce incompatible-duty risk.

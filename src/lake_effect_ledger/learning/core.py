@@ -11,11 +11,13 @@ from lake_effect_ledger.learning.calculations import calculate_answer
 from lake_effect_ledger.learning.engine import LearningEngine
 from lake_effect_ledger.learning.models import (
     CoreReviewResponse,
+    CurriculumClassification,
     KnowledgeCheckType,
     LearningStatus,
     ObjectiveProgress,
     ReviewStyle,
 )
+from lake_effect_ledger.learning.review import ReusableReviewEngine
 from lake_effect_ledger.narrative.models import ContentBundle
 from lake_effect_ledger.state import GameState
 
@@ -62,6 +64,7 @@ class CoreReviewEngine:
     def __init__(self, content: ContentBundle) -> None:
         self.content = content
         self.learning = LearningEngine(content)
+        self.review_behavior = ReusableReviewEngine(self.learning)
 
     def start(self, state: GameState, style: ReviewStyle) -> None:
         review = state.learning.core_review
@@ -84,9 +87,7 @@ class CoreReviewEngine:
             raise ValueError("Checkpoint Review does not reveal hints before submission")
         reference = self.current_reference(state)
         response = self._response(state, reference.id, reference.check_id)
-        response.hints_used += 1
-        check = self.content.knowledge_check(reference.check_id)
-        return check.hints[min(response.hints_used - 1, len(check.hints) - 1)]
+        return self.review_behavior.hint(reference.check_id, response)
 
     def walkthrough(self, state: GameState) -> ReviewSubmission:
         review = state.learning.core_review
@@ -95,9 +96,7 @@ class CoreReviewEngine:
         reference = self.current_reference(state)
         check = self.content.knowledge_check(reference.check_id)
         response = self._response(state, reference.id, reference.check_id)
-        response.walkthrough_used = True
-        response.final_correct = True
-        response.explanation_shown = True
+        self.review_behavior.walkthrough(response)
         self._record_objectives(
             state,
             check.learning_objective_ids,
@@ -119,41 +118,28 @@ class CoreReviewEngine:
         reference = self.current_reference(state)
         check = self.content.knowledge_check(reference.check_id)
         response = self._response(state, reference.id, reference.check_id)
-        response.attempts += 1
-        correct = self.learning.answer_is_correct(reference.check_id, answer)
-        if response.attempts == 1:
-            response.first_answer = answer
-            response.first_attempt_correct = correct
-        after_retry = response.attempts > 1
-        if correct:
-            response.final_correct = True
-            response.independently_demonstrated = (
-                response.attempts == 1
-                and response.hints_used == 0
-                and not response.walkthrough_used
-            )
-        checkpoint = state.learning.core_review.style == ReviewStyle.CHECKPOINT
-        completed = correct or checkpoint
-        if completed:
-            response.explanation_shown = checkpoint
+        attempt = self.review_behavior.submit(
+            check_id=reference.check_id,
+            response=response,
+            answer=answer,
+            style=state.learning.core_review.style,
+        )
+        if attempt.completed:
             self._record_objectives(
                 state,
                 check.learning_objective_ids,
                 response=response,
-                correct=correct,
-                after_retry=after_retry,
+                correct=attempt.correct,
+                after_retry=attempt.after_retry,
             )
             self._advance(state)
-        feedback = None
-        if not correct:
-            feedback = self.learning.wrong_answer_feedback(reference.check_id, answer)
         return ReviewSubmission(
             question_id=reference.id,
             check_id=reference.check_id,
-            correct=correct,
-            completed=completed,
+            correct=attempt.correct,
+            completed=attempt.completed,
             explanation=check.explanation,
-            feedback=feedback,
+            feedback=attempt.feedback,
         )
 
     def diagnostic(self, state: GameState) -> CoreReviewDiagnostic:
@@ -376,7 +362,13 @@ def build_core_debrief(state: GameState, content: ContentBundle) -> CoreDebrief:
         objectives_recommended_for_review=labels(review),
         core_topics_not_encountered=labels(not_encountered),
         future_curriculum_topics=[
-            item.official_topic_label for item in content.curriculum.future_topics
+            *[
+                item.official_topic_label
+                for item in content.curriculum.objectives
+                if item.classification == CurriculumClassification.EXAM_MATERIAL
+                and not item.counts_toward_core
+            ],
+            *[item.official_topic_label for item in content.curriculum.future_topics],
         ],
         calculation_accuracy=_accuracy_text(calculation_correct, calculation_total),
         concept_accuracy=_accuracy_text(concept_correct, concept_total),
@@ -384,8 +376,10 @@ def build_core_debrief(state: GameState, content: ContentBundle) -> CoreDebrief:
         suggested_next_study_area=suggested,
         source_titles=[content.source(item).title for item in sorted(source_ids)],
         disclaimer=(
-            "This diagnostic reflects only concepts implemented and encountered in "
-            "Lake Effect Ledger. It is not a complete Series 3 mock exam or an "
+            "Historical Core curriculum classification: 13 objectives encountered—"
+            "six covered, three partially covered, and four introductory. This "
+            "diagnostic reflects only concepts implemented and encountered in Lake "
+            "Effect Ledger. It is not a complete Series 3 mock exam or an "
             "exam-readiness score."
         ),
     )

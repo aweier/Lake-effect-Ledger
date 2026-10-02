@@ -13,6 +13,7 @@ from lake_effect_ledger.learning.calculations import (
 from lake_effect_ledger.learning.engine import LearningEngine
 from lake_effect_ledger.learning.models import (
     CampaignTrack,
+    CheckOption,
     GameMode,
     GlossaryFile,
     KnowledgeCheckDefinition,
@@ -33,6 +34,17 @@ def guided_state(content, background=Background.DATA_ANALYTICS):
         content=content,
         game_mode=GameMode.GUIDED,
     )
+
+
+def test_check_options_reject_truncated_yaml_mapping_fragments() -> None:
+    with pytest.raises(ValidationError, match="extra_forbidden"):
+        CheckOption.model_validate(
+            {
+                "id": "malformed",
+                "text": "Only the text before an unquoted comma",
+                "discarded fragment": None,
+            }
+        )
 
 
 def rebundle(content, **changes):
@@ -62,6 +74,8 @@ def rebundle(content, **changes):
         "audit_learning": content.audit_learning,
         "diligence_scenario": content.diligence_scenario,
         "diligence_learning": content.diligence_learning,
+        "applied_foundations": content.applied_foundations,
+        "notice_window": content.notice_window,
     }
     values.update(changes)
     return ContentBundle(**values)
@@ -86,6 +100,7 @@ def test_modes_and_prologue_content_are_complete(content) -> None:
     assert [item.day_number for item in content.prologue.prologue.days] == [1, 2, 3]
     assert {item.id.value for item in content.game_modes.campaign_tracks} == {
         "series3_core",
+        "applied_foundations",
         "extended_story",
     }
     assert len(content.prologue.checks) == 17

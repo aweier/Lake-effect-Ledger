@@ -5,6 +5,11 @@ from __future__ import annotations
 from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 from lake_effect_ledger.commodity.engine import (
+    buyer_physical_purchase_cost_variance,
+    combined_economic_result,
+    contract_count,
+    contract_month_spread,
+    delivery_contract_value,
     futures_daily_pnl,
     futures_tick_value,
     hedge_ratio,
@@ -59,6 +64,37 @@ def calculate_answer(check: KnowledgeCheckDefinition, content: ContentBundle) ->
             balance=calculation.margin_balance,
             initial_requirement=calculation.initial_requirement,
             maintenance_requirement=calculation.maintenance_requirement,
+        )
+    if calculation.kind == CalculationKind.CONTRACT_COUNT:
+        if contract is None:
+            raise ValueError("contract-count calculation requires a contract")
+        return contract_count(
+            physical_quantity_mmbtu=calculation.physical_quantity_mmbtu,
+            contract_size_mmbtu=contract.contract_size_mmbtu,
+        )
+    if calculation.kind == CalculationKind.BUYER_PHYSICAL_VARIANCE:
+        return buyer_physical_purchase_cost_variance(
+            initial_regional_price=calculation.initial_regional_price,
+            final_regional_price=calculation.final_regional_price,
+            physical_quantity_mmbtu=calculation.physical_quantity_mmbtu,
+        )
+    if calculation.kind == CalculationKind.COMBINED_ECONOMIC_RESULT:
+        return combined_economic_result(
+            physical_variance=calculation.physical_variance,
+            futures_result=calculation.futures_result,
+        )
+    if calculation.kind == CalculationKind.CONTRACT_MONTH_SPREAD:
+        return contract_month_spread(
+            nearby_price=calculation.nearby_price,
+            deferred_price=calculation.deferred_price,
+        )
+    if calculation.kind == CalculationKind.DELIVERY_CONTRACT_VALUE:
+        if contract is None:
+            raise ValueError("delivery contract value requires a contract")
+        return delivery_contract_value(
+            settlement_price=calculation.settlement_price,
+            contract_size_mmbtu=contract.contract_size_mmbtu,
+            contracts=calculation.contracts,
         )
     raise ValueError(f"unsupported calculation kind: {calculation.kind}")
 

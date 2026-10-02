@@ -12,6 +12,8 @@ def _choice_checks(content):
             *content.eleventh_learning.checks,
             *content.audit_learning.checks,
             *content.diligence_learning.checks,
+            *[item.as_knowledge_check() for item in content.applied_foundations.all_questions],
+            *[item.as_knowledge_check() for item in content.notice_window.all_questions],
         ]
         if check.options
     ]

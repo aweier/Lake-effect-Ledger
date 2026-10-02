@@ -8,7 +8,7 @@ in Milwaukee, Wisconsin. Chicago is the regional physical-gas pricing location,
 while Henry Hub in Louisiana is the futures benchmark; neither is Northstar's
 headquarters.
 
-The repository contains seven connected playable chapters organized into two
+The repository contains nine connected playable chapters organized into three
 campaign tracks. **Series 3 Core** is the recommended beginner path:
 
 1. **First Rotation** — a three-day, 30-minute introduction to physical and
@@ -25,22 +25,53 @@ campaign tracks. **Series 3 Core** is the recommended beginner path:
    supervised order, then reconcile ten authorized contracts against an
    eleven-contract execution and FCM confirmation.
 
-**Extended Story** continues with two optional business-context chapters:
+**Applied Foundations** adds two narrow learning seasons after Core:
 
-6. **No Surprises** — answer Noah Shah's internal-audit request, reconstruct the
+6. **The Supply Gap** — contrast the Core short hedge with an 80,000 MMBtu
+   anticipatory long hedge, compare market/limit/stop behavior on an authored
+   tape, separate economics from margin cash, and complete a fixed review.
+7. **The Notice Window** — classify futures and forwards, read normal and
+   inverted two-month curves, verify the expiration/notice calendar, distinguish
+   offset from delivery and EFP, and close a fictional two-contract local position.
+
+**Extended Story** preserves the dated story chronology: it places **No
+Surprises** after The Supply Gap, then returns to **The Notice Window** before
+the final business-context chapter:
+
+7. **No Surprises** — answer Noah Shah's internal-audit request, reconstruct the
    transaction from preserved records, test eight controls, and draft a
    management response and remediation plan.
-7. **The Diligence Room** — prepare source-linked buyer, lender, and
+9. **The Diligence Room** — prepare source-linked buyer, lender, and
    audit-committee packages for a proposed majority acquisition without changing
    the financial, trade, treasury, or audit records beneath them.
 
-The product source of truth supplied for this project is
-[`../Lake_Effect_Ledger_Game_Concept.txt`](../Lake_Effect_Ledger_Game_Concept.txt).
-The prompt calls it `.md`; the attached source is a complete Markdown-formatted
-`.txt` file, so it is used without duplication.
-
 All companies, people, prices, transactions, and events are fictional.
 Educational material is not legal, tax, accounting, trading, or investment advice.
+
+## Quick start
+
+Lake Effect Ledger requires Python 3.12. After cloning the repository, run the
+following commands from its root.
+
+On Windows PowerShell:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install .
+.\.venv\Scripts\lake-ledger.exe
+```
+
+On macOS or Linux:
+
+```bash
+python3.12 -m venv .venv
+./.venv/bin/python -m pip install .
+./.venv/bin/lake-ledger
+```
+
+The game stores local progress in `saves/lake_ledger.db` relative to the
+directory where it is launched. No external service, API key, or database server
+is required.
 
 ## Series 3 Core Campaign
 
@@ -49,12 +80,13 @@ Game mode and campaign track are independent:
 | Selector | Choices | Controls |
 |---|---|---|
 | Game mode | Guided Career, Standard Story | Teaching support, checks, hints, retries, and math defaults |
-| Campaign track | Series 3 Core, Extended Story | Which chapters are played |
+| Campaign track | Series 3 Core, Applied Foundations, Extended Story | Which chapters are played |
 
 Guided Career plus Series 3 Core is the recommended first play. Standard Story
 still begins with First Rotation and reports the concepts practiced through story
-decisions, but it skips optional chapter checks by default. Extended Story
-preserves all seven chapters.
+decisions, but it skips optional chapter checks by default. Applied Foundations
+preserves Core and adds The Supply Gap plus The Notice Window; Extended Story
+preserves all nine chapters in their authored dates.
 
 After The Eleventh Contract, both tracks receive a 15-question cumulative review
 and an honest Core Debrief. Learning Review permits hints, walkthroughs, and
@@ -63,15 +95,17 @@ correct first attempts, correct retries, helped completions, unknown legacy
 history, and review recommendations. It never converts chapter completion into
 independent mastery.
 
-Series 3 Core stops before No Surprises and The Diligence Room. Those chapters
-remain playable in Extended Story and are labeled business context rather than
-exam coverage. The five Core chapters take about 120 minutes; the cumulative
+Series 3 Core stops before The Supply Gap. Applied Foundations stops after The
+Notice Window review and debrief. No Surprises and The Diligence Room remain
+playable only in Extended Story and are labeled business context rather than
+exam coverage.
+The five Core chapters take about 120 minutes; the cumulative
 review and debrief bring a typical first play to about 140–150 minutes. See
 [`PLAYTEST_GUIDE.md`](PLAYTEST_GUIDE.md) for the recommended four-session manual
 playtest.
 
 The local curriculum map is
-[`content/education/series3_curriculum.yaml`](content/education/series3_curriculum.yaml).
+[`src/lake_effect_ledger/content/education/series3_curriculum.yaml`](src/lake_effect_ledger/content/education/series3_curriculum.yaml).
 It maps every implemented learning objective to the current NFA outline source,
 chapter, checks, calculations, notebook section, coverage status, and
 exam-versus-context classification. It also lists material not yet covered. This
@@ -180,6 +214,57 @@ which is never shown during gameplay.
 - Six state-derived case-file outcomes, durable relationship shifts, new
   detail-oriented and risk-seeking career tendencies, and v5 save/resume.
 
+### Applied Foundations: The Supply Gap
+
+- Three working days and nine decisions contrasting the Core forecast-sale
+  short hedge with a supported 80,000 MMBtu future-purchase long hedge.
+- A deterministic hypothetical order tape: market buy filled at $5.400, a
+  $5.380 buy limit unfilled, and a $5.410 buy stop triggered and filled at
+  $5.420. It models only authored full-fill/unfilled outcomes—not matching,
+  depth, partial fills, price guarantees, or live-market inference.
+- Cal alone authorizes and supervises transmission of eight long contracts;
+  the player prepares the recommendation and reconciliation records.
+- Exact-`Decimal` economics: $44,000 favorable physical purchase-cost variance,
+  a $36,000 long-futures variation loss, an $8,000 favorable buyer-basis effect,
+  and an $8,000 favorable combined result.
+- A season-local $120,000 initial-margin account, $84,000 post-settlement balance,
+  and $36,000 restoration. The funding transfer is not counted as a second loss.
+- Nine Guided checks, a fixed ten-question required review, and four category-
+  targeted remediation variants that never rewrite first-attempt evidence.
+- A frozen Applied assessment snapshot and isolated local ledger, cash, margin,
+  relationships, decisions, and tendencies. Core and later-story state is not mutated.
+- Limited supplement only: it deepens seven existing objectives and adds none of
+  the 23 deferred options, delivery, spread, SPAN, matching, or broad regulatory topics.
+
+### Market Structure: The Notice Window
+
+- Three working days and nine decisions built around a separate fictional
+  two-contract March Henry Hub long position that Northstar does not intend to
+  carry into delivery.
+- Futures-versus-forward and clearinghouse roles, with Northstar accessing
+  clearing through its FCM rather than being portrayed as a direct clearinghouse
+  counterparty.
+- A sourced March 2028 teaching calendar: fictional February 18 internal action
+  deadline, February 25 last trading day, February 28 Notice Day, and March 1
+  delivery-month start. Current exchange calendars remain authoritative.
+- Two authored curves using deferred minus nearby: +$0.160/MMBtu normal/contango
+  and −$0.150/MMBtu inverted/backwardation. A $0.110 carry estimate leaves a
+  $0.050 residual without claiming that curve shape proves one cause or forecast.
+- A fictional locked-limit-up state that does not guarantee a fill and preserves
+  exposure, variation-settlement, and liquidity risk without reproducing Rule
+  589 thresholds or an order book.
+- Clear delivery/EFP boundaries: an EFP requires a corresponding bona fide
+  physical or forward leg; it is not a label for an unsupported late correction.
+- Cal authorizes and supervises two sell contracts that offset the two local
+  longs. The player prepares and reconciles records but never authorizes or
+  transmits. Final local open contracts are zero and all prior records remain.
+- Nine Guided checks, a fixed ten-question review, four targeted remediation
+  variants, and a frozen v11 assessment snapshot. All state is season-local;
+  global cash, ledger, Hedge Book, audit, diligence, and career state are unchanged.
+- Limited supplement only: it adds evidence for seven market-structure objectives
+  but does not implement a matching engine, delivery operations, spreads, options,
+  position-limit logic, or the remaining regulatory curriculum.
+
 ### Milestone 6: No Surprises
 
 - Four working days and twelve durable decisions: Request List, Walkthrough,
@@ -239,17 +324,19 @@ which is never shown during gameplay.
 ## Architecture and data flow
 
 ```text
-content/
-  accounting/                    Accounts, static templates, dynamic patterns
-  audit/                         No Surprises request, controls, scenes, outcomes
-  diligence/                     Diligence requests, scenes, sensitivities, outcomes
-  chapters/                      All authored decision scenes
-  commodity/                     Contract, price path, scenario, hedge levels
-  events/                        Milestone 1 delayed consequences
-  lessons/                       Separable educational explanations
-  education/                     Modes, curriculum, checks, glossary, and sources
-  market_scenarios/              Milestone 1 dashboard market
 src/lake_effect_ledger/
+  content/
+    accounting/                  Accounts, static templates, dynamic patterns
+    audit/                       No Surprises request, controls, scenes, outcomes
+    diligence/                   Diligence requests, scenes, sensitivities, outcomes
+    chapters/                    All authored decision scenes
+    commodity/                   Contract, price path, scenario, hedge levels
+    events/                      Milestone 1 delayed consequences
+    lessons/                     Separable educational explanations
+    education/                   Modes, curriculum, checks, glossary, and sources
+    applied_foundations/         Supply Gap blueprint and authored review bank
+    notice_window/               Notice Window blueprint, calendar, curves, review
+    market_scenarios/            Milestone 1 dashboard market
   accounting/                    Balanced journal primitives and ledger
   commodity/
     models.py                    Saved physical, futures, margin, settlement state
@@ -275,10 +362,12 @@ src/lake_effect_ledger/
     engine.py                    Source projection, reconciliation, sensitivity, outcomes
     presentation.py              Request, package, schedule, Q&A, and report views
     report.py                    State-derived Diligence Room Report
+  applied_foundations/           Isolated story, finance, review, and presentation
+  notice_window/                 Isolated expiry story, review, and presentation
   education/                     Entry-derived and Hedge Book reports
   learning/                      Check rules, Core review/debrief, notebook, rendering
   narrative/                     YAML schemas, references, typed-effect engine
-  persistence/                   Versioned SQLite saves and v1-through-v9 migration
+  persistence/                   Versioned SQLite saves and v1-through-v11 migration
   cli.py                         Typer/Questionary interaction boundary
   game.py                        Initial-state construction
   presentation.py               Milestone 1 Rich rendering
@@ -296,7 +385,10 @@ validated NFA curriculum map + independent campaign track and game mode
   → chapter debrief and sectioned Learning Notebook
   → saved 15-question Learning or Checkpoint Review
   → Core Debrief using only implemented, Core-counting objectives
-  → stop at the Core boundary or continue into Extended Story context
+  → frozen Core assessment snapshot
+  → stop at Core, or run The Supply Gap and its separate fixed review/snapshot
+  → run The Notice Window and its separate fixed review/snapshot
+  → stop at Applied, or preserve dated placement among Extended Story context
 ```
 
 Optional chapters cannot inflate Core progress because their objectives are
@@ -399,7 +491,7 @@ closed if a saved schedule, package link, or formula no longer agrees. See
 [`DILIGENCE_DESIGN.md`](DILIGENCE_DESIGN.md) for invariants, failure modes, and
 scope boundaries.
 
-## Setup
+## Development setup
 
 Python 3.12 is required. From this directory in PowerShell:
 
@@ -545,6 +637,30 @@ Run the one-answer diagnostic:
 lake-ledger --quick-start --game-mode standard `
   --campaign-track series3_core --review-style checkpoint
 ```
+
+### Applied Foundations acceptance path
+
+Resume a completed Core save into the limited Applied supplement:
+
+```powershell
+lake-ledger --load-autosave --campaign-track applied_foundations `
+  --show-math on_request --save-db .\saves\applied_foundations_manual.db
+```
+
+That command is the scripted acceptance route. For a manual playtest, omit
+`--load-autosave` and choose **Load Game** from the interactive menu.
+
+Script the three representative decision paths with `--applied-path`
+`evidence_first`, `concise_operator`, or `escalation_first`. Use
+`--applied-days 2` for the first-session boundary,
+`--pause-before-applied-review` for the automatic Day 3 break, and
+`--remediation-strategy complete` or `skip` for deterministic review testing.
+
+The same Applied track continues into The Notice Window. Script its representative
+paths with `--notice-path evidence_first`, `concise_operator`, or
+`escalation_first`. Use `--notice-days 2`, `--pause-before-notice-review`,
+`--notice-check-strategy correct`, `--notice-review-strategy correct`, and
+`--notice-remediation-strategy skip` for a fast three-session acceptance run.
 
 ### Milestone 7 acceptance paths
 
@@ -1080,15 +1196,20 @@ network access.
 
 ## Save compatibility
 
-The save schema is version 9.
+The save schema is version 11.
 
-- Versions 1 through 6 migrate through the existing chain to version 7, then
-  explicitly through versions 8 and 9.
-- Version 7 Diligence Room saves migrate explicitly through versions 8 and 9.
-- Version 8 Core Campaign saves migrate explicitly to version 9.
+- Versions 1 through 10 migrate explicitly through the existing chain to version 11.
 - Migration preserves the player, resources, decisions, event log, and ledger.
 - Legacy saves default to Extended Story so previously available chapters do not
   disappear.
+- Completed v9 Core reviews with durable responses reconstruct a frozen snapshot
+  from authoritative content definitions. Older completed reviews without durable
+  attempt history record explicit unknown results; incomplete reviews receive no
+  completed snapshot.
+- Legacy Extended saves that already entered No Surprises or The Diligence Room
+  mark Applied Foundations `legacy_skipped` and never move backward.
+- Legacy v10 saves that already entered The Diligence Room mark The Notice Window
+  `legacy_skipped`; other v10 saves can continue forward into the new season.
 - Completed legacy checks remain completed, but missing first-attempt history is
   labeled `completed_history_unknown`; migration does not invent independent
   mastery.
@@ -1122,6 +1243,10 @@ The save schema is version 9.
 - Version 9 persists one-time character introductions. Migration infers
   previously met existing characters from chapter progress without pretending
   the two newly added contacts appeared in older content.
+- Version 10 persists append-only Core and Applied assessment snapshots plus the
+  isolated Supply Gap story, financial, review, relationship, and decision state.
+- Version 11 persists The Notice Window's local position, curve calculations,
+  sourced record chain, relationships, decisions, review, and frozen snapshot.
 - Early native-v5 chapter saves without the explicit reconciliation envelope
   rebuild that typed link from the preserved lifecycle records when play resumes.
 
@@ -1143,10 +1268,10 @@ Run formatting, linting, and the complete suite:
 
 The suite covers:
 
-- independent Guided/Standard modes and Core/Extended tracks, background
-  introductions, all 38 check answers, five check types, glossary/source/topic
+- independent Guided/Standard modes and Core/Applied/Extended tracks, background
+  introductions, all 84 check answers, five check types, glossary/source/topic
   references, and broken content;
-- all 37 implemented objectives mapped exactly once to curriculum status,
+- all 44 implemented objectives mapped exactly once to curriculum status,
   chapter, checks, calculations, notebook section, source, and Core eligibility;
 - rejection of missing mappings, context counted as Core, covered objectives
   without practice, formula drift, concepts tested before introduction, missing
@@ -1168,8 +1293,8 @@ The suite covers:
 - initial margin, maintenance breaches, calls, insufficient cash, and release;
 - balanced entries and cash/FCM reconciliation after every settlement;
 - deterministic replay and mid-scenario save/resume;
-- explicit v1-through-v9, v2-through-v9, v3-through-v9, v4-through-v9,
-  v5-through-v9, v6-through-v9, v7-through-v9, and v8-to-v9 migration;
+- explicit v1-through-v11 migration, completed/incomplete v9 reconstruction,
+  unknown older assessment history, legacy Applied/Notice skips, and invalid-save errors;
 - invalid contract, path, date, price, side, margin, hedge, effect, and lesson data;
 - documentation independence from market P&L;
 - actual-path learning-report reconciliation;
@@ -1224,10 +1349,10 @@ This remains a vertical-slice prototype:
 - No commissions, bid/ask spread, taxes, borrowing-base model, or interest on
   margin.
 - No physical delivery through the futures contract.
-- Series 3 Core is not a complete exam-preparation product or mock exam. It does
-  not yet teach clearinghouse and delivery mechanics; first-notice, last-trading,
-  spot-month, price-limit, normal/inverted-market, and full carry concepts;
-  spreads; speculative return/margin calculations; options; technical or
+- Series 3 Core is not a complete exam-preparation product or mock exam. The
+  later Notice Window now introduces clearing, delivery/notice, spot-month,
+  price-limit, curve-shape, and carrying-charge concepts, but the game still
+  does not teach spreads; speculative return/margin calculations; options; technical or
   fundamental analysis; registration categories; customer-account rules;
   CPO/CTA rules; promotional material; reporting and position limits; or the
   broader regulatory, arbitration, and disciplinary outline.
@@ -1243,11 +1368,13 @@ This remains a vertical-slice prototype:
 - The diligence subsystem stores structured references and versions, not files.
   It is not a virtual data room, valuation model, covenant-waiver tool, legal
   opinion workflow, or generalized M&A platform.
-- Source-tree editable installation is supported; wheel resource packaging is not
-  yet configured.
 - The CLI returns at a clearly rendered main-menu boundary after Core completion;
   it does not redraw the menu within the same process invocation.
 
 This is still a production-shaped prototype, not a production treasury or trading
 system. Live prices, exchange/FCM margin models, legal lender terms, multi-user
 authorization, and full derivatives accounting remain deliberately out of scope.
+
+## License
+
+Lake Effect Ledger is available under the [MIT License](LICENSE).

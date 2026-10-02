@@ -70,6 +70,8 @@ def _rebuild_content(content, **overrides):
             "audit_learning",
             "diligence_scenario",
             "diligence_learning",
+            "applied_foundations",
+            "notice_window",
         )
     }
     values.update(overrides)
@@ -78,6 +80,7 @@ def _rebuild_content(content, **overrides):
 
 def test_campaign_tracks_separate_scope_from_game_mode(content) -> None:
     core = content.campaign_track(CampaignTrack.SERIES_3_CORE)
+    applied = content.campaign_track(CampaignTrack.APPLIED_FOUNDATIONS)
     extended = content.campaign_track(CampaignTrack.EXTENDED_STORY)
     assert core.chapter_ids == [
         "first_rotation",
@@ -86,8 +89,14 @@ def test_campaign_tracks_separate_scope_from_game_mode(content) -> None:
         "two_oclock_call",
         "eleventh_contract",
     ]
-    assert extended.chapter_ids[:5] == core.chapter_ids
-    assert extended.chapter_ids[-2:] == ["no_surprises", "diligence_room"]
+    assert applied.chapter_ids == [*core.chapter_ids, "supply_gap", "notice_window"]
+    assert extended.chapter_ids == [
+        *core.chapter_ids,
+        "supply_gap",
+        "no_surprises",
+        "notice_window",
+        "diligence_room",
+    ]
 
 
 def test_new_guided_game_defaults_to_recommended_core_track(content) -> None:
@@ -500,7 +509,7 @@ def test_v7_migration_defaults_extended_and_marks_history_unknown(
         )
     restored = repository.load()
     restored_progress = restored.learning.checks["d1_physical_direction"]
-    assert restored.save_schema_version == 9
+    assert restored.save_schema_version == 11
     assert restored.campaign_track == CampaignTrack.EXTENDED_STORY
     assert restored_progress.completed
     assert restored_progress.first_attempt_correct is None

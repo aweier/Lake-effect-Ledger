@@ -277,7 +277,7 @@ checks:
       - {id: excess_50000, text: "50,000 MMBtu"}
       - {id: excess_100000, text: "100,000 MMBtu"}
       - {id: excess_150000, text: "150,000 MMBtu"}
-      - {id: excess_zero, text: Zero, because the position is called a hedge}
+      - {id: excess_zero, text: "Zero, because the position is called a hedge"}
     correct_option_id: excess_50000
     explanation: Fifteen contracts represent 150,000 MMBtu; 50,000 exceeds the stated exposure.
     wrong_answer_feedback:
@@ -377,7 +377,7 @@ checks:
     learning_objective_ids: [hedge_documentation]
     source_id: cftc_market_basics
     options:
-      - {id: complete_purpose, text: Hedge Henry Hub price risk on a forecast 100,000 MMBtu Chicago sale; basis risk remains; approved before trade.}
+      - {id: complete_purpose, text: "Hedge Henry Hub price risk on a forecast 100,000 MMBtu Chicago sale; basis risk remains; approved before trade."}
       - {id: profit_purpose, text: Sell ten contracts because the desk expects prices to fall and profits would help the quarter.}
       - {id: vague_purpose, text: Trade as needed for general market reasons.}
     correct_option_id: complete_purpose
@@ -394,8 +394,8 @@ checks:
     learning_objective_ids: [short_futures_hedge, daily_settlement_margin]
     source_id: nfa_series3_outline
     options:
-      - {id: loss_and_lower_margin, text: It has a daily loss, reducing margin cash.}
-      - {id: gain_and_higher_margin, text: It has a daily gain, increasing margin cash.}
+      - {id: loss_and_lower_margin, text: "It has a daily loss, reducing margin cash."}
+      - {id: gain_and_higher_margin, text: "It has a daily gain, increasing margin cash."}
       - {id: no_daily_effect, text: Nothing happens until contract expiration.}
     correct_option_id: loss_and_lower_margin
     explanation: Short futures lose when settlement rises, and the loss is settled daily.

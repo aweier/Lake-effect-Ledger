@@ -42,7 +42,7 @@ def test_milestone_2_save_migrates_through_schema_3_to_schema_6(
 
     restored = repository.load()
 
-    assert restored.save_schema_version == 9
+    assert restored.save_schema_version == 11
     assert restored.no_surprises is None
     assert restored.eleventh_contract is None
     assert restored.game_mode.value == "standard"

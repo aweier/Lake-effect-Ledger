@@ -30,6 +30,7 @@ class PositionSide(StrEnum):
 
 class PhysicalDirection(StrEnum):
     LONG = "long"
+    SHORT = "short"
 
 
 class HedgeOutcome(StrEnum):

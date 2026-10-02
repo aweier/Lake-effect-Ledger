@@ -12,7 +12,7 @@ from lake_effect_ledger.treasury.engine import TreasuryEngine
 
 @pytest.fixture(scope="session")
 def content_root() -> Path:
-    return Path(__file__).resolve().parents[1] / "content"
+    return Path(__file__).resolve().parents[1] / "src" / "lake_effect_ledger" / "content"
 
 
 @pytest.fixture(scope="session")

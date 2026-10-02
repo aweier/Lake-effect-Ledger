@@ -6,6 +6,7 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from lake_effect_ledger.commodity.models import PositionSide
 from lake_effect_ledger.learning.calculations import calculate_answer
 from lake_effect_ledger.learning.core import CoreDebrief, CoreReviewDiagnostic
 from lake_effect_ledger.learning.models import (
@@ -18,12 +19,38 @@ from lake_effect_ledger.learning.models import (
 from lake_effect_ledger.narrative.models import ContentBundle
 from lake_effect_ledger.state import GameState
 
+FORMULAS_BY_KIND = {
+    CalculationKind.FUTURES_PNL: "signed price change × contract size × contracts",
+    CalculationKind.TICK_VALUE: "minimum tick × contract size",
+    CalculationKind.REGIONAL_PRICE: "Henry Hub + regional basis",
+    CalculationKind.HEDGE_RATIO: "futures quantity ÷ physical quantity",
+    CalculationKind.MARGIN_CALL: ("initial requirement - balance, when balance < maintenance"),
+    CalculationKind.CONTRACT_COUNT: "physical quantity ÷ contract size",
+    CalculationKind.BUYER_PHYSICAL_VARIANCE: (
+        "(initial regional price - final regional price) × physical quantity"
+    ),
+    CalculationKind.COMBINED_ECONOMIC_RESULT: ("physical purchase-cost variance + futures result"),
+    CalculationKind.CONTRACT_MONTH_SPREAD: "deferred contract price - nearby contract price",
+    CalculationKind.DELIVERY_CONTRACT_VALUE: ("final settlement price × contract size × contracts"),
+}
+
 FORMULAS = (
-    ("Regional price", "Henry Hub + regional basis"),
-    ("Futures P&L", "signed price change × contract size × contracts"),
-    ("Tick value", "minimum tick × contract size"),
-    ("Hedge ratio", "futures quantity ÷ physical quantity"),
-    ("Margin call", "initial requirement - balance, when balance < maintenance"),
+    ("Regional price", FORMULAS_BY_KIND[CalculationKind.REGIONAL_PRICE]),
+    ("Futures P&L", FORMULAS_BY_KIND[CalculationKind.FUTURES_PNL]),
+    ("Tick value", FORMULAS_BY_KIND[CalculationKind.TICK_VALUE]),
+    ("Hedge ratio", FORMULAS_BY_KIND[CalculationKind.HEDGE_RATIO]),
+    ("Margin call", FORMULAS_BY_KIND[CalculationKind.MARGIN_CALL]),
+    ("Contract count", FORMULAS_BY_KIND[CalculationKind.CONTRACT_COUNT]),
+    (
+        "Buyer purchase-cost variance",
+        FORMULAS_BY_KIND[CalculationKind.BUYER_PHYSICAL_VARIANCE],
+    ),
+    (
+        "Combined economic result",
+        FORMULAS_BY_KIND[CalculationKind.COMBINED_ECONOMIC_RESULT],
+    ),
+    ("Contract-month spread", FORMULAS_BY_KIND[CalculationKind.CONTRACT_MONTH_SPREAD]),
+    ("Delivery contract value", FORMULAS_BY_KIND[CalculationKind.DELIVERY_CONTRACT_VALUE]),
 )
 
 
@@ -72,23 +99,16 @@ def render_check_math(
     check: KnowledgeCheckDefinition,
     content: ContentBundle,
 ) -> None:
-    formulas = {
-        CalculationKind.FUTURES_PNL: "Short P&L = (previous - current) × contract size × contracts",
-        CalculationKind.TICK_VALUE: "Tick value = minimum tick × contract size",
-        CalculationKind.REGIONAL_PRICE: "Regional price = Henry Hub + basis",
-        CalculationKind.HEDGE_RATIO: (
-            "Hedge ratio = (contracts × contract size) ÷ physical quantity"
-        ),
-        CalculationKind.MARGIN_CALL: (
-            "If balance < maintenance: call = initial requirement - balance"
-        ),
-    }
     if check.calculation is not None:
         answer = calculate_answer(check, content)
-        text = (
-            f"{formulas[check.calculation.kind]}\n"
-            f"Shared-engine result: {answer} {check.numeric_rule.answer_unit}"
-        )
+        formula = FORMULAS_BY_KIND[check.calculation.kind]
+        if check.calculation.kind == CalculationKind.FUTURES_PNL:
+            formula = (
+                "Long P&L = (current - previous) × contract size × contracts"
+                if check.calculation.side == PositionSide.LONG
+                else "Short P&L = (previous - current) × contract size × contracts"
+            )
+        text = f"{formula}\nShared-engine result: {answer} {check.numeric_rule.answer_unit}"
     else:
         text = "Compare the position direction, timing, exposure, and stated purpose."
     console.print(Panel(text, title="Math / reasoning frame", border_style="magenta"))
@@ -203,15 +223,6 @@ def render_notebook(console: Console, state: GameState, content: ContentBundle) 
     if not state.learning.notebook.worked_example_ids:
         examples.add_row("None yet", "Use a walkthrough to save an example.", "—")
     console.print(examples)
-
-
-FORMULAS_BY_KIND = {
-    CalculationKind.FUTURES_PNL: "signed price change × contract size × contracts",
-    CalculationKind.TICK_VALUE: "minimum tick × contract size",
-    CalculationKind.REGIONAL_PRICE: "Henry Hub + regional basis",
-    CalculationKind.HEDGE_RATIO: "futures quantity ÷ physical quantity",
-    CalculationKind.MARGIN_CALL: ("initial requirement - balance, when balance < maintenance"),
-}
 
 
 def render_core_chapter_opening(

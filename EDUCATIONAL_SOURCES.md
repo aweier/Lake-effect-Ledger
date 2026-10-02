@@ -1,7 +1,7 @@
 # Educational sources
 
-Checked July 26, 2026. These primary sources support the stable educational
-concepts used in Milestones 2 through 7. Runtime gameplay and tests use local
+Checked August 27, 2026. These primary sources support the stable educational
+concepts used in the Core, Applied, and Extended paths. Runtime gameplay and tests use local
 fictional configuration and do not require network access.
 
 ## CME Group
@@ -20,14 +20,24 @@ fictional configuration and do not require network access.
     adjustments.
 - [Futures Order Types](https://www.cmegroup.com/education/courses/futures-trading-mechanics-and-regulation/futures-order-types)
   - Distinguishes market, limit, and stop orders.
-  - A sell limit defines the seller's minimum acceptable price and may remain
-    unfilled; a stop requires a trigger before it becomes executable.
+  - A buy limit defines the buyer's maximum price and may remain unfilled; a
+    stop requires a market trigger before it becomes executable.
+  - CME's actual electronic order protections and possible partial fills are
+    broader than the game's deliberately simplified authored full-fill examples.
 - [What happens when you submit an order?](https://www.cmegroup.com/education/courses/futures-trading-mechanics-and-regulation/what-happens-when-you-submit-an-order)
   - Describes broker checks, exchange acceptance, matching, fills, clearing, and
     controls on contract type and quantity.
 - [Closing Your Position](https://www.cmegroup.com/education/courses/things-to-know-before-trading-cme-futures/closing-your-position)
   - An open futures position is closed with an opposite position in the same
     contract; released margin then becomes available.
+- [What Is Contango and Backwardation?](https://www.cmegroup.com/education/courses/introduction-to-ferrous-metals/what-is-contango-and-backwardation)
+  - A deferred price above the nearby price is commonly called contango or a
+    normal market; the reverse shape is backwardation or an inverted market.
+  - Curve shape can be discussed alongside carrying costs, but the curve alone
+    does not prove a particular storage-cost explanation.
+- [NYMEX Rulebook Chapter 5 — Rule 538 Exchange for Related Positions](https://www.cmegroup.com/rulebook/NYMEX/1/5.pdf)
+  - An exchange of futures for physical (EFP) is a type of exchange for related
+    positions and requires a corresponding bona fide related transaction.
 
 ## CFTC
 
@@ -36,6 +46,9 @@ fictional configuration and do not require network access.
   - Initial margin is a performance bond rather than a purchase down payment.
   - Futures positions are marked to market daily.
   - A maintenance breach can require funding back to initial margin.
+  - A losing long position debits the margin account as the market falls; adding
+    funds after a maintenance breach restores account collateral and does not
+    create a second trading loss.
 - [CFTC Futures Glossary](https://www.cftc.gov/LearnAndProtect/AdvisoriesAndArticles/CFTCGlossary/index.htm)
   - Definitions for basis risk, hedge ratio, margin, margin calls, variation
     margin, and mark-to-market.
@@ -121,14 +134,24 @@ federal entity.
 
 - [NFA Study Outline for Futures Industry Exams](https://www.nfa.futures.org/registration-membership/study-outlines/index.html)
   - The local curriculum map was reviewed against the current Series 3 outline
-    on July 26, 2026.
+    on August 27, 2026.
   - Implemented Core material includes futures foundations, short and long
     hedging, basis, hedge calculations, daily settlement, initial and
     maintenance margin, margin calls, basic order types, offsets, and selected
     recordkeeping and ethical-conduct concepts.
+  - The later Notice Window adds clearinghouse/forward distinctions, delivery
+    and notice timing, spot-month risk, price/lock limits, normal/inverted curves,
+    and carrying-charge interpretation without rewriting historical Core results.
   - The outline also contains substantial material that the game does not yet
-    teach. `content/education/series3_curriculum.yaml` lists those topics
+    teach. `src/lake_effect_ledger/content/education/series3_curriculum.yaml` lists those topics
     explicitly as future curriculum rather than implying full exam coverage.
+- [NFA Compliance Rule 2-10 recordkeeping material](https://www.nfa.futures.org/rulebooksql/rules.aspx?RuleID=9029&Section=9)
+  - Supports durable, independently verifiable order and allocation records in
+    its actual member context.
+  - The Supply Gap uses that source only for the educational importance of
+    preserving records. Northstar's support, recommendation, authorization,
+    transmission, confirmation, reconciliation, and review chain is fictional
+    internal workflow—not an asserted NFA-mandated sequence.
 - [NFA Rulebook](https://www.nfa.futures.org/rulebook/rules.aspx)
   - Includes NFA Compliance Rule 2-9 supervision requirements and related
     interpretive materials for NFA members.
@@ -158,6 +181,20 @@ requirements:
 - The Eleventh Contract dates, intraday observations, fills, trigger behavior,
   physical-volume outcome, order and authorization IDs, FCM confirmation,
   control workflow, Chicago basis, and fish-fry events.
+- The Supply Gap pipeline event, 80,000 MMBtu requirement, 65,000/15,000 support
+  split, all prices and margin levels, order tape, full-fill assumptions,
+  facilities, characters, and Northstar authorization chain.
+- The Supply Gap physical purchase has not occurred. Its $44,000 amount is an
+  authored purchase-cost variance, not realized physical P&L.
+- The Notice Window's two-contract position, March/April prices, carry estimate,
+  locked-limit state, Northstar February 18 deadline, delivery-capacity memo,
+  offset, FCM records, and authority chain are fictional and season-local.
+- The February 25 last-trading date and February 28 Notice Day are authored
+  teaching dates derived from the Chapter 220 rule and ordinary weekdays. Real
+  exchange calendars and current rules remain authoritative.
+- The game models no exchange order book, queue, partial fills, Rule 589
+  thresholds, pipeline nominations, delivery operations, or matching. EFP is
+  taught only as an EFRP requiring a corresponding bona fide related-position leg.
 - The No Surprises engagement, request list, control objectives and activities,
   Northstar severity labels, test results, findings, target dates, management
   responses, outcomes, and board/lender/buyer interest.

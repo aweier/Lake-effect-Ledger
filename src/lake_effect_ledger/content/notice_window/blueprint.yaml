@@ -1,0 +1,714 @@
+schema_version: 1
+season:
+  id: notice_window
+  title: Market Structure
+  chapter_id: notice_window
+  chapter_title: The Notice Window
+  start_date: 2028-02-05
+  end_date: 2028-02-07
+  estimated_minutes: 75
+  role: Junior Commodity Risk Analyst
+  purpose: >-
+    Move from daily hedge management to the contract calendar: who stands between
+    counterparties, what the curve communicates, and what an open physically delivered
+    futures position can require as trading terminates.
+  supplement_limit: >-
+    The Notice Window is a focused Series 3 supplement. It does not simulate a clearing
+    house, pipeline nominations, warehouse instruments, matching, or exchange operations.
+  coverage_additions:
+    - clearinghouse_mechanics
+    - delivery
+    - first_notice_day
+    - spot_month
+    - price_and_lock_limits
+    - normal_inverted_markets
+    - carrying_charges
+  supporting_objectives:
+    - offset_preserves_history
+    - trade_lifecycle
+    - records_and_ethical_conduct
+
+scenario:
+  id: notice_window_case
+  fictional: true
+  contract_id: cme_henry_hub_ng
+  nearby_contract_month: 2028-03
+  deferred_contract_month: 2028-04
+  open_side: long
+  open_contracts: 2
+  contract_size_mmbtu: 10000
+  delivery_month_start: 2028-03-01
+  exchange_last_trading_day: 2028-02-25
+  exchange_notice_day: 2028-02-28
+  delivery_month_end: 2028-03-31
+  northstar_internal_action_deadline: 2028-02-18
+  normal_curve:
+    id: normal_curve_open
+    nearby_price: 5.120
+    deferred_price: 5.280
+    classification: normal
+    explanation: >-
+      The deferred contract is $0.160/MMBtu above the nearby contract. Carry can help
+      explain an upward slope, but the curve is not a guaranteed forecast.
+  inverted_curve:
+    id: scarcity_curve
+    nearby_price: 5.460
+    deferred_price: 5.310
+    classification: inverted
+    explanation: >-
+      The nearby contract is $0.150/MMBtu above the deferred contract. The authored
+      scarcity event makes immediate supply more valuable; inversion is not proof of one cause.
+  authored_carry_estimate: 0.110
+  planned_resolution: offset_before_internal_deadline
+  offset_contracts: 2
+  final_open_contracts: 0
+  delivery_intended: false
+  limit_state:
+    fictional: true
+    state: locked_limit_up
+    resting_orders_guaranteed_fills: false
+    margin_effect_possible: true
+    disclaimer: >-
+      This is an authored teaching state. It does not reproduce Rule 589 thresholds,
+      expanded-limit procedures, order-book depth, or a live exchange.
+  assumptions:
+    - The two-contract position and all prices are fictional and season-local.
+    - The March 2028 calendar is authored from the Chapter 220 termination rule and ordinary weekdays; exchange calendars remain authoritative.
+    - Northstar's February 18 action deadline is fictional and is not an exchange requirement.
+    - Northstar does not intend to make or take delivery through the futures contract.
+    - The curve examples assign no probability and do not predict spot or futures prices.
+    - The limit state models no fills, partial fills, queue priority, or exact exchange thresholds.
+    - An EFP is presented as one kind of bona fide EFRP with a corresponding physical or forward leg, not as an emergency label.
+
+record_chain:
+  - {id: fcm_expiration_report, owner: lakefront_fcm, status: received}
+  - {id: contract_rule_source, owner: player, status: linked}
+  - {id: calendar_verification, owner: kasia_zielinska, prepared_with: player, status: verified}
+  - {id: delivery_capacity_memo, owner: marisol_vega, status: no_delivery_intent}
+  - {id: expiry_recommendation, owner: player, status: prepared}
+  - {id: offset_authorization, owner: cal_rourke, status: authorized}
+  - {id: supervised_transmission, owner: cal_rourke, status: transmitted_under_supervision}
+  - {id: offset_execution, owner: lakefront_fcm, status: filled}
+  - {id: original_confirmation, owner: lakefront_fcm, status: preserved}
+  - {id: reconciliation, owner: kasia_zielinska, prepared_with: player, status: reconciled}
+  - {id: control_review, owner: evelyn_marsh, status: reviewed}
+
+days:
+  - id: counterparty_you_do_not_see
+    day_number: 1
+    date: 2028-02-05
+    title: The Counterparty You Do Not See
+    lead_characters: [cal_rourke, kasia_zielinska]
+    teaching_points:
+      - A standardized exchange-traded future and a bilateral forward create different offset and counterparty structures.
+      - The clearing house becomes buyer to clearing-member sellers and seller to clearing-member buyers.
+      - Contract-specific rules and the exchange calendar control termination and notice timing.
+    decision_ids: [nw_contract_classification, nw_clearing_chain, nw_calendar_source]
+    check_ids: [nw_future_forward, nw_clearinghouse_role, nw_last_trade_date]
+    boundary:
+      autosave: true
+      allow_return_to_menu: true
+      message: Day 1 is saved after the sourced March contract calendar is verified.
+
+  - id: curve_bends
+    day_number: 2
+    date: 2028-02-06
+    title: The Curve Bends
+    lead_characters: [tj_morrow, marisol_vega]
+    teaching_points:
+      - Deferred-minus-nearby is positive in the authored normal curve and negative in the authored inverted curve.
+      - Carry can contribute to a normal curve; scarcity can contribute to inversion, but neither label proves a single cause.
+      - A limit or locked market constrains trading and can increase liquidity and margin pressure without guaranteeing fills.
+    decision_ids: [nw_curve_explanation, nw_inversion_warning, nw_limit_liquidity]
+    check_ids: [nw_curve_spread, nw_curve_classification, nw_locked_market]
+    boundary:
+      autosave: true
+      allow_return_to_menu: true
+      message: Day 2 is saved after the curve and limit-state briefing is preserved.
+
+  - id: before_notice
+    day_number: 3
+    date: 2028-02-07
+    title: Before the Notice
+    lead_characters: [marisol_vega, evelyn_marsh]
+    teaching_points:
+      - Open March NG positions remaining after termination proceed toward delivery or a permitted bona fide EFRP under the applicable rules.
+      - An EFP requires a corresponding physical or forward transaction; it is not a label for an unsupported late correction.
+      - An equal opposite futures trade offsets the local position prospectively while preserving authorization, execution, and confirmation history.
+    decision_ids: [nw_delivery_intent, nw_resolution_route, nw_final_packet]
+    check_ids: [nw_post_termination, nw_efp_substance, nw_offset_position]
+    boundary:
+      autosave: true
+      allow_return_to_menu: true
+      retention_message: >-
+        The Notice Window is saved. You may continue to its review or take a retention break.
+
+decisions:
+  - id: nw_contract_classification
+    day: 1
+    title: Two Contracts Called Contracts
+    prompt: How do you distinguish the March future from Northstar's bilateral supply forward?
+    choices:
+      - id: nw_classification_columns
+        text: Keep separate columns for standardized cleared futures and negotiated bilateral forwards, including how each obligation is closed.
+        relationship_deltas: {kasia_zielinska: 2}
+        tendency_tags: {detail_oriented: 2, precision: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_classification_matrix
+        text: Send Cal a concise comparison matrix and link the full contract records beneath it.
+        relationship_deltas: {cal_rourke: 2}
+        tendency_tags: {commercial_judgment: 2, precision: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 2
+      - id: nw_classification_walkthrough
+        text: Ask Kasia to join a short desk walkthrough and preserve the resulting distinction in the expiry file.
+        relationship_deltas: {kasia_zielinska: 1, cal_rourke: 1}
+        tendency_tags: {cooperative: 2, stakeholder_aware: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+
+  - id: nw_clearing_chain
+    day: 1
+    title: The Middle of Every Trade
+    prompt: How do you explain the clearing relationship without implying that Northstar trades directly with the Clearing House?
+    choices:
+      - id: nw_chain_roles
+        text: Diagram Northstar, its FCM and clearing member, and the Clearing House as distinct roles with distinct records.
+        relationship_deltas: {kasia_zielinska: 2}
+        tendency_tags: {control_minded: 2, detail_oriented: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_chain_counterparty
+        text: Lead with the central-counterparty concept, then explain that Northstar accesses clearing through its FCM relationship.
+        relationship_deltas: {cal_rourke: 2}
+        tendency_tags: {precision: 2, commercial_judgment: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: nw_chain_source_note
+        text: Put the concise explanation in the briefing and attach the CFTC source note for anyone who wants the full structure.
+        relationship_deltas: {evelyn_marsh: 1, cal_rourke: 1}
+        tendency_tags: {stakeholder_aware: 2, precision: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+
+  - id: nw_calendar_source
+    day: 1
+    title: Friday or Monday
+    prompt: The FCM report and an old spreadsheet disagree on the March termination date. What record do you create?
+    choices:
+      - id: nw_calendar_rule_link
+        text: Link Chapter 220, calculate the date from March 1, and retain the conflicting spreadsheet as superseded evidence.
+        relationship_deltas: {kasia_zielinska: 2, evelyn_marsh: 1}
+        tendency_tags: {principled: 1, detail_oriented: 2}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_calendar_exception_note
+        text: Issue a concise exception note with the verified date, source, owner, and Northstar's earlier internal deadline.
+        relationship_deltas: {cal_rourke: 2}
+        tendency_tags: {commercial_judgment: 2, control_minded: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+      - id: nw_calendar_dual_review
+        text: Route the discrepancy to Kasia and Evelyn for written verification before the expiry file is marked final.
+        relationship_deltas: {kasia_zielinska: 1, evelyn_marsh: 2}
+        tendency_tags: {cooperative: 2, challenges_management: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 1
+
+  - id: nw_curve_explanation
+    day: 2
+    title: Sixteen Cents Up the Curve
+    prompt: How do you explain March at $5.120 and April at $5.280 without calling April a forecast?
+    choices:
+      - id: nw_curve_spread_first
+        text: Calculate deferred minus nearby, then separate observable curve shape from possible carry explanations.
+        relationship_deltas: {tj_morrow: 2}
+        tendency_tags: {precision: 2, detail_oriented: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_curve_business_first
+        text: Start with storage, financing, and scheduling implications, then show the sixteen-cent spread.
+        relationship_deltas: {marisol_vega: 2}
+        tendency_tags: {commercial_judgment: 2, stakeholder_aware: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: nw_curve_chart_first
+        text: Use a two-point curve chart with an explicit note that slope is not a guaranteed price prediction.
+        relationship_deltas: {tj_morrow: 1, marisol_vega: 1}
+        tendency_tags: {stakeholder_aware: 2, candor: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 2
+
+  - id: nw_inversion_warning
+    day: 2
+    title: Scarcity Changes the Shape
+    prompt: The authored tape flips to March $5.460 and April $5.310. How do you frame the inversion?
+    choices:
+      - id: nw_inversion_signed
+        text: Show the negative deferred-minus-nearby spread and describe immediate supply value without claiming one proven cause.
+        relationship_deltas: {tj_morrow: 2}
+        tendency_tags: {precision: 2, candor: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_inversion_operations
+        text: Lead with the scheduling pressure that makes nearby supply valuable, then qualify the market inference.
+        relationship_deltas: {marisol_vega: 2}
+        tendency_tags: {commercial_judgment: 2, candor: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: nw_inversion_scenarios
+        text: Present scarcity as one authored explanation alongside other possible drivers and preserve the assumptions.
+        relationship_deltas: {evelyn_marsh: 1, tj_morrow: 1}
+        tendency_tags: {control_minded: 1, stakeholder_aware: 2}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+
+  - id: nw_limit_liquidity
+    day: 2
+    title: A Price Is Not a Fill
+    prompt: The fictional training screen is locked limit-up. What warning goes to Cal and June?
+    choices:
+      - id: nw_limit_no_fill
+        text: State that the displayed limit does not guarantee executable liquidity and quantify no fill that did not occur.
+        relationship_deltas: {cal_rourke: 1, june_halvorsen: 2}
+        tendency_tags: {candor: 2, precision: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_limit_cash_warning
+        text: Lead with possible margin and cash pressure, then explain the authored limit-state assumptions.
+        relationship_deltas: {june_halvorsen: 2}
+        tendency_tags: {stakeholder_aware: 2, commercial_judgment: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: nw_limit_joint_note
+        text: Send one desk-and-Treasury note separating observed price state, execution uncertainty, and cash contingencies.
+        relationship_deltas: {cal_rourke: 1, june_halvorsen: 1}
+        tendency_tags: {cooperative: 2, control_minded: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 2
+
+  - id: nw_delivery_intent
+    day: 3
+    title: Gas at Henry Hub
+    prompt: Marisol confirms Northstar does not intend or operationally prepare to take exchange delivery. How do you preserve that fact?
+    choices:
+      - id: nw_intent_capacity_memo
+        text: Attach Marisol's delivery-capacity memo and distinguish no delivery intent from an inability to ignore the open contract.
+        relationship_deltas: {marisol_vega: 2}
+        tendency_tags: {detail_oriented: 2, control_minded: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_intent_expiry_brief
+        text: Put the no-delivery conclusion at the top of the expiry brief and link the operational support beneath it.
+        relationship_deltas: {cal_rourke: 1, marisol_vega: 1}
+        tendency_tags: {commercial_judgment: 2, precision: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: nw_intent_control_copy
+        text: Route the signed operational conclusion to Cal and Evelyn before proposing any position action.
+        relationship_deltas: {evelyn_marsh: 2}
+        tendency_tags: {principled: 1, cooperative: 2}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+
+  - id: nw_resolution_route
+    day: 3
+    title: Offset Is the Plan
+    prompt: How do you route the two-contract offset while keeping EFP terminology accurate?
+    choices:
+      - id: nw_route_plain_offset
+        text: Recommend an ordinary two-contract opposite futures trade before the internal deadline and state that no EFP is needed.
+        relationship_deltas: {cal_rourke: 2}
+        tendency_tags: {precision: 2, commercial_judgment: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_route_efp_boundary
+        text: Explain that an EFP would require a bona fide corresponding physical or forward leg, which this file does not contain.
+        relationship_deltas: {evelyn_marsh: 2}
+        tendency_tags: {principled: 2, control_minded: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+      - id: nw_route_supervised_ticket
+        text: Prepare the offset ticket and rule note for Cal's authorization and supervised transmission.
+        relationship_deltas: {cal_rourke: 1, kasia_zielinska: 1}
+        tendency_tags: {cooperative: 2, detail_oriented: 1}
+        evidence_delta: 1
+        documentation_delta: 2
+        communication_delta: 2
+
+  - id: nw_final_packet
+    day: 3
+    title: Zero Open Does Not Mean Zero History
+    prompt: The offset fills and the local position is zero. What goes into the final packet?
+    choices:
+      - id: nw_packet_full_chain
+        text: Preserve the original position, authorization, offset execution, confirmation, and zero-position reconciliation as linked records.
+        relationship_deltas: {kasia_zielinska: 2, evelyn_marsh: 1}
+        tendency_tags: {detail_oriented: 2, principled: 1}
+        evidence_delta: 2
+        documentation_delta: 2
+        communication_delta: 1
+      - id: nw_packet_exception_summary
+        text: Lead with a concise calendar-and-resolution summary and retain every underlying predecessor record.
+        relationship_deltas: {cal_rourke: 2}
+        tendency_tags: {commercial_judgment: 2, control_minded: 1}
+        evidence_delta: 1
+        documentation_delta: 1
+        communication_delta: 2
+      - id: nw_packet_review_index
+        text: Give Evelyn a source index that ties rule, calendar, delivery intent, authorization, execution, and reconciliation together.
+        relationship_deltas: {evelyn_marsh: 2}
+        tendency_tags: {control_minded: 2, stakeholder_aware: 1}
+        evidence_delta: 2
+        documentation_delta: 1
+        communication_delta: 2
+
+checks:
+  - id: nw_future_forward
+    day: 1
+    check_type: multiple_choice
+    category: conceptual
+    prompt: Which distinction between an exchange-traded future and a bilateral forward is accurate?
+    objectives: [clearinghouse_mechanics]
+    source_id: cftc_economic_purpose
+    options:
+      - {id: standardized_cleared, text: "The future is standardized and cleared; a separate bilateral forward is not extinguished by trading an equal future."}
+      - {id: both_clear, text: "Both contracts automatically clear through the same clearing house."}
+      - {id: forward_offsets, text: "Selling an equal future automatically offsets the bilateral forward."}
+    correct_option_id: standardized_cleared
+    explanation: The contracts use different counterparty and offset structures.
+  - id: nw_clearinghouse_role
+    day: 1
+    check_type: multiple_choice
+    category: conceptual
+    prompt: What central role does the futures clearing house perform?
+    objectives: [clearinghouse_mechanics]
+    source_id: cftc_economic_purpose
+    options:
+      - {id: central_counterparty, text: "It becomes buyer to clearing-member sellers and seller to clearing-member buyers."}
+      - {id: price_forecaster, text: "It guarantees the future market price."}
+      - {id: physical_scheduler, text: "It schedules Northstar's Chicago physical gas purchases."}
+    correct_option_id: central_counterparty
+    explanation: Clearing interposes a central counterparty; it does not guarantee price or manage Northstar's physical book.
+  - id: nw_last_trade_date
+    day: 1
+    check_type: multiple_choice
+    category: conceptual
+    prompt: March delivery starts Wednesday, March 1, 2028. Under the authored Chapter 220 calendar, when does trading terminate?
+    objectives: [first_notice_day, spot_month, delivery]
+    source_id: cme_ng_contract
+    options:
+      - {id: friday_feb_25, text: "Friday, February 25—the third business day before March 1."}
+      - {id: monday_feb_28, text: "Monday, February 28—the first business day before March 1."}
+      - {id: wednesday_mar_1, text: "Wednesday, March 1—when delivery begins."}
+    correct_option_id: friday_feb_25
+    explanation: Chapter 220 ends trading on the third business day before the first day of the delivery month.
+  - id: nw_curve_spread
+    day: 2
+    check_type: numeric
+    category: calculation
+    prompt: March NG is $5.120 and April is $5.280/MMBtu. What is April minus March?
+    objectives: [normal_inverted_markets, carrying_charges]
+    source_id: cme_curve_structure
+    calculation: {kind: contract_month_spread, nearby_price: 5.120, deferred_price: 5.280}
+    expected_answer: 0.160
+    answer_unit: dollars per MMBtu
+    explanation: The positive $0.160 deferred-minus-nearby spread is the authored normal curve.
+  - id: nw_curve_classification
+    day: 2
+    check_type: multiple_choice
+    category: conceptual
+    prompt: Nearby March is $5.460 and deferred April is $5.310. How is the authored curve classified?
+    objectives: [normal_inverted_markets]
+    source_id: cme_curve_structure
+    options:
+      - {id: inverted, text: "Inverted, because nearby is above deferred."}
+      - {id: normal, text: "Normal, because deferred is below nearby."}
+      - {id: unknowable, text: "Unclassifiable unless the spot price is supplied."}
+    correct_option_id: inverted
+    explanation: A downward-sloping nearby-to-deferred curve is inverted in this authored example.
+  - id: nw_locked_market
+    day: 2
+    check_type: multiple_choice
+    category: conceptual
+    prompt: What can Northstar safely conclude from the fictional locked limit-up state?
+    objectives: [price_and_lock_limits]
+    source_id: nfa_series3_outline
+    options:
+      - {id: no_fill_guarantee, text: "The price state can constrain trading and increase risk; a resting order is not guaranteed a fill."}
+      - {id: guaranteed_exit, text: "Every resting order must execute at the displayed limit."}
+      - {id: no_margin_effect, text: "A limit move cannot affect margin or liquidity."}
+    correct_option_id: no_fill_guarantee
+    explanation: Price limits do not create guaranteed executable liquidity.
+  - id: nw_post_termination
+    day: 3
+    check_type: multiple_choice
+    category: conceptual
+    prompt: Under Chapter 220, what must happen to March NG contracts that remain open after trading terminates?
+    objectives: [delivery, first_notice_day, spot_month]
+    source_id: cme_ng_contract
+    options:
+      - {id: delivery_or_efrp, text: "They proceed to delivery or are liquidated through a permitted bona fide EFRP under the applicable timing."}
+      - {id: disappear, text: "They automatically disappear without an obligation or record."}
+      - {id: cash_settle, text: "They automatically cash-settle because all NG futures are financial."}
+    correct_option_id: delivery_or_efrp
+    explanation: Chapter 220 is physically delivered and specifies the permitted post-termination paths.
+  - id: nw_efp_substance
+    day: 3
+    check_type: multiple_choice
+    category: conceptual
+    prompt: Which statement about an Exchange of Futures for Physical is accurate?
+    objectives: [delivery, records_and_ethical_conduct]
+    source_id: cme_rule_538
+    options:
+      - {id: corresponding_leg, text: "It pairs the futures transaction with a corresponding bona fide physical or forward transaction."}
+      - {id: label_only, text: "It is a label that can be added to any unsupported late offset."}
+      - {id: automatic_delivery, text: "It automatically makes Northstar able to accept Henry Hub delivery."}
+    correct_option_id: corresponding_leg
+    explanation: Rule 538 requires a real corresponding related-position transaction.
+  - id: nw_offset_position
+    day: 3
+    check_type: multiple_choice
+    category: conceptual
+    prompt: Northstar has two long March futures and executes an authorized sale of two March futures. What remains prospectively?
+    objectives: [offset_preserves_history, trade_lifecycle]
+    source_id: cme_closing_position
+    options:
+      - {id: zero_open_preserved_history, text: "Zero open contracts, while the original and offset records remain preserved."}
+      - {id: four_long, text: "Four long contracts because sales add to long positions."}
+      - {id: history_deleted, text: "Zero open contracts and the original position record is deleted."}
+    correct_option_id: zero_open_preserved_history
+    explanation: The opposite trade closes prospective exposure without rewriting transaction history.
+
+review:
+  style_defaults: {guided: learning, standard: checkpoint}
+  required_count: 10
+  remediation_count: 4
+  required:
+    - id: nwr_forward_obligation
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: clearing_contracts
+      prompt: A company buys a bilateral forward and later sells an exchange future with similar terms. What is true?
+      objectives: [clearinghouse_mechanics]
+      source_id: cftc_economic_purpose
+      options:
+        - {id: separate_obligations, text: "The bilateral forward remains a separate obligation unless it is amended or closed with its counterparty."}
+        - {id: automatic_offset, text: "The futures sale automatically extinguishes the forward."}
+        - {id: clearing_conversion, text: "The clearing house automatically converts the forward into a future."}
+      correct_option_id: separate_obligations
+    - id: nwr_clearing_role
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: clearing_contracts
+      prompt: Which statement best describes clearing after an exchange futures trade?
+      objectives: [clearinghouse_mechanics]
+      source_id: cftc_glossary
+      options:
+        - {id: central_counterparty, text: "The clearing organization interposes itself for clearing members and manages settlement obligations."}
+        - {id: price_guarantee, text: "The clearing organization guarantees a profitable price."}
+        - {id: direct_customer, text: "Every commercial hedger becomes a clearing member automatically."}
+      correct_option_id: central_counterparty
+    - id: nwr_april_last_trade
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: calendar_delivery
+      prompt: April 1, 2028 is a Saturday. Using the authored Chapter 220 weekday calendar, which date is the third business day before April 1?
+      objectives: [first_notice_day, spot_month]
+      source_id: cme_ng_contract
+      options:
+        - {id: wednesday_mar_29, text: "Wednesday, March 29."}
+        - {id: friday_mar_31, text: "Friday, March 31."}
+        - {id: monday_apr_3, text: "Monday, April 3."}
+      correct_option_id: wednesday_mar_29
+    - id: nwr_delivery_value
+      check_type: numeric
+      category: calculation
+      remediation_category: calendar_delivery
+      prompt: Three NG contracts use a $4.875 final settlement and 10,000 MMBtu per contract. What simplified contract value supports the delivery invoice calculation?
+      objectives: [delivery]
+      source_id: cme_ng_contract
+      calculation: {kind: delivery_contract_value, settlement_price: 4.875, contracts: 3, contract_id: cme_henry_hub_ng}
+      expected_answer: 146250
+      answer_unit: dollars
+    - id: nwr_normal_spread
+      check_type: numeric
+      category: calculation
+      remediation_category: curve_limits
+      prompt: Nearby NG is $4.900 and deferred NG is $5.070. What is deferred minus nearby?
+      objectives: [normal_inverted_markets, carrying_charges]
+      source_id: cme_curve_structure
+      calculation: {kind: contract_month_spread, nearby_price: 4.900, deferred_price: 5.070}
+      expected_answer: 0.170
+      answer_unit: dollars per MMBtu
+    - id: nwr_carry_inference
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: curve_limits
+      prompt: What is the disciplined interpretation of a normal commodity futures curve?
+      objectives: [normal_inverted_markets, carrying_charges]
+      source_id: cme_curve_structure
+      options:
+        - {id: carry_possible_not_forecast, text: "Carry can contribute to the slope, but the deferred price is not a guaranteed spot-price forecast."}
+        - {id: guaranteed_rise, text: "The spot price must rise to the deferred price."}
+        - {id: no_carry, text: "Storage and financing can never affect the curve."}
+      correct_option_id: carry_possible_not_forecast
+    - id: nwr_inverted_curve
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: curve_limits
+      prompt: Nearby is above deferred in a physically delivered commodity. Which conclusion is supported?
+      objectives: [normal_inverted_markets]
+      source_id: cme_curve_structure
+      options:
+        - {id: inverted_only, text: "The curve is inverted; scarcity may contribute, but the prices alone do not prove one cause."}
+        - {id: normal_curve, text: "The curve is normal because nearby is higher."}
+        - {id: proven_shortage, text: "The prices prove a specific physical shortage occurred."}
+      correct_option_id: inverted_only
+    - id: nwr_limit_liquidity
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: curve_limits
+      prompt: A market reaches an applicable price limit and available contra-side interest disappears. What is the key risk?
+      objectives: [price_and_lock_limits]
+      source_id: nfa_series3_outline
+      options:
+        - {id: orders_may_not_fill, text: "Orders may not fill, while exposure and margin pressure can remain."}
+        - {id: automatic_fill, text: "Every order automatically fills at the limit."}
+        - {id: exposure_ends, text: "The open futures exposure ends automatically."}
+      correct_option_id: orders_may_not_fill
+    - id: nwr_efp_records
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: resolution_records
+      prompt: Which file supports treating a transaction as an EFP?
+      objectives: [delivery, records_and_ethical_conduct]
+      source_id: cme_rule_538
+      options:
+        - {id: both_legs, text: "Records of the futures leg and the corresponding bona fide physical or forward leg."}
+        - {id: futures_only, text: "Only an internal futures ticket labeled EFP."}
+        - {id: intent_only, text: "A later statement that delivery was inconvenient."}
+      correct_option_id: both_legs
+    - id: nwr_offset_chain
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: resolution_records
+      prompt: After an authorized offset brings the position to zero, what should reconciliation preserve?
+      objectives: [offset_preserves_history, trade_lifecycle, records_and_ethical_conduct]
+      source_id: cme_closing_position
+      options:
+        - {id: complete_chain, text: "The original position, offset authorization, execution, confirmation, and zero-position reconciliation."}
+        - {id: zero_only, text: "Only a screenshot showing zero contracts."}
+        - {id: delete_original, text: "Delete the original trade because no position remains."}
+      correct_option_id: complete_chain
+  remediation:
+    - id: nwr_remediate_clearing
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: clearing_contracts
+      prompt: Who is the commercial hedger's immediate account intermediary when it accesses exchange futures through an FCM relationship?
+      objectives: [clearinghouse_mechanics]
+      source_id: cftc_economic_purpose
+      options:
+        - {id: fcm_relationship, text: "The FCM relationship provides the account path; clearing-member and Clearing House roles remain distinct."}
+        - {id: physical_supplier, text: "The physical supplier automatically clears every futures trade."}
+        - {id: no_intermediary, text: "The hedger necessarily trades directly as a clearing member."}
+      correct_option_id: fcm_relationship
+    - id: nwr_remediate_calendar
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: calendar_delivery
+      prompt: Why should an internal action deadline precede the exchange termination date?
+      objectives: [first_notice_day, spot_month, delivery]
+      source_id: cme_ng_contract
+      options:
+        - {id: operational_buffer, text: "It creates an authored operational buffer; it does not replace or redefine the exchange rule."}
+        - {id: exchange_rule, text: "The internal deadline becomes the exchange's last trading day."}
+        - {id: removes_delivery, text: "An internal deadline removes delivery provisions from the contract."}
+      correct_option_id: operational_buffer
+    - id: nwr_remediate_curve
+      check_type: numeric
+      category: calculation
+      remediation_category: curve_limits
+      prompt: Nearby is $6.020 and deferred is $5.840. What is deferred minus nearby?
+      objectives: [normal_inverted_markets]
+      source_id: cme_curve_structure
+      calculation: {kind: contract_month_spread, nearby_price: 6.020, deferred_price: 5.840}
+      expected_answer: -0.180
+      answer_unit: dollars per MMBtu
+    - id: nwr_remediate_resolution
+      check_type: multiple_choice
+      category: conceptual
+      remediation_category: resolution_records
+      prompt: A desk wants to call an unsupported late futures adjustment an EFP. What is the correct response?
+      objectives: [delivery, records_and_ethical_conduct]
+      source_id: cme_rule_538
+      options:
+        - {id: reject_label, text: "Do not use the label without a bona fide corresponding related-position transaction and required records."}
+        - {id: label_is_enough, text: "Use the label because intent replaces the related-position leg."}
+        - {id: delete_ticket, text: "Delete the original futures ticket and recreate it as an EFP."}
+      correct_option_id: reject_label
+
+formulas:
+  - {id: normal_curve_spread, expression: deferred_price - nearby_price, expected: 0.160}
+  - {id: carry_residual, expression: normal_curve_spread - authored_carry_estimate, expected: 0.050}
+  - {id: inverted_curve_spread, expression: deferred_price - nearby_price, expected: -0.150}
+  - {id: local_position_quantity, expression: open_contracts * contract_size_mmbtu, expected: 20000}
+  - {id: final_open_contracts, expression: open_contracts - offset_contracts, expected: 0}
+  - {id: sample_delivery_value, expression: 4.875 * 10000 * 3, expected: 146250}
+
+scripted_paths:
+  evidence_first:
+    - nw_classification_columns
+    - nw_chain_roles
+    - nw_calendar_rule_link
+    - nw_curve_spread_first
+    - nw_inversion_signed
+    - nw_limit_no_fill
+    - nw_intent_capacity_memo
+    - nw_route_plain_offset
+    - nw_packet_full_chain
+  concise_operator:
+    - nw_classification_matrix
+    - nw_chain_counterparty
+    - nw_calendar_exception_note
+    - nw_curve_business_first
+    - nw_inversion_operations
+    - nw_limit_cash_warning
+    - nw_intent_expiry_brief
+    - nw_route_efp_boundary
+    - nw_packet_exception_summary
+  escalation_first:
+    - nw_classification_walkthrough
+    - nw_chain_source_note
+    - nw_calendar_dual_review
+    - nw_curve_chart_first
+    - nw_inversion_scenarios
+    - nw_limit_joint_note
+    - nw_intent_control_copy
+    - nw_route_supervised_ticket
+    - nw_packet_review_index

@@ -72,7 +72,7 @@ def test_milestone_1_save_migrates_through_full_chain_to_schema_6(
 
     migrated = repository.load()
 
-    assert migrated.save_schema_version == 9
+    assert migrated.save_schema_version == 11
     assert migrated.no_surprises is None
     assert migrated.eleventh_contract is None
     assert migrated.game_mode.value == "standard"

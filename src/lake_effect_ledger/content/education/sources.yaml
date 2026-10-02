@@ -29,7 +29,7 @@ sources:
     organization: National Futures Association
     title: Series 3 — National Commodities Futures Examination Study Outline
     url: https://www.nfa.futures.org/registration-membership/study-outlines/index.html
-    note: Reviewed July 26, 2026; authoritative topic map for the local Series 3 curriculum classifications and explicit future-coverage list.
+    note: Reviewed August 27, 2026; authoritative topic map for the frozen Core classifications, Applied evidence overlay, and explicit future-coverage list.
   - id: cme_order_types
     organization: CME Group
     title: Futures Order Types
@@ -45,6 +45,20 @@ sources:
     title: Closing Your Position
     url: https://www.cmegroup.com/education/courses/things-to-know-before-trading-cme-futures/closing-your-position
     note: Exchange education on using an opposite trade to close an open futures position.
+  - id: cme_curve_structure
+    organization: CME Group
+    title: What Is Contango and Backwardation?
+    url: https://www.cmegroup.com/education/courses/introduction-to-ferrous-metals/what-is-contango-and-backwardation
+    note: >-
+      Exchange education supporting normal/contango and inverted/backwardation
+      curve terminology. The Notice Window uses fictional natural-gas prices.
+  - id: cme_rule_538
+    organization: CME Group
+    title: NYMEX Rulebook Chapter 5 — Rule 538 Exchange for Related Positions
+    url: https://www.cmegroup.com/rulebook/NYMEX/1/5.pdf
+    note: >-
+      Primary exchange rule supporting the EFRP and EFP distinctions. The
+      fictional Northstar workflow is not presented as an exchange requirement.
   - id: cftc_trade_records
     organization: Electronic Code of Federal Regulations
     title: 17 CFR 1.35 — Records of commodity interest transactions
@@ -79,6 +93,15 @@ sources:
       Primary NFA rulebook entry point for member supervision requirements.
       The game does not imply that every rule directly governs every
       Northstar employee.
+  - id: nfa_trade_records
+    organization: National Futures Association
+    title: NFA Compliance Rule 2-10 — Recordkeeping
+    url: https://www.nfa.futures.org/rulebooksql/rules.aspx?RuleID=9029&Section=9
+    note: >-
+      Current NFA material incorporating applicable customer-order recordkeeping
+      requirements. It supports the educational distinction among authorization,
+      order, execution, confirmation, and reconciliation records. Northstar's
+      fictional internal approval chain is not presented as an NFA requirement.
   - id: fasb_concepts_useful_information
     organization: Financial Accounting Standards Board
     title: Concepts Statement No. 8, Chapter 3 — Qualitative Characteristics

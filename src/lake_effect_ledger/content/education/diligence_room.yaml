@@ -11,8 +11,8 @@ checks:
     learning_objective_ids: [supported_vs_forecast_volume]
     source_id: fasb_concepts_useful_information
     options:
-      - {id: dated_support, text: The volume became supported Friday; Monday still had 100,000 supported and 10,000 possible}
-      - {id: monday_support, text: All 110,000 MMBtu were supported Monday}
+      - {id: dated_support, text: "The volume became supported Friday; Monday still had 100,000 supported and 10,000 possible"}
+      - {id: monday_support, text: "All 110,000 MMBtu were supported Monday"}
       - {id: authorization_changed, text: Friday support raised Monday authorization to eleven contracts}
     correct_option_id: dated_support
     explanation: Later support changes the later exposure view, not the earlier state of knowledge or authorization.
@@ -28,7 +28,7 @@ checks:
     learning_objective_ids: [qualitative_significance]
     source_id: sec_sab_99_materiality
     options:
-      - {id: context, text: Authorization, certification, recurrence, and credibility can be qualitatively significant}
+      - {id: context, text: "Authorization, certification, recurrence, and credibility can be qualitatively significant"}
       - {id: never, text: Anything below a dollar threshold is automatically irrelevant}
       - {id: profit, text: A profitable result automatically makes the exception insignificant}
     correct_option_id: context
@@ -62,7 +62,7 @@ checks:
     learning_objective_ids: [scenario_vs_forecast]
     source_id: fasb_concepts_useful_information
     options:
-      - {id: assumptions, text: They disclose fictional assumptions, assign no probabilities, and test consequences}
+      - {id: assumptions, text: "They disclose fictional assumptions, assign no probabilities, and test consequences"}
       - {id: colors, text: They use a table rather than prose}
       - {id: entries, text: They create accounting entries for each case}
     correct_option_id: assumptions
@@ -79,7 +79,7 @@ checks:
     learning_objective_ids: [covenant_headroom]
     source_id: fasb_debt_overview
     options:
-      - {id: one_hundred, text: $100,000}
+      - {id: one_hundred, text: "$100,000"}
       - {id: three_six, text: $3.60 million}
       - {id: seven_three, text: $7.30 million}
     correct_option_id: one_hundred
@@ -96,7 +96,7 @@ checks:
     learning_objective_ids: [remediation_status_evidence]
     source_id: iia_global_standards
     options:
-      - {id: approved, text: Approved, not implemented or tested}
+      - {id: approved, text: "Approved, not implemented or tested"}
       - {id: tested, text: Tested and effective}
       - {id: closed, text: Closed automatically}
     correct_option_id: approved

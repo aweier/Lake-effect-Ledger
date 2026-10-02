@@ -10,6 +10,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field
 
 from lake_effect_ledger.accounting.models import Ledger
+from lake_effect_ledger.applied_foundations.models import AppliedFoundationsState
 from lake_effect_ledger.audit.models import NoSurprisesState
 from lake_effect_ledger.commodity.models import HedgeBookState
 from lake_effect_ledger.diligence.models import DiligenceRoomState
@@ -21,10 +22,11 @@ from lake_effect_ledger.learning.models import (
     PrologueState,
     ShowMathMode,
 )
+from lake_effect_ledger.notice_window.models import NoticeWindowState
 from lake_effect_ledger.trading.models import EleventhContractState
 from lake_effect_ledger.treasury.models import CommunicationRecord, TreasuryState
 
-SAVE_SCHEMA_VERSION = 9
+SAVE_SCHEMA_VERSION = 11
 CONTENT_SCHEMA_VERSION = 1
 
 
@@ -102,7 +104,7 @@ class ScheduledEvent(BaseModel):
 class GameState(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
 
-    save_schema_version: Literal[9] = SAVE_SCHEMA_VERSION
+    save_schema_version: Literal[11] = SAVE_SCHEMA_VERSION
     content_schema_version: Literal[1] = CONTENT_SCHEMA_VERSION
     game_id: str
     seed: int = Field(ge=0)
@@ -138,6 +140,8 @@ class GameState(BaseModel):
     core_chapter_debrief_ids: list[str] = Field(default_factory=list)
     core_debrief_completed: bool = False
     core_campaign_completed: bool = False
+    applied_foundations: AppliedFoundationsState = Field(default_factory=AppliedFoundationsState)
+    notice_window: NoticeWindowState = Field(default_factory=NoticeWindowState)
     completed: bool = False
 
     def record(

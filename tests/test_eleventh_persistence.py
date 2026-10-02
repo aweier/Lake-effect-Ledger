@@ -35,7 +35,7 @@ def test_v4_save_migrates_to_v8_without_losing_prior_state(
 
     restored = repository.load()
 
-    assert restored.save_schema_version == 9
+    assert restored.save_schema_version == 11
     assert restored.no_surprises is None
     assert restored.eleventh_contract is None
     assert restored.player == state.player

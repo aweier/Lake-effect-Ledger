@@ -3,6 +3,8 @@ from decimal import Decimal
 import pytest
 
 from lake_effect_ledger.commodity.engine import (
+    contract_month_spread,
+    delivery_contract_value,
     futures_daily_pnl,
     hedge_ratio,
     margin_call_amount,
@@ -53,6 +55,23 @@ def test_decimal_rounding_is_explicit_and_exact() -> None:
     )
     assert result == Decimal("0.01")
     assert isinstance(result, Decimal)
+
+
+def test_contract_month_spread_preserves_direction() -> None:
+    assert contract_month_spread(
+        nearby_price=Decimal("5.120"), deferred_price=Decimal("5.280")
+    ) == Decimal("0.160")
+    assert contract_month_spread(
+        nearby_price=Decimal("5.460"), deferred_price=Decimal("5.310")
+    ) == Decimal("-0.150")
+
+
+def test_delivery_contract_value_uses_settlement_quantity_and_contracts() -> None:
+    assert delivery_contract_value(
+        settlement_price=Decimal("4.875"),
+        contract_size_mmbtu=Decimal("10000"),
+        contracts=3,
+    ) == Decimal("146250.00")
 
 
 @pytest.mark.parametrize(
@@ -106,3 +125,28 @@ def test_basis_risk_decomposition_reconciles_physical_pnl() -> None:
     assert basis == Decimal("-40000.00")
     assert physical == Decimal("-140000.00")
     assert henry + basis == physical
+
+
+def test_economically_short_buyer_reverses_physical_price_signs() -> None:
+    exposure = PhysicalExposure(
+        id="test_purchase",
+        quantity_mmbtu=Decimal("80000"),
+        direction=PhysicalDirection.SHORT,
+        regional_hub="Chicago",
+        settlement_date="2028-01-31",
+        original_henry_hub_price=Decimal("5.40"),
+        original_basis=Decimal("-0.20"),
+    )
+    market = DailyMarketPrice(
+        settlement_date="2028-01-31",
+        henry_hub_price=Decimal("4.95"),
+        chicago_basis=Decimal("-0.30"),
+        event_title="Test",
+        event_text="Test",
+    )
+
+    henry, basis, physical = physical_pnl_components(exposure, market)
+
+    assert henry == Decimal("36000.00")
+    assert basis == Decimal("8000.00")
+    assert physical == Decimal("44000.00")

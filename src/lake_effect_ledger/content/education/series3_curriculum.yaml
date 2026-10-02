@@ -3,10 +3,12 @@ outline:
   source_id: nfa_series3_outline
   title: Series 3 — National Commodity Futures Examination Study Outline
   url: https://www.nfa.futures.org/registration-membership/study-outlines/index.html
-  reviewed_on: 2026-07-26
+  reviewed_on: 2026-08-27
   authority_note: >-
     This locally validated map uses the current NFA outline as the exam-content
-    authority. It is a scope map, not a complete exam-readiness claim.
+    authority. Core coverage classifications remain the frozen historical map;
+    Applied Foundations adds a separate seven-objective evidence overlay. This
+    is a scope map, not a complete exam-readiness claim.
 
 objectives:
   - id: double_entry
@@ -426,6 +428,90 @@ objectives:
     notebook_section: Business Context
     counts_toward_core: false
 
+  - id: clearinghouse_mechanics
+    official_outline_section: Part 1 — The Futures Contract
+    official_topic_label: Clearinghouse function
+    game_concept_label: Clearing versus bilateral counterparty structure
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [notice_window, notice_window_review]
+    check_ids:
+      [nw_future_forward, nw_clearinghouse_role, nwr_forward_obligation, nwr_clearing_role, nwr_remediate_clearing]
+    classification: exam_material
+    notebook_section: Futures Foundations
+    counts_toward_core: false
+  - id: delivery
+    official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery"
+    official_topic_label: Delivery provisions and notices
+    game_concept_label: Physically delivered contract obligations
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [notice_window, notice_window_review]
+    check_ids:
+      [nw_last_trade_date, nw_post_termination, nw_efp_substance, nwr_delivery_value, nwr_efp_records, nwr_remediate_calendar, nwr_remediate_resolution]
+    calculation_kinds: [delivery_contract_value]
+    classification: exam_material
+    notebook_section: Orders and Positions
+    counts_toward_core: false
+  - id: first_notice_day
+    official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery"
+    official_topic_label: First notice day
+    game_concept_label: Verify the notice and expiration calendar
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [notice_window, notice_window_review]
+    check_ids: [nw_last_trade_date, nw_post_termination, nwr_april_last_trade, nwr_remediate_calendar]
+    classification: exam_material
+    notebook_section: Orders and Positions
+    counts_toward_core: false
+  - id: spot_month
+    official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery"
+    official_topic_label: Trading in the spot month
+    game_concept_label: Manage nearby-contract calendar exposure
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [notice_window, notice_window_review]
+    check_ids: [nw_last_trade_date, nw_post_termination, nwr_april_last_trade, nwr_remediate_calendar]
+    classification: exam_material
+    notebook_section: Orders and Positions
+    counts_toward_core: false
+  - id: price_and_lock_limits
+    official_outline_section: Part 1 — Price Limits
+    official_topic_label: Price limits and lock limits
+    game_concept_label: Locked markets preserve execution and liquidity risk
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [notice_window, notice_window_review]
+    check_ids: [nw_locked_market, nwr_limit_liquidity]
+    classification: exam_material
+    notebook_section: Margin and Settlement
+    counts_toward_core: false
+  - id: normal_inverted_markets
+    official_outline_section: Part 1 — Structure of Futures Markets
+    official_topic_label: Normal and inverted markets
+    game_concept_label: Read the signed nearby/deferred curve
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [notice_window, notice_window_review]
+    check_ids:
+      [nw_curve_spread, nw_curve_classification, nwr_normal_spread, nwr_carry_inference, nwr_inverted_curve, nwr_remediate_curve]
+    calculation_kinds: [contract_month_spread]
+    classification: exam_material
+    notebook_section: Futures Foundations
+    counts_toward_core: false
+  - id: carrying_charges
+    official_outline_section: Part 1 — Structure of Futures Markets
+    official_topic_label: Carrying charges and full carry
+    game_concept_label: Compare observed curve spread with carrying costs
+    source_id: nfa_series3_outline
+    coverage_status: covered
+    chapter_ids: [notice_window, notice_window_review]
+    check_ids: [nw_curve_spread, nwr_normal_spread, nwr_carry_inference]
+    calculation_kinds: [contract_month_spread]
+    classification: exam_material
+    notebook_section: Futures Foundations
+    counts_toward_core: false
+
 core_chapters:
   - id: first_rotation
     title: First Rotation
@@ -498,13 +584,6 @@ review_questions:
   - {id: review_records_ethics, check_id: ec_records_ethics}
 
 future_topics:
-  - {id: clearinghouse_mechanics, official_outline_section: Part 1 — The Futures Contract, official_topic_label: Clearinghouse function, source_id: nfa_series3_outline}
-  - {id: delivery, official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery", official_topic_label: Delivery provisions and notices, source_id: nfa_series3_outline}
-  - {id: first_notice_day, official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery", official_topic_label: First notice day, source_id: nfa_series3_outline}
-  - {id: spot_month, official_outline_section: "Part 1 — Offsetting Contracts, Settlements, Delivery", official_topic_label: Trading in the spot month, source_id: nfa_series3_outline}
-  - {id: price_and_lock_limits, official_outline_section: Part 1 — Price Limits, official_topic_label: Price limits and lock limits, source_id: nfa_series3_outline}
-  - {id: normal_inverted_markets, official_outline_section: Part 1 — Structure of Futures Markets, official_topic_label: Normal and inverted markets, source_id: nfa_series3_outline}
-  - {id: carrying_charges, official_outline_section: Part 1 — Structure of Futures Markets, official_topic_label: Carrying charges and full carry, source_id: nfa_series3_outline}
   - {id: spreads, official_outline_section: Part 1 — Spreading, official_topic_label: Spread trading and common spreads, source_id: nfa_series3_outline}
   - {id: speculative_return_margin, official_outline_section: Part 1 — Speculating in Futures, official_topic_label: Return on margin equity, source_id: nfa_series3_outline}
   - {id: options_terminology, official_outline_section: Part 1 — General Options Terminology, official_topic_label: "Calls, puts, writers, buyers, and assignment", source_id: nfa_series3_outline}

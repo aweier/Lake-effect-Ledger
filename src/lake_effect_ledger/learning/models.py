@@ -19,6 +19,7 @@ class GameMode(StrEnum):
 
 class CampaignTrack(StrEnum):
     SERIES_3_CORE = "series3_core"
+    APPLIED_FOUNDATIONS = "applied_foundations"
     EXTENDED_STORY = "extended_story"
 
 
@@ -119,6 +120,99 @@ class ReviewStyle(StrEnum):
     CHECKPOINT = "checkpoint"
 
 
+class QuestionCategory(StrEnum):
+    CALCULATION = "calculation"
+    CONCEPTUAL = "conceptual"
+
+
+class SnapshotProvenance(StrEnum):
+    NATIVE_V10 = "native_v10"
+    NATIVE_V11 = "native_v11"
+    RECONSTRUCTED_FROM_V9 = "reconstructed_from_v9"
+    LEGACY_ATTEMPT_HISTORY_UNKNOWN = "legacy_attempt_history_unknown"
+
+
+class SeasonReviewResponse(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+
+    question_id: str
+    first_answer: str | None = None
+    first_attempt_correct: bool | None = None
+    final_answer: str | None = None
+    attempts: int = Field(default=0, ge=0)
+    hints_used: int = Field(default=0, ge=0)
+    walkthrough_used: bool = False
+    final_correct: bool = False
+    independently_demonstrated: bool = False
+    explanation_shown: bool = False
+
+
+class SeasonReviewState(BaseModel):
+    model_config = ConfigDict(validate_assignment=True)
+
+    style: ReviewStyle | None = None
+    started: bool = False
+    required_completed: bool = False
+    completed: bool = False
+    current_required_index: int = Field(default=0, ge=0)
+    current_remediation_index: int = Field(default=0, ge=0)
+    responses: dict[str, SeasonReviewResponse] = Field(default_factory=dict)
+    recommended_remediation_categories: list[str] = Field(default_factory=list)
+    selected_remediation_ids: list[str] = Field(default_factory=list)
+    remediation_declined: bool = False
+
+
+class AssessmentQuestionSnapshot(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    question_id: str
+    check_id: str
+    category: QuestionCategory
+    remediation: bool = False
+    first_answer: str | None = None
+    first_attempt_correct: bool | None = None
+    final_answer: str | None = None
+    final_correct: bool | None = None
+    attempts: int | None = Field(default=None, ge=0)
+    hints_used: int | None = Field(default=None, ge=0)
+    walkthrough_used: bool | None = None
+    independently_demonstrated: bool | None = None
+
+
+class ObjectiveEvidenceSnapshot(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    objective_id: str
+    story_application_ids: tuple[str, ...] = ()
+    required_question_ids: tuple[str, ...] = ()
+    remediation_question_ids: tuple[str, ...] = ()
+    first_attempt_correct: int | None = Field(default=None, ge=0)
+    final_correct: int | None = Field(default=None, ge=0)
+    assistance_used: bool | None = None
+    demonstrated_status: LearningStatus | None = None
+
+
+class AssessmentSnapshot(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    season_id: str = Field(pattern=r"^[a-z0-9_]+$")
+    completed_story_date: date
+    provenance: SnapshotProvenance
+    questions: tuple[AssessmentQuestionSnapshot, ...]
+    objective_evidence: tuple[ObjectiveEvidenceSnapshot, ...]
+    calculation_first_attempt_correct: int | None = Field(default=None, ge=0)
+    calculation_first_attempt_total: int | None = Field(default=None, ge=0)
+    conceptual_first_attempt_correct: int | None = Field(default=None, ge=0)
+    conceptual_first_attempt_total: int | None = Field(default=None, ge=0)
+
+    @model_validator(mode="after")
+    def unique_questions(self) -> AssessmentSnapshot:
+        ids = [item.question_id for item in self.questions]
+        if len(ids) != len(set(ids)):
+            raise ValueError(f"assessment snapshot {self.season_id} repeats question IDs")
+        return self
+
+
 class CoreReviewResponse(BaseModel):
     model_config = ConfigDict(validate_assignment=True)
 
@@ -126,6 +220,7 @@ class CoreReviewResponse(BaseModel):
     check_id: str
     first_answer: str | None = None
     first_attempt_correct: bool | None = None
+    final_answer: str | None = None
     attempts: int = Field(default=0, ge=0)
     hints_used: int = Field(default=0, ge=0)
     walkthrough_used: bool = False
@@ -152,6 +247,14 @@ class LearningProfile(BaseModel):
     notebook: LearningNotebookState = Field(default_factory=LearningNotebookState)
     completed_day_ids: list[str] = Field(default_factory=list)
     core_review: CoreReviewState = Field(default_factory=CoreReviewState)
+    assessment_snapshots: list[AssessmentSnapshot] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def unique_assessment_seasons(self) -> LearningProfile:
+        season_ids = [item.season_id for item in self.assessment_snapshots]
+        if len(season_ids) != len(set(season_ids)):
+            raise ValueError("assessment snapshots are append-only by season")
+        return self
 
 
 class CareerTrajectory(BaseModel):
@@ -219,15 +322,32 @@ class GameModeFile(BaseModel):
             raise ValueError("exactly one game mode must be recommended")
         track_ids = [item.id for item in self.campaign_tracks]
         if set(track_ids) != set(CampaignTrack):
-            raise ValueError("campaign tracks must define series3_core and extended_story")
+            raise ValueError(
+                "campaign tracks must define series3_core, applied_foundations, and extended_story"
+            )
         if sum(item.recommended for item in self.campaign_tracks) != 1:
             raise ValueError("exactly one campaign track must be recommended")
         core = next(item for item in self.campaign_tracks if item.id == CampaignTrack.SERIES_3_CORE)
+        applied = next(
+            item for item in self.campaign_tracks if item.id == CampaignTrack.APPLIED_FOUNDATIONS
+        )
         extended = next(
             item for item in self.campaign_tracks if item.id == CampaignTrack.EXTENDED_STORY
         )
-        if extended.chapter_ids[: len(core.chapter_ids)] != core.chapter_ids:
-            raise ValueError("Extended Story must begin with the complete Series 3 Core")
+        if applied.chapter_ids != [*core.chapter_ids, "supply_gap", "notice_window"]:
+            raise ValueError(
+                "Applied Foundations must place Supply Gap and Notice Window after Core"
+            )
+        if extended.chapter_ids != [
+            *core.chapter_ids,
+            "supply_gap",
+            "no_surprises",
+            "notice_window",
+            "diligence_room",
+        ]:
+            raise ValueError(
+                "Extended Story must preserve the dated audit, Notice Window, and diligence order"
+            )
         return self
 
 
@@ -276,9 +396,16 @@ class CalculationKind(StrEnum):
     REGIONAL_PRICE = "regional_price"
     HEDGE_RATIO = "hedge_ratio"
     MARGIN_CALL = "margin_call"
+    CONTRACT_COUNT = "contract_count"
+    BUYER_PHYSICAL_VARIANCE = "buyer_physical_variance"
+    COMBINED_ECONOMIC_RESULT = "combined_economic_result"
+    CONTRACT_MONTH_SPREAD = "contract_month_spread"
+    DELIVERY_CONTRACT_VALUE = "delivery_contract_value"
 
 
 class CheckOption(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
     id: str = Field(pattern=r"^[a-z0-9_]+$")
     text: str = Field(min_length=1)
 
@@ -303,6 +430,13 @@ class CalculationDefinition(BaseModel):
     initial_requirement: Decimal | None = None
     maintenance_requirement: Decimal | None = None
     margin_balance: Decimal | None = None
+    initial_regional_price: Decimal | None = None
+    final_regional_price: Decimal | None = None
+    physical_variance: Decimal | None = None
+    futures_result: Decimal | None = None
+    nearby_price: Decimal | None = None
+    deferred_price: Decimal | None = None
+    settlement_price: Decimal | None = None
 
     @model_validator(mode="after")
     def validate_inputs(self) -> CalculationDefinition:
@@ -325,6 +459,28 @@ class CalculationDefinition(BaseModel):
                 "initial_requirement",
                 "maintenance_requirement",
                 "margin_balance",
+            ),
+            CalculationKind.CONTRACT_COUNT: (
+                "contract_id",
+                "physical_quantity_mmbtu",
+            ),
+            CalculationKind.BUYER_PHYSICAL_VARIANCE: (
+                "initial_regional_price",
+                "final_regional_price",
+                "physical_quantity_mmbtu",
+            ),
+            CalculationKind.COMBINED_ECONOMIC_RESULT: (
+                "physical_variance",
+                "futures_result",
+            ),
+            CalculationKind.CONTRACT_MONTH_SPREAD: (
+                "nearby_price",
+                "deferred_price",
+            ),
+            CalculationKind.DELIVERY_CONTRACT_VALUE: (
+                "contract_id",
+                "settlement_price",
+                "contracts",
             ),
         }
         missing = [name for name in required_by_kind[self.kind] if getattr(self, name) is None]
