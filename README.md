@@ -1,5 +1,7 @@
 # Lake Effect Ledger
 
+![A winter commodity-risk desk overlooking Milwaukee and Lake Michigan, with an open ledger and natural-gas infrastructure](docs/assets/lake-effect-ledger-hero.png)
+
 Lake Effect Ledger is a fictional Python CLI game about natural-gas accounting,
 hedging, liquidity, evidence, and professional judgment. You play a junior
 commodity risk analyst at Northstar Midstream & Trading and learn by making
